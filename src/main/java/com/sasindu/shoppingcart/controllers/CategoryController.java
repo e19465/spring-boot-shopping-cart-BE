@@ -6,6 +6,7 @@ import com.sasindu.shoppingcart.constants.ApplicationConstants;
 import com.sasindu.shoppingcart.dto.request.category.AddCategoryRequest;
 import com.sasindu.shoppingcart.dto.request.category.UpdateCategoryRequest;
 import com.sasindu.shoppingcart.dto.response.category.CategoryResponse;
+import com.sasindu.shoppingcart.dto.response.product.ProductResponse;
 import com.sasindu.shoppingcart.helpers.ApiResponse;
 import com.sasindu.shoppingcart.helpers.GlobalExceptionHandler;
 import com.sasindu.shoppingcart.helpers.GlobalSuccessHandler;
@@ -132,6 +133,16 @@ public class CategoryController {
             return GlobalExceptionHandler.handleException(e);
         }
     }
+
+    @GetMapping("/get-products/{category}")
+    public ResponseEntity<ApiResponse> deleteCategory(@PathVariable String category) {
+        try {
+            List<ProductResponse> products = _categoryService.getAllProductsForCategory(category);
+            return GlobalSuccessHandler.handleSuccess("All products for category", products, HttpStatus.OK.value(), null);
+        } catch (Exception e) {
+            return GlobalExceptionHandler.handleException(e);
+        }
+    }
 }
 
 
@@ -143,4 +154,5 @@ public class CategoryController {
  * 4. find all categories - GET - http://localhost:9091/api/v1/category/get-all
  * 5. update category - PUT - http://localhost:9091/api/v1/category/update/{id}
  * 6. delete category - DELETE - http://localhost:9091/api/v1/category/delete/{id}
+ * 7. get products for category - GET - http://localhost:9091/api/v1/category/get-products/{category}
  */

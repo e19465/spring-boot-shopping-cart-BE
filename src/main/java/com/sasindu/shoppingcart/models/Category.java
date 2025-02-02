@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
 import java.util.List;
 
 
@@ -21,7 +22,7 @@ public class Category {
     @Column(unique = true, nullable = false)
     private String name;
 
-    @OneToMany (mappedBy = "category", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
     private List<Product> products;
 
     public Category(String name) {
@@ -33,7 +34,6 @@ public class Category {
         CategoryResponse response = new CategoryResponse();
         response.setId(this.id);
         response.setName(this.name);
-        response.setProducts(this.products);
         return response;
     }
 }

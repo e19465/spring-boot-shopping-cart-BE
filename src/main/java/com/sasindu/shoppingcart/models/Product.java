@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -33,7 +34,7 @@ public class Product {
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Image> images;
 
-    @ManyToOne (cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
@@ -46,7 +47,7 @@ public class Product {
         response.setPrice(this.price);
         response.setInventory(this.inventory);
         response.setDescription(this.description);
-        response.setCategory(this.category);
+        response.setCategory(this.category.getName());
         response.setImages(this.images);  // You can also map this to URLs if needed
         return response;
     }
@@ -57,8 +58,7 @@ public class Product {
             BigDecimal price,
             int inventory,
             String description,
-            Category category)
-    {
+            Category category) {
         this.name = name;
         this.brand = brand;
         this.price = price;

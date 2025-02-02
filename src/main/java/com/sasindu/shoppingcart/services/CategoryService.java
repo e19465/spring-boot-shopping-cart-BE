@@ -4,11 +4,12 @@ import com.sasindu.shoppingcart.abstractions.ICategoryService;
 import com.sasindu.shoppingcart.dto.request.category.AddCategoryRequest;
 import com.sasindu.shoppingcart.dto.request.category.UpdateCategoryRequest;
 import com.sasindu.shoppingcart.dto.response.category.CategoryResponse;
-import com.sasindu.shoppingcart.exceptions.BadRequestException;
+import com.sasindu.shoppingcart.dto.response.product.ProductResponse;
 import com.sasindu.shoppingcart.exceptions.ConflictException;
 import com.sasindu.shoppingcart.exceptions.NotFoundException;
 import com.sasindu.shoppingcart.helpers.ValidationHelper;
 import com.sasindu.shoppingcart.models.Category;
+import com.sasindu.shoppingcart.models.Product;
 import com.sasindu.shoppingcart.repository.CategoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -156,6 +157,29 @@ public class CategoryService implements ICategoryService {
             throw e;
         } catch (Exception e) {
             throw new RuntimeException("Failed to delete category: " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * getAllProductsForCategory method is responsible for fetching all the products for a given category
+     *
+     * @param categoryName String value of the category name
+     * @return List of ProductResponse objects containing the product details
+     * @throws NotFoundException if the category is not found
+     */
+    public List<ProductResponse> getAllProductsForCategory(String categoryName) {
+        try {
+            Category category = _categoryRepository.findByName(categoryName);
+            if (category == null) {
+                throw new NotFoundException("Category not found");
+            }
+            return category.getProducts().stream()
+                    .map(Product::toProductResponse)
+                    .toList();
+        } catch (NotFoundException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to fetch products for category: " + e.getMessage(), e);
         }
     }
 }

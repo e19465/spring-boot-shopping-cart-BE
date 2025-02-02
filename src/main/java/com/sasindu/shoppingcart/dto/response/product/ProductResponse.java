@@ -4,6 +4,7 @@ import com.sasindu.shoppingcart.models.Category;
 import com.sasindu.shoppingcart.models.Image;
 import com.sasindu.shoppingcart.models.Product;
 import lombok.Data;
+
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -17,18 +18,5 @@ public class ProductResponse {
     private String description;
     private String imageUrl;
     private List<Image> images;
-    private Category category;
-
-    public Product toProduct() {
-        Product product = new Product();
-        product.setId(this.id);
-        product.setName(this.name);
-        product.setBrand(this.brand);
-        product.setPrice(this.price);
-        product.setInventory(this.inventory);
-        product.setDescription(this.description);
-        product.setImages(this.images);
-        product.setCategory(this.category);
-        return product;
-    }
+    private String category;
 }
