@@ -42,7 +42,7 @@ public class ImageController {
             List<ImageResponse> images = _imageService.saveImages(request, productId);
             return GlobalSuccessHandler.handleSuccess("Upload successful", images, HttpStatus.CREATED.value(), null);
         } catch (Exception e) {
-            return GlobalExceptionHandler.handleException(e, "Upload failed");
+            return GlobalExceptionHandler.handleException(e);
         }
     }
 
@@ -66,7 +66,7 @@ public class ImageController {
             headers.setContentDispositionFormData("attachment", image.getFileName());
             return GlobalSuccessHandler.handleSuccess("Download successful", resource, HttpStatus.OK.value(), headers);
         } catch (Exception e) {
-            return GlobalExceptionHandler.handleException(e, "Download failed");
+            return GlobalExceptionHandler.handleException(e);
         }
     }
 
@@ -86,7 +86,7 @@ public class ImageController {
             return GlobalSuccessHandler.handleSuccess("Update successful", image, HttpStatus.OK.value(), null
             );
         } catch (Exception e) {
-            return GlobalExceptionHandler.handleException(e, "Update failed");
+            return GlobalExceptionHandler.handleException(e);
         }
     }
 
@@ -96,7 +96,7 @@ public class ImageController {
             _imageService.deleteImageById(imageId);
             return GlobalSuccessHandler.handleSuccess("Delete successful", null, 200, null);
         } catch (Exception e) {
-            return GlobalExceptionHandler.handleException(e, "Delete failed");
+            return GlobalExceptionHandler.handleException(e);
         }
     }
 }

@@ -39,7 +39,7 @@ public class CategoryController {
             CategoryResponse category = _categoryService.addCategory(request);
             return GlobalSuccessHandler.handleSuccess("Category saved successfully", category, HttpStatus.CREATED.value(), null);
         } catch (Exception e) {
-            return GlobalExceptionHandler.handleException(e, "Category save failed");
+            return GlobalExceptionHandler.handleException(e);
         }
     }
 
@@ -57,7 +57,7 @@ public class CategoryController {
             CategoryResponse category = _categoryService.getCategoryById(id);
             return GlobalSuccessHandler.handleSuccess("Category fetched successfully", category, HttpStatus.OK.value(), null);
         } catch (Exception e) {
-            return GlobalExceptionHandler.handleException(e, "Category fetch failed");
+            return GlobalExceptionHandler.handleException(e);
         }
     }
 
@@ -75,7 +75,7 @@ public class CategoryController {
             CategoryResponse category = _categoryService.getCategoryByName(name);
             return GlobalSuccessHandler.handleSuccess("Category fetched successfully", category, HttpStatus.OK.value(), null);
         } catch (Exception e) {
-            return GlobalExceptionHandler.handleException(e, "Category fetch failed");
+            return GlobalExceptionHandler.handleException(e);
         }
     }
 
@@ -92,7 +92,7 @@ public class CategoryController {
             List<CategoryResponse> categories = _categoryService.getAllCategories();
             return GlobalSuccessHandler.handleSuccess("Categories fetched successfully", categories, HttpStatus.OK.value(), null);
         } catch (Exception e) {
-            return GlobalExceptionHandler.handleException(e, "Categories fetch failed");
+            return GlobalExceptionHandler.handleException(e);
         }
     }
 
@@ -111,7 +111,7 @@ public class CategoryController {
             CategoryResponse category = _categoryService.updateCategory(request, id);
             return GlobalSuccessHandler.handleSuccess("Category updated successfully", category, HttpStatus.OK.value(), null);
         } catch (Exception e) {
-            return GlobalExceptionHandler.handleException(e, "Category update failed");
+            return GlobalExceptionHandler.handleException(e);
         }
     }
 
@@ -129,7 +129,7 @@ public class CategoryController {
             _categoryService.deleteCategoryById(id);
             return GlobalSuccessHandler.handleSuccess("Category deleted successfully", null, HttpStatus.OK.value(), null);
         } catch (Exception e) {
-            return GlobalExceptionHandler.handleException(e, "Category delete failed");
+            return GlobalExceptionHandler.handleException(e);
         }
     }
 }

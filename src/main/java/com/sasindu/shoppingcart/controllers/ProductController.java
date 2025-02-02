@@ -40,7 +40,7 @@ public class ProductController {
             ProductResponse product = _productService.addProduct(request);
             return GlobalSuccessHandler.handleSuccess("Product saved successfully", product, HttpStatus.CREATED.value(), null);
         } catch (Exception e) {
-            return GlobalExceptionHandler.handleException(e, "Product save failed");
+            return GlobalExceptionHandler.handleException(e);
         }
     }
 
@@ -57,7 +57,7 @@ public class ProductController {
             List<ProductResponse> products = _productService.getAllProducts();
             return GlobalSuccessHandler.handleSuccess("Products fetched successfully", products, HttpStatus.OK.value(), null);
         } catch (Exception e) {
-            return GlobalExceptionHandler.handleException(e, "Products fetch failed");
+            return GlobalExceptionHandler.handleException(e);
         }
     }
 
@@ -75,7 +75,7 @@ public class ProductController {
             ProductResponse product = _productService.getProductById(id);
             return GlobalSuccessHandler.handleSuccess("Product fetched successfully", product, HttpStatus.OK.value(), null);
         } catch (Exception e) {
-            return GlobalExceptionHandler.handleException(e, "Product fetch failed");
+            return GlobalExceptionHandler.handleException(e);
         }
     }
 
@@ -93,7 +93,7 @@ public class ProductController {
             ProductResponse product = _productService.updateProduct(request, id);
             return GlobalSuccessHandler.handleSuccess("Product updated successfully", product, HttpStatus.OK.value(), null);
         } catch (Exception e) {
-            return GlobalExceptionHandler.handleException(e, "Product update failed");
+            return GlobalExceptionHandler.handleException(e);
         }
     }
 
@@ -111,7 +111,7 @@ public class ProductController {
             _productService.deleteProduct(id);
             return GlobalSuccessHandler.handleSuccess("Product deleted successfully", null, HttpStatus.OK.value(), null);
         } catch (Exception e) {
-            return GlobalExceptionHandler.handleException(e, "Product delete failed");
+            return GlobalExceptionHandler.handleException(e);
         }
     }
 
@@ -129,7 +129,7 @@ public class ProductController {
             List<ProductResponse> products = _productService.getProductsByCategory(category);
             return GlobalSuccessHandler.handleSuccess("Products fetched successfully", products, HttpStatus.OK.value(), null);
         } catch (Exception e) {
-            return GlobalExceptionHandler.handleException(e, "Products fetch failed");
+            return GlobalExceptionHandler.handleException(e);
         }
     }
 
@@ -147,7 +147,7 @@ public class ProductController {
             List<ProductResponse> products = _productService.getProductsByBrand(brand);
             return GlobalSuccessHandler.handleSuccess("Products fetched successfully", products, HttpStatus.OK.value(), null);
         } catch (Exception e) {
-            return GlobalExceptionHandler.handleException(e, "Products fetch failed");
+            return GlobalExceptionHandler.handleException(e);
         }
     }
 
@@ -166,7 +166,7 @@ public class ProductController {
             List<ProductResponse> products = _productService.getProductByCategoryAndBrand(category, brand);
             return GlobalSuccessHandler.handleSuccess("Products fetched successfully", products, HttpStatus.OK.value(), null);
         } catch (Exception e) {
-            return GlobalExceptionHandler.handleException(e, "Products fetch failed");
+            return GlobalExceptionHandler.handleException(e);
         }
     }
 
@@ -184,7 +184,7 @@ public class ProductController {
             List<ProductResponse> products = _productService.getProductsByName(name);
             return GlobalSuccessHandler.handleSuccess("Products fetched successfully", products, HttpStatus.OK.value(), null);
         } catch (Exception e) {
-            return GlobalExceptionHandler.handleException(e, "Products fetch failed");
+            return GlobalExceptionHandler.handleException(e);
         }
     }
 
@@ -203,7 +203,7 @@ public class ProductController {
             List<ProductResponse> products = _productService.getProductsByBrandAndName(brand, name);
             return GlobalSuccessHandler.handleSuccess("Products fetched successfully", products, HttpStatus.OK.value(), null);
         } catch (Exception e) {
-            return GlobalExceptionHandler.handleException(e, "Products fetch failed");
+            return GlobalExceptionHandler.handleException(e);
         }
     }
 
@@ -222,7 +222,7 @@ public class ProductController {
             Long count = _productService.countProductsByBrandAndName(brand, name);
             return GlobalSuccessHandler.handleSuccess("Products counted successfully", count, HttpStatus.OK.value(), null);
         } catch (Exception e) {
-            return GlobalExceptionHandler.handleException(e, "Products count failed");
+            return GlobalExceptionHandler.handleException(e);
         }
     }
 
