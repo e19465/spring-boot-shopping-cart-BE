@@ -34,7 +34,7 @@ public class CategoryController {
      * @return ApiResponse object containing the response details
      */
     @PostMapping("/create")
-    public ResponseEntity<ApiResponse> saveCategory(@RequestParam AddCategoryRequest request) {
+    public ResponseEntity<ApiResponse> saveCategory(@RequestBody AddCategoryRequest request) {
         try {
             CategoryResponse category = _categoryService.addCategory(request);
             return GlobalSuccessHandler.handleSuccess("Category saved successfully", category, HttpStatus.CREATED.value(), null);
