@@ -2,17 +2,15 @@ package com.sasindu.shoppingcart.services;
 
 import com.sasindu.shoppingcart.abstractions.IImageService;
 import com.sasindu.shoppingcart.constants.ApplicationConstants;
-import com.sasindu.shoppingcart.dto.request.image.AddImageRequest;
-import com.sasindu.shoppingcart.dto.request.image.UpdateImageRequest;
 import com.sasindu.shoppingcart.dto.response.image.ImageResponse;
 import com.sasindu.shoppingcart.exceptions.NotFoundException;
-import com.sasindu.shoppingcart.helpers.ValidationHelper;
 import com.sasindu.shoppingcart.models.Image;
 import com.sasindu.shoppingcart.models.Product;
 import com.sasindu.shoppingcart.repository.ImageRepository;
 import com.sasindu.shoppingcart.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.sql.rowset.serial.SerialBlob;
 import java.util.List;
@@ -71,41 +69,41 @@ public class ImageService implements IImageService {
     /**
      * saveImage method is responsible for saving an image
      *
-     * @param request   AddImageRequest object containing the image details
+     * @param files     Files list of MultipartFile objects containing the image details
      * @param productId Long value of the product id
-     * @return List of ImageResponse objects containing the image details
      */
     @Override
-    public List<ImageResponse> saveImages(AddImageRequest request, Long productId) {
+    public void saveImages(List<MultipartFile> files, Long productId) {
         try {
-            // Validate the request body
-            ValidationHelper.validateModelBinding(request);
-
             // Check if the product exists
             Product product = _productRepository.findById(productId)
                     .orElseThrow(() -> new NotFoundException("No product found with id: " + productId));
 
-            // Save the images
-            return request.getFiles().stream().map(file -> {
+            // Iterate over each file and save it
+            for (MultipartFile file : files) {
                 try {
+                    // Create a new image instance
                     Image image = new Image();
                     image.setFileName(file.getOriginalFilename());
                     image.setFileType(file.getContentType());
-                    image.setImage(new SerialBlob(file.getBytes()));
+                    image.setImage(new SerialBlob(file.getBytes())); // Store image as Blob
                     image.setProduct(product);
 
+                    // Save the image to the database
                     Image savedImage = _imageRepository.save(image);
+
+                    // Set the download URL after saving the image
                     savedImage.setDownloadUrl(IMAGE_DOWNLOAD_URL_PREFIX + savedImage.getId());
 
-                    _imageRepository.save(savedImage); // Update with the correct download URL
+                    // Save the image again to update with the correct download URL
+                    _imageRepository.save(savedImage);
 
-                    return savedImage.toImageResponse();
                 } catch (Exception e) {
-                    throw new RuntimeException("Failed to save image: " + e.getMessage(), e);
+                    throw new RuntimeException("Failed to save image: " + file.getOriginalFilename() + " due to " + e.getMessage(), e);
                 }
-            }).collect(Collectors.toList());
-        } catch (RuntimeException e) {
-            throw e;
+            }
+        } catch (NotFoundException e) {
+            throw new NotFoundException("Product not found for id: " + productId);
         } catch (Exception e) {
             throw new RuntimeException("Failed to save images: " + e.getMessage(), e);
         }
@@ -115,24 +113,22 @@ public class ImageService implements IImageService {
     /**
      * updateImage method is responsible for updating an image
      *
-     * @param request UpdateImageRequest object containing the updated image details
+     * @param file    MultipartFile object containing the image details
      * @param imageId Long value of the image id
      * @return ImageResponse object containing the updated image details
      */
     @Override
-    public ImageResponse updateImage(UpdateImageRequest request, Long imageId) {
+    public ImageResponse updateImage(MultipartFile file, Long imageId) {
         try {
-            // Validate the request body
-            ValidationHelper.validateModelBinding(request);
 
             // Check if the image exists
             Image image = _imageRepository.findById(imageId)
                     .orElseThrow(() -> new NotFoundException("No image found with id: " + imageId));
 
             // Update the image
-            image.setFileName(request.getFile().getOriginalFilename());
-            image.setFileType(request.getFile().getContentType());
-            image.setImage(new SerialBlob(request.getFile().getBytes()));
+            image.setFileName(file.getOriginalFilename());
+            image.setFileType(file.getContentType());
+            image.setImage(new SerialBlob(file.getBytes()));
             _imageRepository.save(image);
             return image.toImageResponse();
         } catch (RuntimeException e) {

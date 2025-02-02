@@ -2,19 +2,20 @@ package com.sasindu.shoppingcart.controllers;
 
 import com.sasindu.shoppingcart.abstractions.IImageService;
 import com.sasindu.shoppingcart.constants.ApplicationConstants;
-import com.sasindu.shoppingcart.dto.request.image.AddImageRequest;
-import com.sasindu.shoppingcart.dto.request.image.UpdateImageRequest;
 import com.sasindu.shoppingcart.dto.response.image.ImageResponse;
+import com.sasindu.shoppingcart.exceptions.NotFoundException;
 import com.sasindu.shoppingcart.helpers.ApiResponse;
 import com.sasindu.shoppingcart.helpers.GlobalExceptionHandler;
 import com.sasindu.shoppingcart.helpers.GlobalSuccessHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -27,20 +28,21 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ImageController {
     private final IImageService _imageService;
+    private final GlobalExceptionHandler globalExceptionHandler;
 
     /**
      * saveImages method is responsible for saving images
      * this method calls the saveImages method of the ImageService class internally
      *
-     * @param request   AddImageRequest object containing the image details
+     * @param files     MultipartFile list of objects containing the image details
      * @param productId Long value of the product id
      * @return ApiResponse object containing the response details
      */
-    @PostMapping("/upload")
-    public ResponseEntity<ApiResponse> saveImages(@RequestParam AddImageRequest request, @RequestParam Long productId) {
+    @PostMapping("/upload/{productId}")
+    public ResponseEntity<ApiResponse> saveImages(@RequestParam List<MultipartFile> files, @PathVariable Long productId) {
         try {
-            List<ImageResponse> images = _imageService.saveImages(request, productId);
-            return GlobalSuccessHandler.handleSuccess("Upload successful", images, HttpStatus.CREATED.value(), null);
+            _imageService.saveImages(files, productId);
+            return GlobalSuccessHandler.handleSuccess("Upload successful", null, HttpStatus.CREATED.value(), null);
         } catch (Exception e) {
             return GlobalExceptionHandler.handleException(e);
         }
@@ -52,10 +54,10 @@ public class ImageController {
      * this method calls the getImageById method of the ImageService class internally
      *
      * @param imageId Long value of the image id
-     * @return ApiResponse object containing the resource details
+     * @return Resource object containing the image details
      */
     @GetMapping("/image/download/{imageId}")
-    public ResponseEntity<ApiResponse> downloadImage(@PathVariable Long imageId) {
+    public ResponseEntity<?> downloadImage(@PathVariable Long imageId) {
         try {
             ImageResponse image = _imageService.getImageById(imageId);
             ByteArrayResource resource = new ByteArrayResource(
@@ -64,7 +66,9 @@ public class ImageController {
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.parseMediaType(image.getFileType()));
             headers.setContentDispositionFormData("attachment", image.getFileName());
-            return GlobalSuccessHandler.handleSuccess("Download successful", resource, HttpStatus.OK.value(), headers);
+            return ResponseEntity.ok()
+                    .headers(headers)
+                    .body(resource);
         } catch (Exception e) {
             return GlobalExceptionHandler.handleException(e);
         }
@@ -75,15 +79,15 @@ public class ImageController {
      * updateImage method is responsible for updating an image
      * this method calls the updateImage method of the ImageService class internally
      *
-     * @param request UpdateImageRequest object containing the updated image details
+     * @param file    MultipartFile object containing the image details
      * @param imageId Long value of the image id
      * @return ApiResponse object containing the response details
      */
     @PutMapping("image/update/{imageId}")
-    public ResponseEntity<ApiResponse> updateImage(@RequestParam UpdateImageRequest request, @PathVariable Long imageId) {
+    public ResponseEntity<ApiResponse> updateImage(@RequestParam MultipartFile file, @PathVariable Long imageId) {
         try {
-            ImageResponse image = _imageService.updateImage(request, imageId);
-            return GlobalSuccessHandler.handleSuccess("Update successful", image, HttpStatus.OK.value(), null
+            _imageService.updateImage(file, imageId);
+            return GlobalSuccessHandler.handleSuccess("Update successful", null, HttpStatus.OK.value(), null
             );
         } catch (Exception e) {
             return GlobalExceptionHandler.handleException(e);
@@ -104,7 +108,7 @@ public class ImageController {
 
 /*
  * ENDPOINTS
- * 1. upload image - POST - http://localhost:9091/api/v1/images/upload
+ * 1. upload image - POST - http://localhost:9091/api/v1/images/upload/{productId}
  * 2. download image - GET - http://localhost:9091/api/v1/images/image/download/{imageId}
  * 3. update image - PUT - http://localhost:9091/api/v1/images/image/update/{imageId}
  * 4. delete image - DELETE - http://localhost:9091/api/v1/images/image/delete/{imageId}
