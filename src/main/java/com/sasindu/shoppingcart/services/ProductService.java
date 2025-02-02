@@ -13,7 +13,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 /**
@@ -253,6 +255,55 @@ public class ProductService implements IProductService {
             return _productRepository.countByBrandAndName(brand, name);
         } catch (Exception e) {
             throw new RuntimeException("Failed to count products: " + e.getMessage(), e);
+        }
+    }
+
+
+    /**
+     * Get filtered products.
+     *
+     * @param filters A map containing all the filter parameters (category, brand, name, etc.)
+     * @return List of ProductResponse objects containing the filtered products.
+     */
+    @Override
+    public List<ProductResponse> getFilteredProducts(Map<String, String> filters) {
+        try {
+            String category = filters.get("category");
+            String brand = filters.get("brand");
+            String name = filters.get("name");
+
+            // Use a stream to filter based on available parameters
+            return _productRepository.findAll().stream()
+                    .filter(product -> (category == null || product.getCategory().getName().equals(category)))
+                    .filter(product -> (brand == null || product.getBrand().equals(brand)))
+                    .filter(product -> (name == null || product.getName().contains(name)))
+                    .map(Product::toProductResponse)
+                    .collect(Collectors.toList());
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to filter products: " + e.getMessage(), e);
+        }
+    }
+
+
+    /**
+     * Count products by brand.
+     *
+     * @param filters A map containing all the filter parameters (category, brand, name, etc.)
+     * @return Number of products.
+     */
+    @Override
+    public Long countProducts(Map<String, String> filters) {
+        String category = filters.get("category");
+        String brand = filters.get("brand");
+        String name = filters.get("name");
+        try {
+            return _productRepository.findAll().stream()
+                    .filter(product -> (category == null || product.getCategory().getName().equals(category)))
+                    .filter(product -> (brand == null || product.getBrand().equals(brand)))
+                    .filter(product -> (name == null || product.getName().contains(name)))
+                    .count();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 }
