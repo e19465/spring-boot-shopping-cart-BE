@@ -40,6 +40,8 @@ public class Image {
         response.setFileName(this.fileName);
         response.setFileType(this.fileType);
         response.setDownloadUrl(this.downloadUrl);
+        response.setImage(this.image);
+        response.setProduct(this.product);
         return response;
     }
 }

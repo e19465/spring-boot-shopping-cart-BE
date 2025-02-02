@@ -1,4 +1,97 @@
 package com.sasindu.shoppingcart.controllers;
 
+import com.sasindu.shoppingcart.abstractions.IImageService;
+import com.sasindu.shoppingcart.constants.ApplicationConstants;
+import com.sasindu.shoppingcart.dto.request.image.AddImageRequest;
+import com.sasindu.shoppingcart.dto.request.image.UpdateImageRequest;
+import com.sasindu.shoppingcart.dto.response.image.ImageResponse;
+import com.sasindu.shoppingcart.helpers.ApiResponse;
+import com.sasindu.shoppingcart.helpers.GlobalExceptionHandler;
+import com.sasindu.shoppingcart.helpers.GlobalSuccessHandler;
+import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping(ApplicationConstants.BASE_API_URL + "/images")
+@RequiredArgsConstructor
 public class ImageController {
+    private final IImageService _imageService;
+
+    /**
+     * saveImages method is responsible for saving images
+     * this method calls the saveImages method of the ImageService class internally
+     *
+     * @param request   AddImageRequest object containing the image details
+     * @param productId Long value of the product id
+     * @return ApiResponse object containing the response details
+     */
+    @PostMapping("/upload")
+    public ResponseEntity<ApiResponse> saveImages(@RequestParam AddImageRequest request, @RequestParam Long productId) {
+        try {
+            List<ImageResponse> images = _imageService.saveImages(request, productId);
+            return GlobalSuccessHandler.handleSuccess("Upload successful", images, 200, null);
+        } catch (Exception e) {
+            return GlobalExceptionHandler.handleException(e, "Upload failed");
+        }
+    }
+
+
+    /**
+     * downloadImage method is responsible for downloading an image by its id
+     * this method calls the getImageById method of the ImageService class internally
+     *
+     * @param imageId Long value of the image id
+     * @return ApiResponse object containing the resource details
+     */
+    @GetMapping("/image/download/{imageId}")
+    public ResponseEntity<ApiResponse> downloadImage(@PathVariable Long imageId) {
+        try {
+            ImageResponse image = _imageService.getImageById(imageId);
+            ByteArrayResource resource = new ByteArrayResource(
+                    image.getImage().getBytes(1, (int) image.getImage().length())
+            );
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.parseMediaType(image.getFileType()));
+            headers.setContentDispositionFormData("attachment", image.getFileName());
+            return GlobalSuccessHandler.handleSuccess("Download successful", resource, 200, headers);
+        } catch (Exception e) {
+            return GlobalExceptionHandler.handleException(e, "Download failed");
+        }
+    }
+
+
+    /**
+     * updateImage method is responsible for updating an image
+     * this method calls the updateImage method of the ImageService class internally
+     *
+     * @param request UpdateImageRequest object containing the updated image details
+     * @param imageId Long value of the image id
+     * @return ApiResponse object containing the response details
+     */
+    @PutMapping("image/update/{imageId}")
+    public ResponseEntity<ApiResponse> updateImage(@RequestParam UpdateImageRequest request, @PathVariable Long imageId) {
+        try {
+            ImageResponse image = _imageService.updateImage(request, imageId);
+            return GlobalSuccessHandler.handleSuccess("Update successful", image, 200, null
+            );
+        } catch (Exception e) {
+            return GlobalExceptionHandler.handleException(e, "Update failed");
+        }
+    }
+
+    @DeleteMapping("image/delete/{imageId}")
+    public ResponseEntity<ApiResponse> deleteImage(@PathVariable Long imageId) {
+        try {
+            _imageService.deleteImageById(imageId);
+            return GlobalSuccessHandler.handleSuccess("Delete successful", null, 200, null);
+        } catch (Exception e) {
+            return GlobalExceptionHandler.handleException(e, "Delete failed");
+        }
+    }
 }

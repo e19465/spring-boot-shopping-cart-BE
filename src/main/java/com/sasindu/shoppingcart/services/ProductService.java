@@ -4,7 +4,7 @@ import com.sasindu.shoppingcart.abstractions.IProductService;
 import com.sasindu.shoppingcart.dto.request.product.AddProductRequest;
 import com.sasindu.shoppingcart.dto.request.product.UpdateProductRequest;
 import com.sasindu.shoppingcart.dto.response.product.ProductResponse;
-import com.sasindu.shoppingcart.exceptions.ResourceNotFoundException;
+import com.sasindu.shoppingcart.exceptions.NotFoundException;
 import com.sasindu.shoppingcart.models.Category;
 import com.sasindu.shoppingcart.models.Product;
 import com.sasindu.shoppingcart.repository.CategoryRepository;
@@ -60,7 +60,7 @@ public class ProductService implements IProductService {
      * @param request UpdateProductRequest object containing the updated product details.
      * @param productId Long ID of the product to be updated.
      * @return ProductResponse object containing the updated product details.
-     * @throws ResourceNotFoundException if the product is not found.
+     * @throws NotFoundException if the product is not found.
      */
     @Override
     public ProductResponse updateProduct(UpdateProductRequest request,  Long productId) {
@@ -77,7 +77,7 @@ public class ProductService implements IProductService {
                 })
                 .map(_productRepository::save)
                 .map(Product::toProductResponse)
-                .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
+                .orElseThrow(() -> new NotFoundException("Product not found"));
     }
 
 
@@ -98,12 +98,12 @@ public class ProductService implements IProductService {
      * Get a product by its ID.
      * @param id Long ID of the product.
      * @return ProductResponse object containing the product details.
-     * @throws ResourceNotFoundException if the product is not found.
+     * @throws NotFoundException if the product is not found.
      */
     @Override
     public ProductResponse getProductById(Long id) {
         Product product =  _productRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
+                .orElseThrow(() -> new NotFoundException("Product not found"));
         return product.toProductResponse();
     }
 
@@ -112,13 +112,13 @@ public class ProductService implements IProductService {
     /**
      * Delete a product.
      * @param id Long ID of the product to be deleted.
-     * @throws ResourceNotFoundException if the product is not found.
+     * @throws NotFoundException if the product is not found.
      */
     @Override
     public void deleteProduct(Long id) {
         _productRepository.findById(id)
         .ifPresentOrElse(_productRepository::delete, () -> {
-            throw new ResourceNotFoundException("Product not found");
+            throw new NotFoundException("Product not found");
         });
     }
 

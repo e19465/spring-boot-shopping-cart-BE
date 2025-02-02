@@ -35,7 +35,7 @@ public interface IImageService {
      * @param productId Long value of the product id
      * @return List of ImageResponse objects containing the image details
      */
-    List<ImageResponse> saveImage(AddImageRequest request, Long productId);
+    List<ImageResponse> saveImages(AddImageRequest request, Long productId);
 
 
 

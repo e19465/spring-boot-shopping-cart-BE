@@ -1,10 +1,11 @@
 package com.sasindu.shoppingcart.services;
 
 import com.sasindu.shoppingcart.abstractions.IImageService;
+import com.sasindu.shoppingcart.constants.ApplicationConstants;
 import com.sasindu.shoppingcart.dto.request.image.AddImageRequest;
 import com.sasindu.shoppingcart.dto.request.image.UpdateImageRequest;
 import com.sasindu.shoppingcart.dto.response.image.ImageResponse;
-import com.sasindu.shoppingcart.exceptions.ResourceNotFoundException;
+import com.sasindu.shoppingcart.exceptions.NotFoundException;
 import com.sasindu.shoppingcart.models.Image;
 import com.sasindu.shoppingcart.models.Product;
 import com.sasindu.shoppingcart.repository.ImageRepository;
@@ -25,8 +26,7 @@ import java.util.stream.Collectors;
 public class ImageService implements IImageService {
     private final ImageRepository _imageRepository;
     private final ProductRepository _productRepository;
-    private static final String IMAGE_DOWNLOAD_URL_PREFIX = "/api/v1/images/image/download/";
-
+    private static final String IMAGE_DOWNLOAD_URL_PREFIX = ApplicationConstants.IMAGE_DOWNLOAD_URL_PREFIX;
 
     /**
      * getImageById method is responsible for fetching an image by its id
@@ -36,7 +36,7 @@ public class ImageService implements IImageService {
     @Override
     public ImageResponse getImageById(Long id) {
         Image image =  _imageRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("No image found with id: " + id));
+                .orElseThrow(() -> new NotFoundException("No image found with id: " + id));
         return image.toImageResponse();
     }
 
@@ -50,7 +50,7 @@ public class ImageService implements IImageService {
     public void deleteImageById(Long id) {
         _imageRepository.findById(id)
                 .ifPresentOrElse(_imageRepository::delete, () -> {
-                    throw new ResourceNotFoundException("No image found with id: " + id);
+                    throw new NotFoundException("No image found with id: " + id);
                 });
     }
 
@@ -63,9 +63,9 @@ public class ImageService implements IImageService {
      * @return List of ImageResponse objects containing the image details
      */
     @Override
-    public List<ImageResponse> saveImage(AddImageRequest request, Long productId) {
+    public List<ImageResponse> saveImages(AddImageRequest request, Long productId) {
         Product product = _productRepository.findById(productId)
-                .orElseThrow(() -> new ResourceNotFoundException("No product found with id: " + productId));
+                .orElseThrow(() -> new NotFoundException("No product found with id: " + productId));
 
         return request.getFiles().stream().map(file -> {
             try {
@@ -99,13 +99,17 @@ public class ImageService implements IImageService {
     public ImageResponse updateImage(UpdateImageRequest request, Long imageId) {
         try{
         Image image = _imageRepository.findById(imageId)
-                .orElseThrow(() -> new ResourceNotFoundException("No image found with id: " + imageId));
+                .orElseThrow(() -> new NotFoundException("No image found with id: " + imageId));
             image.setFileName(request.getFile().getOriginalFilename());
             image.setFileType(request.getFile().getContentType());
             image.setImage(new SerialBlob(request.getFile().getBytes()));
             _imageRepository.save(image);
             return image.toImageResponse();
-        }catch (Exception e){
+        }
+        catch (NotFoundException e) {
+            throw e;
+        }
+        catch (Exception e) {
             throw new RuntimeException("Failed to update image: " + e.getMessage(), e);
         }
     }

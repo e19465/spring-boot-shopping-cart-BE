@@ -1,13 +1,13 @@
 package com.sasindu.shoppingcart.exceptions;
 
-public class ResourceNotFoundException extends RuntimeException {
+public class NotFoundException extends RuntimeException {
     private static final String DEFAULT_MESSAGE = "Resource not found.";
 
-    public ResourceNotFoundException(String message) {
+    public NotFoundException(String message) {
         super(message);
     }
 
-    public ResourceNotFoundException() {
+    public NotFoundException() {
         super(DEFAULT_MESSAGE);
     }
 }
