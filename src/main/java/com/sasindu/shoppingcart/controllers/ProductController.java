@@ -51,7 +51,7 @@ public class ProductController {
      *
      * @return ApiResponse object containing the response details
      */
-    @PostMapping("/get-all")
+    @GetMapping("/get-all")
     public ResponseEntity<ApiResponse> getAllProducts() {
         try {
             List<ProductResponse> products = _productService.getAllProducts();
@@ -69,7 +69,7 @@ public class ProductController {
      * @param id Long value of the product id
      * @return ApiResponse object containing the response details
      */
-    @PostMapping("/find-by-id/{id}")
+    @GetMapping("/find-by-id/{id}")
     public ResponseEntity<ApiResponse> getProductById(@PathVariable Long id) {
         try {
             ProductResponse product = _productService.getProductById(id);
@@ -87,7 +87,7 @@ public class ProductController {
      * @param id      Long value of the product id
      * @return ApiResponse object containing the response details
      */
-    @PostMapping("/update/{id}")
+    @PutMapping("/update/{id}")
     public ResponseEntity<ApiResponse> updateProduct(@RequestBody UpdateProductRequest request, @PathVariable Long id) {
         try {
             ProductResponse product = _productService.updateProduct(request, id);
@@ -123,7 +123,7 @@ public class ProductController {
      * @param category String value of the category
      * @return ApiResponse object containing the response details
      */
-    @PostMapping("/find-by-category/{category}")
+    @GetMapping("/find-by-category/{category}")
     public ResponseEntity<ApiResponse> getProductsByCategory(@PathVariable String category) {
         try {
             List<ProductResponse> products = _productService.getProductsByCategory(category);
@@ -141,7 +141,7 @@ public class ProductController {
      * @param brand String value of the brand
      * @return ApiResponse object containing the response details
      */
-    @PostMapping("/find-by-brand/{brand}")
+    @GetMapping("/find-by-brand/{brand}")
     public ResponseEntity<ApiResponse> getProductsByBrand(@PathVariable String brand) {
         try {
             List<ProductResponse> products = _productService.getProductsByBrand(brand);
@@ -160,7 +160,7 @@ public class ProductController {
      * @param brand    String value of the brand
      * @return ApiResponse object containing the response details
      */
-    @PostMapping("/find-by-category-and-brand/{category}/{brand}")
+    @GetMapping("/find-by-category-and-brand/{category}/{brand}")
     public ResponseEntity<ApiResponse> getProductByCategoryAndBrand(@PathVariable String category, @PathVariable String brand) {
         try {
             List<ProductResponse> products = _productService.getProductByCategoryAndBrand(category, brand);
@@ -178,7 +178,7 @@ public class ProductController {
      * @param name String value of the product name
      * @return ApiResponse object containing the response details
      */
-    @PostMapping("/find-by-name/{name}")
+    @GetMapping("/find-by-name/{name}")
     public ResponseEntity<ApiResponse> getProductsByName(@PathVariable String name) {
         try {
             List<ProductResponse> products = _productService.getProductsByName(name);
@@ -197,7 +197,7 @@ public class ProductController {
      * @param name  String value of the product name
      * @return ApiResponse object containing the response details
      */
-    @PostMapping("/find-by-brand-and-name/{brand}/{name}")
+    @GetMapping("/find-by-brand-and-name/{brand}/{name}")
     public ResponseEntity<ApiResponse> getProductsByBrandAndName(@PathVariable String brand, @PathVariable String name) {
         try {
             List<ProductResponse> products = _productService.getProductsByBrandAndName(brand, name);
@@ -216,7 +216,7 @@ public class ProductController {
      * @param name  String value of the product name
      * @return ApiResponse object containing the response details
      */
-    @PostMapping("/count-by-brand-and-name/{brand}/{name}")
+    @GetMapping("/count-by-brand-and-name/{brand}/{name}")
     public ResponseEntity<ApiResponse> countProductsByBrandAndName(@PathVariable String brand, @PathVariable String name) {
         try {
             Long count = _productService.countProductsByBrandAndName(brand, name);
@@ -231,14 +231,14 @@ public class ProductController {
 /*
  * ENDPOINTS
  * 1. create - POST - http://localhost:9091/api/v1/product/create
- * 2. get-all - POST - http://localhost:9091/api/v1/product/get-all
- * 3. find-by-id - POST - http://localhost:9091/api/v1/product/find-by-id/{id}
- * 4. update - POST - http://localhost:9091/api/v1/product/update/{id}
+ * 2. get-all - GET - http://localhost:9091/api/v1/product/get-all
+ * 3. find-by-id - GET - http://localhost:9091/api/v1/product/find-by-id/{id}
+ * 4. update - PUT - http://localhost:9091/api/v1/product/update/{id}
  * 5. delete - DELETE - http://localhost:9091/api/v1/product/delete/{id}
- * 6. find-by-category - POST - http://localhost:9091/api/v1/product/find-by-category/{category}
- * 7. find-by-brand - POST - http://localhost:9091/api/v1/product/find-by-brand/{brand}
- * 8. find-by-category-and-brand - POST - http://localhost:9091/api/v1/product/find-by-category-and-brand/{category}/{brand}
- * 9. find-by-name - POST - http://localhost:9091/api/v1/product/find-by-name/{name}
- * 10. find-by-brand-and-name - POST - http://localhost:9091/api/v1/product/find-by-brand-and-name/{brand}/{name}
- * 11. count-by-brand-and-name - POST - http://localhost:9091/api/v1/product/count-by-brand-and-name/{brand}/{name}
+ * 6. find-by-category - GET - http://localhost:9091/api/v1/product/find-by-category/{category}
+ * 7. find-by-brand - GET - http://localhost:9091/api/v1/product/find-by-brand/{brand}
+ * 8. find-by-category-and-brand - GET - http://localhost:9091/api/v1/product/find-by-category-and-brand/{category}/{brand}
+ * 9. find-by-name - GET - http://localhost:9091/api/v1/product/find-by-name/{name}
+ * 10. find-by-brand-and-name - GET - http://localhost:9091/api/v1/product/find-by-brand-and-name/{brand}/{name}
+ * 11. count-by-brand-and-name - GET - http://localhost:9091/api/v1/product/count-by-brand-and-name/{brand}/{name}
  * */
