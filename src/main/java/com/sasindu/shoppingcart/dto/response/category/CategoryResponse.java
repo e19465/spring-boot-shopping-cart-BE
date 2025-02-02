@@ -10,11 +10,4 @@ import java.util.List;
 public class CategoryResponse {
     private Long id;
     private String name;
-
-    public Category toCategory() {
-        Category category = new Category();
-        category.setId(this.id);
-        category.setName(this.name);
-        return category;
-    }
 }

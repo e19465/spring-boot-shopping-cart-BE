@@ -126,6 +126,10 @@ public class CategoryService implements ICategoryService {
     @Override
     public CategoryResponse updateCategory(UpdateCategoryRequest request, Long id) {
         try {
+            // validate the request body
+            ValidationHelper.validateModelBinding(request);
+
+            // Check if the category exists, if not throw an exception else update the category
             return _categoryRepository.findById(id)
                     .map(category -> {
                         category.setName(request.getName());
