@@ -7,6 +7,6 @@ public final class ApplicationConstants {
         throw new UnsupportedOperationException("This is a constants class and cannot be instantiated");
     }
 
-    public static final String BASE_API_URL = "/api/v1";
+    public static final String API_URL_PREFIX = "/api/v1";
     public static final String IMAGE_DOWNLOAD_URL_PREFIX = "/api/v1/images/image/download/";
 }

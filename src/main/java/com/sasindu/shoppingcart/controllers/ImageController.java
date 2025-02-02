@@ -17,8 +17,12 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+
+/**
+ * ImageController class is responsible for handling all the API requests related to the image
+ */
 @RestController
-@RequestMapping(ApplicationConstants.BASE_API_URL + "/images")
+@RequestMapping(ApplicationConstants.API_URL_PREFIX + "/images")
 @RequiredArgsConstructor
 public class ImageController {
     private final IImageService _imageService;
@@ -95,3 +99,12 @@ public class ImageController {
         }
     }
 }
+
+
+/*
+ * ENDPOINTS
+ * 1. upload image - POST - http://localhost:9091/api/v1/images/upload
+ * 2. download image - GET - http://localhost:9091/api/v1/images/image/download/{imageId}
+ * 3. update image - PUT - http://localhost:9091/api/v1/images/image/update/{imageId}
+ * 4. delete image - DELETE - http://localhost:9091/api/v1/images/image/delete/{imageId}
+ */

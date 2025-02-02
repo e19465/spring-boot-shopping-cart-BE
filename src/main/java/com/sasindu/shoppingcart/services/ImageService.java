@@ -12,10 +12,10 @@ import com.sasindu.shoppingcart.repository.ImageRepository;
 import com.sasindu.shoppingcart.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
 import javax.sql.rowset.serial.SerialBlob;
 import java.util.List;
 import java.util.stream.Collectors;
-
 
 
 /**
@@ -30,86 +30,102 @@ public class ImageService implements IImageService {
 
     /**
      * getImageById method is responsible for fetching an image by its id
+     *
      * @param id Long value of the image id
      * @return ImageResponse object containing the image details
      */
     @Override
     public ImageResponse getImageById(Long id) {
-        Image image =  _imageRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("No image found with id: " + id));
-        return image.toImageResponse();
+        try {
+            Image image = _imageRepository.findById(id)
+                    .orElseThrow(() -> new NotFoundException("No image found with id: " + id));
+            return image.toImageResponse();
+        } catch (NotFoundException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to fetch image: " + e.getMessage(), e);
+        }
     }
-
 
 
     /**
      * deleteImageById method is responsible for deleting an image by its id
+     *
      * @param id Long value of the image id
      */
     @Override
     public void deleteImageById(Long id) {
-        _imageRepository.findById(id)
-                .ifPresentOrElse(_imageRepository::delete, () -> {
-                    throw new NotFoundException("No image found with id: " + id);
-                });
+        try {
+            Image image = _imageRepository.findById(id)
+                    .orElseThrow(() -> new NotFoundException("No image found with id: " + id));
+            _imageRepository.delete(image);
+        } catch (NotFoundException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to delete image: " + e.getMessage(), e);
+        }
     }
-
 
 
     /**
      * saveImage method is responsible for saving an image
-     * @param request AddImageRequest object containing the image details
+     *
+     * @param request   AddImageRequest object containing the image details
      * @param productId Long value of the product id
      * @return List of ImageResponse objects containing the image details
      */
     @Override
     public List<ImageResponse> saveImages(AddImageRequest request, Long productId) {
-        Product product = _productRepository.findById(productId)
-                .orElseThrow(() -> new NotFoundException("No product found with id: " + productId));
+        try {
+            Product product = _productRepository.findById(productId)
+                    .orElseThrow(() -> new NotFoundException("No product found with id: " + productId));
 
-        return request.getFiles().stream().map(file -> {
-            try {
-                Image image = new Image();
-                image.setFileName(file.getOriginalFilename());
-                image.setFileType(file.getContentType());
-                image.setImage(new SerialBlob(file.getBytes()));
-                image.setProduct(product);
+            return request.getFiles().stream().map(file -> {
+                try {
+                    Image image = new Image();
+                    image.setFileName(file.getOriginalFilename());
+                    image.setFileType(file.getContentType());
+                    image.setImage(new SerialBlob(file.getBytes()));
+                    image.setProduct(product);
 
-                Image savedImage = _imageRepository.save(image);
-                savedImage.setDownloadUrl(IMAGE_DOWNLOAD_URL_PREFIX + savedImage.getId());
+                    Image savedImage = _imageRepository.save(image);
+                    savedImage.setDownloadUrl(IMAGE_DOWNLOAD_URL_PREFIX + savedImage.getId());
 
-                _imageRepository.save(savedImage); // Update with the correct download URL
+                    _imageRepository.save(savedImage); // Update with the correct download URL
 
-                return savedImage.toImageResponse();
-            } catch (Exception e) {
-                throw new RuntimeException("Failed to save image: " + e.getMessage(), e);
-            }
-        }).collect(Collectors.toList());
+                    return savedImage.toImageResponse();
+                } catch (Exception e) {
+                    throw new RuntimeException("Failed to save image: " + e.getMessage(), e);
+                }
+            }).collect(Collectors.toList());
+        } catch (NotFoundException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to save images: " + e.getMessage(), e);
+        }
     }
-
 
 
     /**
      * updateImage method is responsible for updating an image
+     *
      * @param request UpdateImageRequest object containing the updated image details
      * @param imageId Long value of the image id
      * @return ImageResponse object containing the updated image details
      */
     @Override
     public ImageResponse updateImage(UpdateImageRequest request, Long imageId) {
-        try{
-        Image image = _imageRepository.findById(imageId)
-                .orElseThrow(() -> new NotFoundException("No image found with id: " + imageId));
+        try {
+            Image image = _imageRepository.findById(imageId)
+                    .orElseThrow(() -> new NotFoundException("No image found with id: " + imageId));
             image.setFileName(request.getFile().getOriginalFilename());
             image.setFileType(request.getFile().getContentType());
             image.setImage(new SerialBlob(request.getFile().getBytes()));
             _imageRepository.save(image);
             return image.toImageResponse();
-        }
-        catch (NotFoundException e) {
+        } catch (NotFoundException e) {
             throw e;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new RuntimeException("Failed to update image: " + e.getMessage(), e);
         }
     }
