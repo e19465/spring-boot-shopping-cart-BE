@@ -10,6 +10,7 @@ import com.sasindu.shoppingcart.helpers.ApiResponse;
 import com.sasindu.shoppingcart.helpers.GlobalExceptionHandler;
 import com.sasindu.shoppingcart.helpers.GlobalSuccessHandler;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,7 +37,7 @@ public class CategoryController {
     public ResponseEntity<ApiResponse> saveCategory(@RequestParam AddCategoryRequest request) {
         try {
             CategoryResponse category = _categoryService.addCategory(request);
-            return GlobalSuccessHandler.handleSuccess("Category saved successfully", category, 200, null);
+            return GlobalSuccessHandler.handleSuccess("Category saved successfully", category, HttpStatus.CREATED.value(), null);
         } catch (Exception e) {
             return GlobalExceptionHandler.handleException(e, "Category save failed");
         }
@@ -54,7 +55,7 @@ public class CategoryController {
     public ResponseEntity<ApiResponse> getCategoryById(@PathVariable Long id) {
         try {
             CategoryResponse category = _categoryService.getCategoryById(id);
-            return GlobalSuccessHandler.handleSuccess("Category fetched successfully", category, 200, null);
+            return GlobalSuccessHandler.handleSuccess("Category fetched successfully", category, HttpStatus.OK.value(), null);
         } catch (Exception e) {
             return GlobalExceptionHandler.handleException(e, "Category fetch failed");
         }
@@ -72,7 +73,7 @@ public class CategoryController {
     public ResponseEntity<ApiResponse> getCategoryByName(@PathVariable String name) {
         try {
             CategoryResponse category = _categoryService.getCategoryByName(name);
-            return GlobalSuccessHandler.handleSuccess("Category fetched successfully", category, 200, null);
+            return GlobalSuccessHandler.handleSuccess("Category fetched successfully", category, HttpStatus.OK.value(), null);
         } catch (Exception e) {
             return GlobalExceptionHandler.handleException(e, "Category fetch failed");
         }
@@ -89,7 +90,7 @@ public class CategoryController {
     public ResponseEntity<ApiResponse> getAllCategories() {
         try {
             List<CategoryResponse> categories = _categoryService.getAllCategories();
-            return GlobalSuccessHandler.handleSuccess("Categories fetched successfully", categories, 200, null);
+            return GlobalSuccessHandler.handleSuccess("Categories fetched successfully", categories, HttpStatus.OK.value(), null);
         } catch (Exception e) {
             return GlobalExceptionHandler.handleException(e, "Categories fetch failed");
         }
@@ -108,7 +109,7 @@ public class CategoryController {
     public ResponseEntity<ApiResponse> updateCategory(@RequestParam UpdateCategoryRequest request, @PathVariable Long id) {
         try {
             CategoryResponse category = _categoryService.updateCategory(request, id);
-            return GlobalSuccessHandler.handleSuccess("Category updated successfully", category, 200, null);
+            return GlobalSuccessHandler.handleSuccess("Category updated successfully", category, HttpStatus.OK.value(), null);
         } catch (Exception e) {
             return GlobalExceptionHandler.handleException(e, "Category update failed");
         }
@@ -126,7 +127,7 @@ public class CategoryController {
     public ResponseEntity<ApiResponse> deleteCategory(@PathVariable Long id) {
         try {
             _categoryService.deleteCategoryById(id);
-            return GlobalSuccessHandler.handleSuccess("Category deleted successfully", null, 200, null);
+            return GlobalSuccessHandler.handleSuccess("Category deleted successfully", null, HttpStatus.OK.value(), null);
         } catch (Exception e) {
             return GlobalExceptionHandler.handleException(e, "Category delete failed");
         }

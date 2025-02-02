@@ -10,6 +10,7 @@ import com.sasindu.shoppingcart.helpers.ApiResponse;
 import com.sasindu.shoppingcart.helpers.GlobalExceptionHandler;
 import com.sasindu.shoppingcart.helpers.GlobalSuccessHandler;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -37,7 +38,7 @@ public class ProductController {
     public ResponseEntity<ApiResponse> saveProduct(@RequestBody AddProductRequest request) {
         try {
             ProductResponse product = _productService.addProduct(request);
-            return GlobalSuccessHandler.handleSuccess("Product saved successfully", product, 200, null);
+            return GlobalSuccessHandler.handleSuccess("Product saved successfully", product, HttpStatus.CREATED.value(), null);
         } catch (Exception e) {
             return GlobalExceptionHandler.handleException(e, "Product save failed");
         }
@@ -54,7 +55,7 @@ public class ProductController {
     public ResponseEntity<ApiResponse> getAllProducts() {
         try {
             List<ProductResponse> products = _productService.getAllProducts();
-            return GlobalSuccessHandler.handleSuccess("Products fetched successfully", products, 200, null);
+            return GlobalSuccessHandler.handleSuccess("Products fetched successfully", products, HttpStatus.OK.value(), null);
         } catch (Exception e) {
             return GlobalExceptionHandler.handleException(e, "Products fetch failed");
         }
@@ -72,7 +73,7 @@ public class ProductController {
     public ResponseEntity<ApiResponse> getProductById(@PathVariable Long id) {
         try {
             ProductResponse product = _productService.getProductById(id);
-            return GlobalSuccessHandler.handleSuccess("Product fetched successfully", product, 200, null);
+            return GlobalSuccessHandler.handleSuccess("Product fetched successfully", product, HttpStatus.OK.value(), null);
         } catch (Exception e) {
             return GlobalExceptionHandler.handleException(e, "Product fetch failed");
         }
@@ -90,7 +91,7 @@ public class ProductController {
     public ResponseEntity<ApiResponse> updateProduct(@RequestBody UpdateProductRequest request, @PathVariable Long id) {
         try {
             ProductResponse product = _productService.updateProduct(request, id);
-            return GlobalSuccessHandler.handleSuccess("Product updated successfully", product, 200, null);
+            return GlobalSuccessHandler.handleSuccess("Product updated successfully", product, HttpStatus.OK.value(), null);
         } catch (Exception e) {
             return GlobalExceptionHandler.handleException(e, "Product update failed");
         }
@@ -108,7 +109,7 @@ public class ProductController {
     public ResponseEntity<ApiResponse> deleteProduct(@PathVariable Long id) {
         try {
             _productService.deleteProduct(id);
-            return GlobalSuccessHandler.handleSuccess("Product deleted successfully", null, 200, null);
+            return GlobalSuccessHandler.handleSuccess("Product deleted successfully", null, HttpStatus.OK.value(), null);
         } catch (Exception e) {
             return GlobalExceptionHandler.handleException(e, "Product delete failed");
         }
@@ -126,7 +127,7 @@ public class ProductController {
     public ResponseEntity<ApiResponse> getProductsByCategory(@PathVariable String category) {
         try {
             List<ProductResponse> products = _productService.getProductsByCategory(category);
-            return GlobalSuccessHandler.handleSuccess("Products fetched successfully", products, 200, null);
+            return GlobalSuccessHandler.handleSuccess("Products fetched successfully", products, HttpStatus.OK.value(), null);
         } catch (Exception e) {
             return GlobalExceptionHandler.handleException(e, "Products fetch failed");
         }
@@ -144,7 +145,7 @@ public class ProductController {
     public ResponseEntity<ApiResponse> getProductsByBrand(@PathVariable String brand) {
         try {
             List<ProductResponse> products = _productService.getProductsByBrand(brand);
-            return GlobalSuccessHandler.handleSuccess("Products fetched successfully", products, 200, null);
+            return GlobalSuccessHandler.handleSuccess("Products fetched successfully", products, HttpStatus.OK.value(), null);
         } catch (Exception e) {
             return GlobalExceptionHandler.handleException(e, "Products fetch failed");
         }
@@ -163,7 +164,7 @@ public class ProductController {
     public ResponseEntity<ApiResponse> getProductByCategoryAndBrand(@PathVariable String category, @PathVariable String brand) {
         try {
             List<ProductResponse> products = _productService.getProductByCategoryAndBrand(category, brand);
-            return GlobalSuccessHandler.handleSuccess("Products fetched successfully", products, 200, null);
+            return GlobalSuccessHandler.handleSuccess("Products fetched successfully", products, HttpStatus.OK.value(), null);
         } catch (Exception e) {
             return GlobalExceptionHandler.handleException(e, "Products fetch failed");
         }
@@ -181,7 +182,7 @@ public class ProductController {
     public ResponseEntity<ApiResponse> getProductsByName(@PathVariable String name) {
         try {
             List<ProductResponse> products = _productService.getProductsByName(name);
-            return GlobalSuccessHandler.handleSuccess("Products fetched successfully", products, 200, null);
+            return GlobalSuccessHandler.handleSuccess("Products fetched successfully", products, HttpStatus.OK.value(), null);
         } catch (Exception e) {
             return GlobalExceptionHandler.handleException(e, "Products fetch failed");
         }
@@ -200,7 +201,7 @@ public class ProductController {
     public ResponseEntity<ApiResponse> getProductsByBrandAndName(@PathVariable String brand, @PathVariable String name) {
         try {
             List<ProductResponse> products = _productService.getProductsByBrandAndName(brand, name);
-            return GlobalSuccessHandler.handleSuccess("Products fetched successfully", products, 200, null);
+            return GlobalSuccessHandler.handleSuccess("Products fetched successfully", products, HttpStatus.OK.value(), null);
         } catch (Exception e) {
             return GlobalExceptionHandler.handleException(e, "Products fetch failed");
         }
@@ -219,7 +220,7 @@ public class ProductController {
     public ResponseEntity<ApiResponse> countProductsByBrandAndName(@PathVariable String brand, @PathVariable String name) {
         try {
             Long count = _productService.countProductsByBrandAndName(brand, name);
-            return GlobalSuccessHandler.handleSuccess("Products counted successfully", count, 200, null);
+            return GlobalSuccessHandler.handleSuccess("Products counted successfully", count, HttpStatus.OK.value(), null);
         } catch (Exception e) {
             return GlobalExceptionHandler.handleException(e, "Products count failed");
         }

@@ -11,6 +11,7 @@ import com.sasindu.shoppingcart.helpers.GlobalSuccessHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -39,7 +40,7 @@ public class ImageController {
     public ResponseEntity<ApiResponse> saveImages(@RequestParam AddImageRequest request, @RequestParam Long productId) {
         try {
             List<ImageResponse> images = _imageService.saveImages(request, productId);
-            return GlobalSuccessHandler.handleSuccess("Upload successful", images, 200, null);
+            return GlobalSuccessHandler.handleSuccess("Upload successful", images, HttpStatus.CREATED.value(), null);
         } catch (Exception e) {
             return GlobalExceptionHandler.handleException(e, "Upload failed");
         }
@@ -63,7 +64,7 @@ public class ImageController {
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.parseMediaType(image.getFileType()));
             headers.setContentDispositionFormData("attachment", image.getFileName());
-            return GlobalSuccessHandler.handleSuccess("Download successful", resource, 200, headers);
+            return GlobalSuccessHandler.handleSuccess("Download successful", resource, HttpStatus.OK.value(), headers);
         } catch (Exception e) {
             return GlobalExceptionHandler.handleException(e, "Download failed");
         }
@@ -82,7 +83,7 @@ public class ImageController {
     public ResponseEntity<ApiResponse> updateImage(@RequestParam UpdateImageRequest request, @PathVariable Long imageId) {
         try {
             ImageResponse image = _imageService.updateImage(request, imageId);
-            return GlobalSuccessHandler.handleSuccess("Update successful", image, 200, null
+            return GlobalSuccessHandler.handleSuccess("Update successful", image, HttpStatus.OK.value(), null
             );
         } catch (Exception e) {
             return GlobalExceptionHandler.handleException(e, "Update failed");
