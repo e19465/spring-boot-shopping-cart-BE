@@ -86,7 +86,7 @@ public class CategoryController {
      *
      * @return ApiResponse object containing the response details
      */
-    @GetMapping("/find-all")
+    @GetMapping("/get-all")
     public ResponseEntity<ApiResponse> getAllCategories() {
         try {
             List<CategoryResponse> categories = _categoryService.getAllCategories();
@@ -106,7 +106,7 @@ public class CategoryController {
      * @return ApiResponse object containing the response details
      */
     @PutMapping("/update/{id}")
-    public ResponseEntity<ApiResponse> updateCategory(@RequestParam UpdateCategoryRequest request, @PathVariable Long id) {
+    public ResponseEntity<ApiResponse> updateCategory(@RequestBody UpdateCategoryRequest request, @PathVariable Long id) {
         try {
             CategoryResponse category = _categoryService.updateCategory(request, id);
             return GlobalSuccessHandler.handleSuccess("Category updated successfully", category, HttpStatus.OK.value(), null);
@@ -140,7 +140,7 @@ public class CategoryController {
  * 1. create category - POST - http://localhost:9091/api/v1/category/create
  * 2. find category by id - GET - http://localhost:9091/api/v1/category/find-by-id/{id}
  * 3. find category by name - GET - http://localhost:9091/api/v1/category/find-by-name/{name}
- * 4. find all categories - GET - http://localhost:9091/api/v1/category/find-all
+ * 4. find all categories - GET - http://localhost:9091/api/v1/category/get-all
  * 5. update category - PUT - http://localhost:9091/api/v1/category/update/{id}
  * 6. delete category - DELETE - http://localhost:9091/api/v1/category/delete/{id}
  */

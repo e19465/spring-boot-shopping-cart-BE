@@ -20,10 +20,10 @@ public class GlobalSuccessHandler {
         if (headers != null) {
             return ResponseEntity.status(status)
                     .headers(headers)
-                    .body(new ApiResponse(message != null ? message : defaultMessage, data));
+                    .body(new ApiResponse(null, message != null ? message : defaultMessage, data));
         } else {
             return ResponseEntity.status(status)
-                    .body(new ApiResponse(message != null ? message : defaultMessage, data));
+                    .body(new ApiResponse(null, message != null ? message : defaultMessage, data));
         }
     }
 }

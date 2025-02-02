@@ -11,7 +11,7 @@ public class GlobalExceptionHandler {
     //! Handle all exceptions
     private static ResponseEntity<ApiResponse> handleAllExceptions(HttpStatus status, Exception ex) {
         return ResponseEntity.status(status.value())
-                .body(new ApiResponse(ex.getMessage(), null));
+                .body(new ApiResponse(ex.getMessage(), null, null));
     }
 
     //! Static method to handle exceptions manually with a custom message

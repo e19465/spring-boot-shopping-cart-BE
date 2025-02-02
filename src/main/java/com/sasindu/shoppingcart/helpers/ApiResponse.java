@@ -6,6 +6,7 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class ApiResponse {
+    private String error;
     private String message;
     private Object data;
 }
