@@ -179,7 +179,7 @@ public class ProductService implements IProductService {
     @Override
     public List<ProductResponse> getProductsByBrand(String brand) {
         try {
-            List<Product> products = _productRepository.findByBrandName(brand);
+            List<Product> products = _productRepository.findByBrand(brand);
             return products.stream().map(Product::toProductResponse).toList();
         } catch (Exception e) {
             throw new RuntimeException("Failed to fetch products: " + e.getMessage(), e);
@@ -197,7 +197,7 @@ public class ProductService implements IProductService {
     @Override
     public List<ProductResponse> getProductByCategoryAndBrand(String category, String brand) {
         try {
-            List<Product> products = _productRepository.findByCategoryNameAndBrandName(category, brand);
+            List<Product> products = _productRepository.findByCategoryNameAndBrand(category, brand);
             return products.stream().map(Product::toProductResponse).toList();
         } catch (Exception e) {
             throw new RuntimeException("Failed to fetch products: " + e.getMessage(), e);
