@@ -6,6 +6,7 @@ import com.sasindu.shoppingcart.dto.request.image.AddImageRequest;
 import com.sasindu.shoppingcart.dto.request.image.UpdateImageRequest;
 import com.sasindu.shoppingcart.dto.response.image.ImageResponse;
 import com.sasindu.shoppingcart.exceptions.NotFoundException;
+import com.sasindu.shoppingcart.helpers.ValidationHelper;
 import com.sasindu.shoppingcart.models.Image;
 import com.sasindu.shoppingcart.models.Product;
 import com.sasindu.shoppingcart.repository.ImageRepository;
@@ -40,7 +41,7 @@ public class ImageService implements IImageService {
             Image image = _imageRepository.findById(id)
                     .orElseThrow(() -> new NotFoundException("No image found with id: " + id));
             return image.toImageResponse();
-        } catch (NotFoundException e) {
+        } catch (RuntimeException e) {
             throw e;
         } catch (Exception e) {
             throw new RuntimeException("Failed to fetch image: " + e.getMessage(), e);
@@ -59,7 +60,7 @@ public class ImageService implements IImageService {
             Image image = _imageRepository.findById(id)
                     .orElseThrow(() -> new NotFoundException("No image found with id: " + id));
             _imageRepository.delete(image);
-        } catch (NotFoundException e) {
+        } catch (RuntimeException e) {
             throw e;
         } catch (Exception e) {
             throw new RuntimeException("Failed to delete image: " + e.getMessage(), e);
@@ -77,9 +78,14 @@ public class ImageService implements IImageService {
     @Override
     public List<ImageResponse> saveImages(AddImageRequest request, Long productId) {
         try {
+            // Validate the request body
+            ValidationHelper.validateModelBinding(request);
+
+            // Check if the product exists
             Product product = _productRepository.findById(productId)
                     .orElseThrow(() -> new NotFoundException("No product found with id: " + productId));
 
+            // Save the images
             return request.getFiles().stream().map(file -> {
                 try {
                     Image image = new Image();
@@ -98,7 +104,7 @@ public class ImageService implements IImageService {
                     throw new RuntimeException("Failed to save image: " + e.getMessage(), e);
                 }
             }).collect(Collectors.toList());
-        } catch (NotFoundException e) {
+        } catch (RuntimeException e) {
             throw e;
         } catch (Exception e) {
             throw new RuntimeException("Failed to save images: " + e.getMessage(), e);
@@ -116,14 +122,20 @@ public class ImageService implements IImageService {
     @Override
     public ImageResponse updateImage(UpdateImageRequest request, Long imageId) {
         try {
+            // Validate the request body
+            ValidationHelper.validateModelBinding(request);
+
+            // Check if the image exists
             Image image = _imageRepository.findById(imageId)
                     .orElseThrow(() -> new NotFoundException("No image found with id: " + imageId));
+
+            // Update the image
             image.setFileName(request.getFile().getOriginalFilename());
             image.setFileType(request.getFile().getContentType());
             image.setImage(new SerialBlob(request.getFile().getBytes()));
             _imageRepository.save(image);
             return image.toImageResponse();
-        } catch (NotFoundException e) {
+        } catch (RuntimeException e) {
             throw e;
         } catch (Exception e) {
             throw new RuntimeException("Failed to update image: " + e.getMessage(), e);

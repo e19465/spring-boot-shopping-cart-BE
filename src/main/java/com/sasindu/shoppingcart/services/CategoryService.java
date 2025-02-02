@@ -4,8 +4,10 @@ import com.sasindu.shoppingcart.abstractions.ICategoryService;
 import com.sasindu.shoppingcart.dto.request.category.AddCategoryRequest;
 import com.sasindu.shoppingcart.dto.request.category.UpdateCategoryRequest;
 import com.sasindu.shoppingcart.dto.response.category.CategoryResponse;
+import com.sasindu.shoppingcart.exceptions.BadRequestException;
 import com.sasindu.shoppingcart.exceptions.ConflictException;
 import com.sasindu.shoppingcart.exceptions.NotFoundException;
+import com.sasindu.shoppingcart.helpers.ValidationHelper;
 import com.sasindu.shoppingcart.models.Category;
 import com.sasindu.shoppingcart.repository.CategoryRepository;
 import lombok.RequiredArgsConstructor;
@@ -35,11 +37,15 @@ public class CategoryService implements ICategoryService {
     @Override
     public CategoryResponse addCategory(AddCategoryRequest request) {
         try {
+            // Validate the request body
+            ValidationHelper.validateModelBinding(request);
+
+            // Check if the category already exists
             return Optional.of(request)
                     .filter(c -> !_categoryRepository.existsByName(c.getName()))
                     .map(c -> _categoryRepository.save(new Category(c.getName())).toCategoryResponse())
                     .orElseThrow(() -> new ConflictException("Category already exists"));
-        } catch (ConflictException e) {
+        } catch (RuntimeException e) {
             throw e;
         } catch (Exception e) {
             throw new RuntimeException("Failed to save category: " + e.getMessage(), e);
@@ -60,7 +66,7 @@ public class CategoryService implements ICategoryService {
             Category category = _categoryRepository.findById(id)
                     .orElseThrow(() -> new NotFoundException("Category not found"));
             return category.toCategoryResponse();
-        } catch (NotFoundException e) {
+        } catch (RuntimeException e) {
             throw e;
         } catch (Exception e) {
             throw new RuntimeException("Failed to fetch category: " + e.getMessage(), e);
@@ -125,7 +131,7 @@ public class CategoryService implements ICategoryService {
                         return _categoryRepository.save(category).toCategoryResponse();
                     })
                     .orElseThrow(() -> new NotFoundException("Category not found"));
-        } catch (NotFoundException e) {
+        } catch (RuntimeException e) {
             throw e;
         } catch (Exception e) {
             throw new RuntimeException("Failed to update category: " + e.getMessage(), e);
@@ -146,7 +152,7 @@ public class CategoryService implements ICategoryService {
                     .ifPresentOrElse(_categoryRepository::delete, () -> {
                         throw new NotFoundException("Category not found");
                     });
-        } catch (NotFoundException e) {
+        } catch (RuntimeException e) {
             throw e;
         } catch (Exception e) {
             throw new RuntimeException("Failed to delete category: " + e.getMessage(), e);

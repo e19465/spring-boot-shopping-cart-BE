@@ -5,6 +5,7 @@ import com.sasindu.shoppingcart.dto.request.product.AddProductRequest;
 import com.sasindu.shoppingcart.dto.request.product.UpdateProductRequest;
 import com.sasindu.shoppingcart.dto.response.product.ProductResponse;
 import com.sasindu.shoppingcart.exceptions.NotFoundException;
+import com.sasindu.shoppingcart.helpers.ValidationHelper;
 import com.sasindu.shoppingcart.models.Category;
 import com.sasindu.shoppingcart.models.Product;
 import com.sasindu.shoppingcart.repository.CategoryRepository;
@@ -41,12 +42,20 @@ public class ProductService implements IProductService {
         // check if the category exists in the database
         // idf yes, use it else create a new category
         try {
+            // validate the request body
+            ValidationHelper.validateModelBinding(request);
+
+            // check if the category already exists
             Category category = Optional.ofNullable(_categoryRepository.findByName(request.getCategory().getName()))
                     .orElseGet(() -> {
                         Category newCategory = new Category(request.getCategory().getName());
                         return _categoryRepository.save(newCategory);
                     });
+
+            // set the category to the product
             request.setCategory(category);
+
+            // save the product
             Product newProduct = new Product(
                     request.getName(),
                     request.getBrand(),
@@ -56,6 +65,8 @@ public class ProductService implements IProductService {
                     category
             );
             return _productRepository.save(newProduct).toProductResponse();
+        } catch (RuntimeException e) {
+            throw e;
         } catch (Exception e) {
             throw new RuntimeException("Failed to add product: " + e.getMessage(), e);
         }
@@ -73,6 +84,10 @@ public class ProductService implements IProductService {
     @Override
     public ProductResponse updateProduct(UpdateProductRequest request, Long productId) {
         try {
+            // Validate the request body
+            ValidationHelper.validateModelBinding(request);
+
+            // Check if the product exists
             return _productRepository.findById(productId)
                     .map(existingProduct -> {
                         existingProduct.setName(request.getName());
@@ -87,7 +102,7 @@ public class ProductService implements IProductService {
                     .map(_productRepository::save)
                     .map(Product::toProductResponse)
                     .orElseThrow(() -> new NotFoundException("Product not found"));
-        } catch (NotFoundException e) {
+        } catch (RuntimeException e) {
             throw e;
         } catch (Exception e) {
             throw new RuntimeException("Failed to update product: " + e.getMessage(), e);
@@ -125,7 +140,7 @@ public class ProductService implements IProductService {
             Product product = _productRepository.findById(id)
                     .orElseThrow(() -> new NotFoundException("Product not found"));
             return product.toProductResponse();
-        } catch (NotFoundException e) {
+        } catch (RuntimeException e) {
             throw e;
         } catch (Exception e) {
             throw new RuntimeException("Failed to fetch product: " + e.getMessage(), e);
@@ -146,7 +161,7 @@ public class ProductService implements IProductService {
                     .ifPresentOrElse(_productRepository::delete, () -> {
                         throw new NotFoundException("Product not found");
                     });
-        } catch (NotFoundException e) {
+        } catch (RuntimeException e) {
             throw e;
         } catch (Exception e) {
             throw new RuntimeException("Failed to delete product: " + e.getMessage(), e);
