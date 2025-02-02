@@ -1,6 +1,7 @@
 package com.sasindu.shoppingcart.abstractions;
 
 import com.sasindu.shoppingcart.dto.response.image.ImageResponse;
+import com.sasindu.shoppingcart.dto.response.image.ImageResponseWithoutBlob;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -35,7 +36,7 @@ public interface IImageService {
      * @param files     Files list of MultipartFile objects containing the image details
      * @param productId Long value of the product id
      */
-    void saveImages(List<MultipartFile> files, Long productId);
+    List<ImageResponseWithoutBlob> saveImages(List<MultipartFile> files, Long productId);
 
 
     /**

@@ -3,6 +3,7 @@ package com.sasindu.shoppingcart.services;
 import com.sasindu.shoppingcart.abstractions.IImageService;
 import com.sasindu.shoppingcart.constants.ApplicationConstants;
 import com.sasindu.shoppingcart.dto.response.image.ImageResponse;
+import com.sasindu.shoppingcart.dto.response.image.ImageResponseWithoutBlob;
 import com.sasindu.shoppingcart.exceptions.NotFoundException;
 import com.sasindu.shoppingcart.models.Image;
 import com.sasindu.shoppingcart.models.Product;
@@ -14,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.sql.rowset.serial.SerialBlob;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 
@@ -73,18 +75,20 @@ public class ImageService implements IImageService {
      * @param productId Long value of the product id
      */
     @Override
-    public void saveImages(List<MultipartFile> files, Long productId) {
+    public List<ImageResponseWithoutBlob> saveImages(List<MultipartFile> files, Long productId) {
         try {
             // Check if the product exists
             Product product = _productRepository.findById(productId)
                     .orElseThrow(() -> new NotFoundException("No product found with id: " + productId));
 
             // Iterate over each file and save it
-            for (MultipartFile file : files) {
+            return files.stream().map(file -> {
                 try {
                     // Create a new image instance
                     Image image = new Image();
-                    image.setFileName(file.getOriginalFilename());
+                    String uniqueFileName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
+
+                    image.setFileName(uniqueFileName);
                     image.setFileType(file.getContentType());
                     image.setImage(new SerialBlob(file.getBytes())); // Store image as Blob
                     image.setProduct(product);
@@ -97,11 +101,11 @@ public class ImageService implements IImageService {
 
                     // Save the image again to update with the correct download URL
                     _imageRepository.save(savedImage);
-
+                    return savedImage.toImageResponseWithoutBlob();
                 } catch (Exception e) {
                     throw new RuntimeException("Failed to save image: " + file.getOriginalFilename() + " due to " + e.getMessage(), e);
                 }
-            }
+            }).collect(Collectors.toList());
         } catch (NotFoundException e) {
             throw new NotFoundException("Product not found for id: " + productId);
         } catch (Exception e) {

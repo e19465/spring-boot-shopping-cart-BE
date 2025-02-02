@@ -1,6 +1,5 @@
 package com.sasindu.shoppingcart.dto.response.product;
 
-import com.sasindu.shoppingcart.models.Image;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -15,6 +14,6 @@ public class ProductResponse {
     private int inventory;
     private String description;
     private String imageUrl;
-    private List<Image> images;
+    private List<String> images;
     private String category;
 }

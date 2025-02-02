@@ -1,11 +1,13 @@
 package com.sasindu.shoppingcart.models;
 
 import com.sasindu.shoppingcart.dto.response.image.ImageResponse;
+import com.sasindu.shoppingcart.dto.response.image.ImageResponseWithoutBlob;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
 import java.sql.Blob;
 
 @Getter
@@ -41,7 +43,18 @@ public class Image {
         response.setFileType(this.fileType);
         response.setDownloadUrl(this.downloadUrl);
         response.setImage(this.image);
-        response.setProduct(this.product);
+        response.setProductId(this.product.getId());
+        return response;
+    }
+
+    // Add the toImageResponseWithoutBlob() method here
+    public ImageResponseWithoutBlob toImageResponseWithoutBlob() {
+        ImageResponseWithoutBlob response = new ImageResponseWithoutBlob();
+        response.setId(this.id);
+        response.setFileName(this.fileName);
+        response.setFileType(this.fileType);
+        response.setDownloadUrl(this.downloadUrl);
+        response.setProductId(this.product.getId());
         return response;
     }
 }

@@ -8,6 +8,7 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Getter
@@ -48,7 +49,9 @@ public class Product {
         response.setInventory(this.inventory);
         response.setDescription(this.description);
         response.setCategory(this.category.getName());
-        response.setImages(this.images);  // You can also map this to URLs if needed
+        response.setImages(this.images.stream()
+                .map(Image::getDownloadUrl)
+                .collect(Collectors.toList()));
         return response;
     }
 

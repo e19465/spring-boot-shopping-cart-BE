@@ -3,6 +3,7 @@ package com.sasindu.shoppingcart.controllers;
 import com.sasindu.shoppingcart.abstractions.IImageService;
 import com.sasindu.shoppingcart.constants.ApplicationConstants;
 import com.sasindu.shoppingcart.dto.response.image.ImageResponse;
+import com.sasindu.shoppingcart.dto.response.image.ImageResponseWithoutBlob;
 import com.sasindu.shoppingcart.helpers.ApiResponse;
 import com.sasindu.shoppingcart.helpers.GlobalExceptionHandler;
 import com.sasindu.shoppingcart.helpers.GlobalSuccessHandler;
@@ -39,8 +40,8 @@ public class ImageController {
     @PostMapping("/upload/{productId}")
     public ResponseEntity<ApiResponse> saveImages(@RequestParam List<MultipartFile> files, @PathVariable Long productId) {
         try {
-            _imageService.saveImages(files, productId);
-            return GlobalSuccessHandler.handleSuccess("Upload successful", null, HttpStatus.CREATED.value(), null);
+            List<ImageResponseWithoutBlob> images = _imageService.saveImages(files, productId);
+            return GlobalSuccessHandler.handleSuccess("Upload successful", images, HttpStatus.CREATED.value(), null);
         } catch (Exception e) {
             return GlobalExceptionHandler.handleException(e);
         }
