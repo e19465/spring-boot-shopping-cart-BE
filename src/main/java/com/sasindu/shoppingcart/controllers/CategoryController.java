@@ -134,6 +134,14 @@ public class CategoryController {
         }
     }
 
+
+    /**
+     * getAllProductsForCategory method is responsible for fetching all the products for a category
+     * this method calls the getAllProductsForCategory method of the CategoryService class internally
+     *
+     * @param category String value of the category name
+     * @return ApiResponse object containing the response details
+     */
     @GetMapping("/get-products/{category}")
     public ResponseEntity<ApiResponse> deleteCategory(@PathVariable String category) {
         try {
