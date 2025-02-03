@@ -105,23 +105,15 @@ public class CartItemService implements ICartItemService {
     public void updateItemQuantity(Long cartId, Long productId, int quantity) {
         try {
             Cart cart = _cartService.getCartById(cartId);
-            Product product = _productService.getProductById(productId);
             CartItem cartItem = _cartItemRepository.findByCartIdAndProductId(cartId, productId);
 
             if (cartItem == null) {
-                cartItem = new CartItem();
-                cartItem.setQuantity(quantity);
-                cartItem.setUnitPrice(_productService.getProductById(productId).getPrice());
-                cartItem.setProduct(product);
-                cartItem.setCart(cart);
-                cartItem.setTotalPrice();
-                cart.addCartItem(cartItem);
-                cart.updateTotalAmount();
-            } else {
-                cartItem.setQuantity(cartItem.getQuantity() + quantity);
-                cartItem.setTotalPrice();
-                cart.updateTotalAmount();
+                throw new NotFoundException("Cart item not found");
             }
+
+            cartItem.setQuantity(quantity);
+            cartItem.setTotalPrice();
+            cart.updateTotalAmount();
             _cartService.saveCart(cart);
             _cartItemRepository.save(cartItem);
         } catch (RuntimeException e) {
