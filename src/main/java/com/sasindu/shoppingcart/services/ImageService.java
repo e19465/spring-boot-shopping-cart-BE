@@ -1,12 +1,12 @@
 package com.sasindu.shoppingcart.services;
 
 import com.sasindu.shoppingcart.abstractions.IImageService;
+import com.sasindu.shoppingcart.abstractions.IProductService;
 import com.sasindu.shoppingcart.constants.ApplicationConstants;
 import com.sasindu.shoppingcart.exceptions.NotFoundException;
 import com.sasindu.shoppingcart.models.Image;
 import com.sasindu.shoppingcart.models.Product;
 import com.sasindu.shoppingcart.repository.ImageRepository;
-import com.sasindu.shoppingcart.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ImageService implements IImageService {
     private final ImageRepository _imageRepository;
-    private final ProductRepository _productRepository;
+    private final IProductService _productService;
     private static final String IMAGE_DOWNLOAD_URL_PREFIX = ApplicationConstants.IMAGE_DOWNLOAD_URL_PREFIX;
 
     /**
@@ -75,8 +75,7 @@ public class ImageService implements IImageService {
     public List<Image> saveImages(List<MultipartFile> files, Long productId) {
         try {
             // Check if the product exists
-            Product product = _productRepository.findById(productId)
-                    .orElseThrow(() -> new NotFoundException("No product found with id: " + productId));
+            Product product = _productService.getProductById(productId);
 
             // Iterate over each file and save it
             return files.stream().map(file -> {
@@ -136,6 +135,24 @@ public class ImageService implements IImageService {
             throw e;
         } catch (Exception e) {
             throw new RuntimeException("Failed to update image: " + e.getMessage(), e);
+        }
+    }
+
+
+    /**
+     * saveImage method is responsible for saving an image
+     *
+     * @param image Image object containing the image details
+     * @return Image object containing the saved image details
+     */
+    @Override
+    public Image saveImage(Image image) {
+        try {
+            return _imageRepository.save(image);
+        } catch (RuntimeException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to save image: " + e.getMessage(), e);
         }
     }
 }

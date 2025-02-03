@@ -47,4 +47,13 @@ public interface IImageService {
      * @return Image object containing the updated image details
      */
     Image updateImage(MultipartFile file, Long imageId);
+
+
+    /**
+     * saveImage method is responsible for saving an image
+     *
+     * @param image Image object containing the image details
+     * @return Image object containing the saved image details
+     */
+    Image saveImage(Image image);
 }

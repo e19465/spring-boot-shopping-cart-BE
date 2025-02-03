@@ -130,4 +130,13 @@ public interface IProductService {
      * @return Number of products.
      */
     Long countProducts(Map<String, String> filters);
+
+
+    /**
+     * Save product.
+     *
+     * @param product Product object containing the product details.
+     * @return Product object containing the saved product details.
+     */
+    Product saveProduct(Product product);
 }

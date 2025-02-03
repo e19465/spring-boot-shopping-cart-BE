@@ -12,7 +12,7 @@ public interface ICartService {
      * @param id The id of the cart
      * @return The cart
      */
-    Cart getCart(Long id);
+    Cart getCartById(Long id);
 
 
     /**
@@ -30,4 +30,13 @@ public interface ICartService {
      * @return The total price
      */
     BigDecimal getTotalPrice(Long id);
+
+
+    /**
+     * Save the cart
+     *
+     * @param cart The cart to save
+     * @return The saved cart
+     */
+    Cart saveCart(Cart cart);
 }

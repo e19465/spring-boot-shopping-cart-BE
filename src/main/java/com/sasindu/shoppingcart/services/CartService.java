@@ -1,9 +1,9 @@
 package com.sasindu.shoppingcart.services;
 
+import com.sasindu.shoppingcart.abstractions.ICartItemService;
 import com.sasindu.shoppingcart.abstractions.ICartService;
 import com.sasindu.shoppingcart.exceptions.NotFoundException;
 import com.sasindu.shoppingcart.models.Cart;
-import com.sasindu.shoppingcart.repository.CartItemRepository;
 import com.sasindu.shoppingcart.repository.CartRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,7 +15,7 @@ import java.math.BigDecimal;
 @RequiredArgsConstructor
 public class CartService implements ICartService {
     private final CartRepository _cartRepository;
-    private final CartItemRepository _cartItemRepository;
+    private final ICartItemService _cartItemService;
 
 
     /**
@@ -25,7 +25,7 @@ public class CartService implements ICartService {
      * @return the cart
      */
     @Override
-    public Cart getCart(Long id) {
+    public Cart getCartById(Long id) {
         try {
             return _cartRepository.findById(id)
                     .map(c -> {
@@ -49,8 +49,8 @@ public class CartService implements ICartService {
     @Override
     public void clearCart(Long id) {
         try {
-            Cart cart = getCart(id);
-            _cartItemRepository.deleteAllByCartId(id);
+            Cart cart = getCartById(id);
+            _cartItemService.deleteAllByCartId(id);
             cart.getCartItems().clear();
             _cartRepository.deleteById(id);
         } catch (RuntimeException e) {
@@ -70,8 +70,26 @@ public class CartService implements ICartService {
     @Override
     public BigDecimal getTotalPrice(Long id) {
         try {
-            Cart cart = getCart(id);
+            Cart cart = getCartById(id);
             return cart.getTotalAmount();
+        } catch (RuntimeException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    /**
+     * Save the cart
+     *
+     * @param cart the cart to save
+     * @return the saved cart
+     */
+    @Override
+    public Cart saveCart(Cart cart) {
+        try {
+            return _cartRepository.save(cart);
         } catch (RuntimeException e) {
             throw e;
         } catch (Exception e) {

@@ -71,4 +71,12 @@ public interface ICategoryService {
      * @return List of Product objects containing the product details
      */
     List<Product> getAllProductsForCategory(String categoryName);
+
+
+    /**
+     * saveCategory method is responsible for saving a category
+     *
+     * @param category Category object containing the category details
+     */
+    Category saveCategory(Category category);
 }

@@ -179,4 +179,19 @@ public class CategoryService implements ICategoryService {
             throw new RuntimeException("Failed to fetch products for category: " + e.getMessage(), e);
         }
     }
+
+
+    /**
+     * saveCategory method is responsible for saving a category
+     *
+     * @param category Category object containing the category details
+     */
+    @Override
+    public Category saveCategory(Category category) {
+        try {
+            return _categoryRepository.save(category);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to save category: " + e.getMessage(), e);
+        }
+    }
 }

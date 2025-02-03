@@ -1,5 +1,6 @@
 package com.sasindu.shoppingcart.services;
 
+import com.sasindu.shoppingcart.abstractions.ICategoryService;
 import com.sasindu.shoppingcart.abstractions.IProductService;
 import com.sasindu.shoppingcart.dto.request.product.AddProductRequest;
 import com.sasindu.shoppingcart.dto.request.product.UpdateProductRequest;
@@ -7,7 +8,6 @@ import com.sasindu.shoppingcart.exceptions.NotFoundException;
 import com.sasindu.shoppingcart.helpers.ValidationHelper;
 import com.sasindu.shoppingcart.models.Category;
 import com.sasindu.shoppingcart.models.Product;
-import com.sasindu.shoppingcart.repository.CategoryRepository;
 import com.sasindu.shoppingcart.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -28,7 +28,7 @@ public class ProductService implements IProductService {
     // In here, we don't define constructor explicitly,
     // because Lombok's @RequiredArgsConstructor will do it for us
     private final ProductRepository _productRepository;
-    private final CategoryRepository _categoryRepository;
+    private final ICategoryService _categoryService;
 
     /**
      * Add a new product.
@@ -45,10 +45,10 @@ public class ProductService implements IProductService {
             ValidationHelper.validateModelBinding(request);
 
             // check if the category already exists
-            Category category = Optional.ofNullable(_categoryRepository.findByName(request.getCategory().getName()))
+            Category category = Optional.ofNullable(_categoryService.getCategoryByName(request.getCategory().getName()))
                     .orElseGet(() -> {
                         Category newCategory = new Category(request.getCategory().getName());
-                        return _categoryRepository.save(newCategory);
+                        return _categoryService.saveCategory(newCategory);
                     });
 
             // set the category to the product
@@ -94,7 +94,7 @@ public class ProductService implements IProductService {
                         existingProduct.setPrice(request.getPrice());
                         existingProduct.setInventory(request.getInventory());
                         existingProduct.setDescription(request.getDescription());
-                        Category category = _categoryRepository.findByName(request.getCategory().getName());
+                        Category category = _categoryService.getCategoryByName(request.getCategory().getName());
                         existingProduct.setCategory(category);
                         return existingProduct;
                     })
@@ -307,6 +307,22 @@ public class ProductService implements IProductService {
                     .count();
         } catch (Exception e) {
             throw new RuntimeException(e);
+        }
+    }
+
+
+    /**
+     * Save a product.
+     *
+     * @param product Product object containing the product details.
+     * @return Product object containing the saved product details.
+     */
+    @Override
+    public Product saveProduct(Product product) {
+        try {
+            return _productRepository.save(product);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to save product: " + e.getMessage(), e);
         }
     }
 }
