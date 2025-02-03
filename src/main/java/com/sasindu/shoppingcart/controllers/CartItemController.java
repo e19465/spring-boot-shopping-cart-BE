@@ -2,6 +2,7 @@ package com.sasindu.shoppingcart.controllers;
 
 
 import com.sasindu.shoppingcart.abstractions.ICartItemService;
+import com.sasindu.shoppingcart.abstractions.ICartService;
 import com.sasindu.shoppingcart.constants.ApplicationConstants;
 import com.sasindu.shoppingcart.dto.request.cartitem.AddCartItemRequest;
 import com.sasindu.shoppingcart.dto.request.cartitem.UpdateCartItemRequest;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping(ApplicationConstants.API_URL_PREFIX + "/cart-item")
 public class CartItemController {
     private final ICartItemService _cartItemService;
+    private final ICartService _cartService;
 
 
     /**
@@ -30,6 +32,11 @@ public class CartItemController {
     public ResponseEntity<ApiResponse> addItemToCart(@RequestBody AddCartItemRequest request) {
         try {
             Long cartId = request.getCartId();
+
+            if (cartId == null) {
+                cartId = _cartService.initializeNewCart();
+            }
+
             Long productId = request.getProductId();
             int quantity = request.getQuantity();
             _cartItemService.addItemToCart(cartId, productId, quantity);
