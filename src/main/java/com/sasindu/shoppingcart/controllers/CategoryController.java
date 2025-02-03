@@ -10,6 +10,8 @@ import com.sasindu.shoppingcart.dto.response.product.ProductResponse;
 import com.sasindu.shoppingcart.helpers.ApiResponse;
 import com.sasindu.shoppingcart.helpers.GlobalExceptionHandler;
 import com.sasindu.shoppingcart.helpers.GlobalSuccessHandler;
+import com.sasindu.shoppingcart.models.Category;
+import com.sasindu.shoppingcart.models.Product;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,7 +39,7 @@ public class CategoryController {
     @PostMapping("/create")
     public ResponseEntity<ApiResponse> saveCategory(@RequestBody AddCategoryRequest request) {
         try {
-            CategoryResponse category = _categoryService.addCategory(request);
+            CategoryResponse category = _categoryService.addCategory(request).toCategoryResponse();
             return GlobalSuccessHandler.handleSuccess("Category saved successfully", category, HttpStatus.CREATED.value(), null);
         } catch (Exception e) {
             return GlobalExceptionHandler.handleException(e);
@@ -55,7 +57,7 @@ public class CategoryController {
     @GetMapping("/find-by-id/{id}")
     public ResponseEntity<ApiResponse> getCategoryById(@PathVariable Long id) {
         try {
-            CategoryResponse category = _categoryService.getCategoryById(id);
+            CategoryResponse category = _categoryService.getCategoryById(id).toCategoryResponse();
             return GlobalSuccessHandler.handleSuccess("Category fetched successfully", category, HttpStatus.OK.value(), null);
         } catch (Exception e) {
             return GlobalExceptionHandler.handleException(e);
@@ -73,7 +75,7 @@ public class CategoryController {
     @GetMapping("/find-by-name/{name}")
     public ResponseEntity<ApiResponse> getCategoryByName(@PathVariable String name) {
         try {
-            CategoryResponse category = _categoryService.getCategoryByName(name);
+            CategoryResponse category = _categoryService.getCategoryByName(name).toCategoryResponse();
             return GlobalSuccessHandler.handleSuccess("Category fetched successfully", category, HttpStatus.OK.value(), null);
         } catch (Exception e) {
             return GlobalExceptionHandler.handleException(e);
@@ -90,7 +92,7 @@ public class CategoryController {
     @GetMapping("/get-all")
     public ResponseEntity<ApiResponse> getAllCategories() {
         try {
-            List<CategoryResponse> categories = _categoryService.getAllCategories();
+            List<CategoryResponse> categories = _categoryService.getAllCategories().stream().map(Category::toCategoryResponse).toList();
             return GlobalSuccessHandler.handleSuccess("Categories fetched successfully", categories, HttpStatus.OK.value(), null);
         } catch (Exception e) {
             return GlobalExceptionHandler.handleException(e);
@@ -109,7 +111,7 @@ public class CategoryController {
     @PutMapping("/update/{id}")
     public ResponseEntity<ApiResponse> updateCategory(@RequestBody UpdateCategoryRequest request, @PathVariable Long id) {
         try {
-            CategoryResponse category = _categoryService.updateCategory(request, id);
+            CategoryResponse category = _categoryService.updateCategory(request, id).toCategoryResponse();
             return GlobalSuccessHandler.handleSuccess("Category updated successfully", category, HttpStatus.OK.value(), null);
         } catch (Exception e) {
             return GlobalExceptionHandler.handleException(e);
@@ -145,7 +147,7 @@ public class CategoryController {
     @GetMapping("/get-products/{category}")
     public ResponseEntity<ApiResponse> deleteCategory(@PathVariable String category) {
         try {
-            List<ProductResponse> products = _categoryService.getAllProductsForCategory(category);
+            List<ProductResponse> products = _categoryService.getAllProductsForCategory(category).stream().map(Product::toProductResponse).toList();
             return GlobalSuccessHandler.handleSuccess("All products for category", products, HttpStatus.OK.value(), null);
         } catch (Exception e) {
             return GlobalExceptionHandler.handleException(e);

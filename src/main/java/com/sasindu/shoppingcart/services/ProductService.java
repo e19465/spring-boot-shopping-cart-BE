@@ -3,7 +3,6 @@ package com.sasindu.shoppingcart.services;
 import com.sasindu.shoppingcart.abstractions.IProductService;
 import com.sasindu.shoppingcart.dto.request.product.AddProductRequest;
 import com.sasindu.shoppingcart.dto.request.product.UpdateProductRequest;
-import com.sasindu.shoppingcart.dto.response.product.ProductResponse;
 import com.sasindu.shoppingcart.exceptions.NotFoundException;
 import com.sasindu.shoppingcart.helpers.ValidationHelper;
 import com.sasindu.shoppingcart.models.Category;
@@ -35,10 +34,10 @@ public class ProductService implements IProductService {
      * Add a new product.
      *
      * @param request Request of type AddProductRequest object containing product details.
-     * @return ProductResponse object containing the added product details.
+     * @return Product object containing the added product details.
      */
     @Override
-    public ProductResponse addProduct(AddProductRequest request) {
+    public Product addProduct(AddProductRequest request) {
         // check if the category exists in the database
         // idf yes, use it else create a new category
         try {
@@ -64,7 +63,7 @@ public class ProductService implements IProductService {
                     request.getDescription(),
                     category
             );
-            return _productRepository.save(newProduct).toProductResponse();
+            return _productRepository.save(newProduct);
         } catch (RuntimeException e) {
             throw e;
         } catch (Exception e) {
@@ -78,11 +77,11 @@ public class ProductService implements IProductService {
      *
      * @param request   UpdateProductRequest object containing the updated product details.
      * @param productId Long ID of the product to be updated.
-     * @return ProductResponse object containing the updated product details.
+     * @return Product object containing the updated product details.
      * @throws NotFoundException if the product is not found.
      */
     @Override
-    public ProductResponse updateProduct(UpdateProductRequest request, Long productId) {
+    public Product updateProduct(UpdateProductRequest request, Long productId) {
         try {
             // Validate the request body
             ValidationHelper.validateModelBinding(request);
@@ -100,7 +99,6 @@ public class ProductService implements IProductService {
                         return existingProduct;
                     })
                     .map(_productRepository::save)
-                    .map(Product::toProductResponse)
                     .orElseThrow(() -> new NotFoundException("Product not found"));
         } catch (RuntimeException e) {
             throw e;
@@ -113,14 +111,12 @@ public class ProductService implements IProductService {
     /**
      * Get all products.
      *
-     * @return List of ProductResponse objects containing product details.
+     * @return List of Product objects containing product details.
      */
     @Override
-    public List<ProductResponse> getAllProducts() {
+    public List<Product> getAllProducts() {
         try {
-            List<Product> products = _productRepository.findAll();
-            return products.stream()
-                    .map(Product::toProductResponse).toList();
+            return _productRepository.findAll();
         } catch (Exception e) {
             throw new RuntimeException("Failed to fetch products: " + e.getMessage(), e);
         }
@@ -131,15 +127,14 @@ public class ProductService implements IProductService {
      * Get a product by its ID.
      *
      * @param id Long ID of the product.
-     * @return ProductResponse object containing the product details.
+     * @return Product object containing the product details.
      * @throws NotFoundException if the product is not found.
      */
     @Override
-    public ProductResponse getProductById(Long id) {
+    public Product getProductById(Long id) {
         try {
-            Product product = _productRepository.findById(id)
+            return _productRepository.findById(id)
                     .orElseThrow(() -> new NotFoundException("Product not found"));
-            return product.toProductResponse();
         } catch (RuntimeException e) {
             throw e;
         } catch (Exception e) {
@@ -173,14 +168,12 @@ public class ProductService implements IProductService {
      * Get all products by category.
      *
      * @param category Category name of the products.
-     * @return List of ProductResponse objects containing product details.
+     * @return List of Product objects containing product details.
      */
     @Override
-    public List<ProductResponse> getProductsByCategory(String category) {
+    public List<Product> getProductsByCategory(String category) {
         try {
-            List<Product> products = _productRepository.findByCategoryName(category);
-            return products.stream()
-                    .map(Product::toProductResponse).toList();
+            return _productRepository.findByCategoryName(category);
         } catch (Exception e) {
             throw new RuntimeException("Failed to fetch products: " + e.getMessage(), e);
         }
@@ -194,10 +187,9 @@ public class ProductService implements IProductService {
      * @return List of ProductResponse objects containing product details.
      */
     @Override
-    public List<ProductResponse> getProductsByBrand(String brand) {
+    public List<Product> getProductsByBrand(String brand) {
         try {
-            List<Product> products = _productRepository.findByBrand(brand);
-            return products.stream().map(Product::toProductResponse).toList();
+            return _productRepository.findByBrand(brand);
         } catch (Exception e) {
             throw new RuntimeException("Failed to fetch products: " + e.getMessage(), e);
         }
@@ -209,13 +201,12 @@ public class ProductService implements IProductService {
      *
      * @param category Category name of the products.
      * @param brand    Brand name of the products.
-     * @return List of ProductResponse objects containing product details.
+     * @return List of Product objects containing product details.
      */
     @Override
-    public List<ProductResponse> getProductByCategoryAndBrand(String category, String brand) {
+    public List<Product> getProductByCategoryAndBrand(String category, String brand) {
         try {
-            List<Product> products = _productRepository.findByCategoryNameAndBrand(category, brand);
-            return products.stream().map(Product::toProductResponse).toList();
+            return _productRepository.findByCategoryNameAndBrand(category, brand);
         } catch (Exception e) {
             throw new RuntimeException("Failed to fetch products: " + e.getMessage(), e);
         }
@@ -226,13 +217,12 @@ public class ProductService implements IProductService {
      * Get products by name.
      *
      * @param name Name of the products.
-     * @return List of ProductResponse objects containing product details.
+     * @return List of Product objects containing product details.
      */
     @Override
-    public List<ProductResponse> getProductsByName(String name) {
+    public List<Product> getProductsByName(String name) {
         try {
-            List<Product> products = _productRepository.findByName(name);
-            return products.stream().map(Product::toProductResponse).toList();
+            return _productRepository.findByName(name);
         } catch (Exception e) {
             throw new RuntimeException("Failed to fetch products: " + e.getMessage(), e);
         }
@@ -244,13 +234,12 @@ public class ProductService implements IProductService {
      *
      * @param brand Brand name of the products.
      * @param name  Name of the products.
-     * @return List of ProductResponse objects containing product details.
+     * @return List of Product objects containing product details.
      */
     @Override
-    public List<ProductResponse> getProductsByBrandAndName(String brand, String name) {
+    public List<Product> getProductsByBrandAndName(String brand, String name) {
         try {
-            List<Product> products = _productRepository.findByBrandAndName(brand, name);
-            return products.stream().map(Product::toProductResponse).toList();
+            return _productRepository.findByBrandAndName(brand, name);
         } catch (Exception e) {
             throw new RuntimeException("Failed to fetch products: " + e.getMessage(), e);
         }
@@ -278,10 +267,10 @@ public class ProductService implements IProductService {
      * Get filtered products.
      *
      * @param filters A map containing all the filter parameters (category, brand, name, etc.)
-     * @return List of ProductResponse objects containing the filtered products.
+     * @return List of Product objects containing the filtered products.
      */
     @Override
-    public List<ProductResponse> getFilteredProducts(Map<String, String> filters) {
+    public List<Product> getFilteredProducts(Map<String, String> filters) {
         try {
             String category = filters.get("category");
             String brand = filters.get("brand");
@@ -292,7 +281,6 @@ public class ProductService implements IProductService {
                     .filter(product -> (category == null || product.getCategory().getName().equals(category)))
                     .filter(product -> (brand == null || product.getBrand().equals(brand)))
                     .filter(product -> (name == null || product.getName().contains(name)))
-                    .map(Product::toProductResponse)
                     .collect(Collectors.toList());
         } catch (Exception e) {
             throw new RuntimeException("Failed to filter products: " + e.getMessage(), e);

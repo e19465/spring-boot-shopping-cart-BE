@@ -1,7 +1,6 @@
 package com.sasindu.shoppingcart.abstractions;
 
-import com.sasindu.shoppingcart.dto.response.image.ImageResponse;
-import com.sasindu.shoppingcart.dto.response.image.ImageResponseWithoutBlob;
+import com.sasindu.shoppingcart.models.Image;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -16,9 +15,9 @@ public interface IImageService {
      * getImageById method is responsible for fetching an image by its id
      *
      * @param id Long value of the image id
-     * @return ImageResponse object containing the image details
+     * @return Image object containing the image details
      */
-    ImageResponse getImageById(Long id);
+    Image getImageById(Long id);
 
 
     /**
@@ -35,8 +34,9 @@ public interface IImageService {
      *
      * @param files     Files list of MultipartFile objects containing the image details
      * @param productId Long value of the product id
+     * @return List of Image objects containing the saved image details
      */
-    List<ImageResponseWithoutBlob> saveImages(List<MultipartFile> files, Long productId);
+    List<Image> saveImages(List<MultipartFile> files, Long productId);
 
 
     /**
@@ -44,7 +44,7 @@ public interface IImageService {
      *
      * @param file    MultipartFile object containing the image details
      * @param imageId Long value of the image id
-     * @return ImageResponse object containing the updated image details
+     * @return Image object containing the updated image details
      */
-    ImageResponse updateImage(MultipartFile file, Long imageId);
+    Image updateImage(MultipartFile file, Long imageId);
 }

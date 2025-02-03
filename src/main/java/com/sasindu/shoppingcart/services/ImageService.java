@@ -2,8 +2,6 @@ package com.sasindu.shoppingcart.services;
 
 import com.sasindu.shoppingcart.abstractions.IImageService;
 import com.sasindu.shoppingcart.constants.ApplicationConstants;
-import com.sasindu.shoppingcart.dto.response.image.ImageResponse;
-import com.sasindu.shoppingcart.dto.response.image.ImageResponseWithoutBlob;
 import com.sasindu.shoppingcart.exceptions.NotFoundException;
 import com.sasindu.shoppingcart.models.Image;
 import com.sasindu.shoppingcart.models.Product;
@@ -33,14 +31,13 @@ public class ImageService implements IImageService {
      * getImageById method is responsible for fetching an image by its id
      *
      * @param id Long value of the image id
-     * @return ImageResponse object containing the image details
+     * @return Image object containing the image details
      */
     @Override
-    public ImageResponse getImageById(Long id) {
+    public Image getImageById(Long id) {
         try {
-            Image image = _imageRepository.findById(id)
+            return _imageRepository.findById(id)
                     .orElseThrow(() -> new NotFoundException("No image found with id: " + id));
-            return image.toImageResponse();
         } catch (RuntimeException e) {
             throw e;
         } catch (Exception e) {
@@ -75,7 +72,7 @@ public class ImageService implements IImageService {
      * @param productId Long value of the product id
      */
     @Override
-    public List<ImageResponseWithoutBlob> saveImages(List<MultipartFile> files, Long productId) {
+    public List<Image> saveImages(List<MultipartFile> files, Long productId) {
         try {
             // Check if the product exists
             Product product = _productRepository.findById(productId)
@@ -101,7 +98,7 @@ public class ImageService implements IImageService {
 
                     // Save the image again to update with the correct download URL
                     _imageRepository.save(savedImage);
-                    return savedImage.toImageResponseWithoutBlob();
+                    return savedImage;
                 } catch (Exception e) {
                     throw new RuntimeException("Failed to save image: " + file.getOriginalFilename() + " due to " + e.getMessage(), e);
                 }
@@ -119,10 +116,10 @@ public class ImageService implements IImageService {
      *
      * @param file    MultipartFile object containing the image details
      * @param imageId Long value of the image id
-     * @return ImageResponse object containing the updated image details
+     * @return Image object containing the updated image details
      */
     @Override
-    public ImageResponse updateImage(MultipartFile file, Long imageId) {
+    public Image updateImage(MultipartFile file, Long imageId) {
         try {
 
             // Check if the image exists
@@ -134,7 +131,7 @@ public class ImageService implements IImageService {
             image.setFileType(file.getContentType());
             image.setImage(new SerialBlob(file.getBytes()));
             _imageRepository.save(image);
-            return image.toImageResponse();
+            return image;
         } catch (RuntimeException e) {
             throw e;
         } catch (Exception e) {

@@ -2,8 +2,8 @@ package com.sasindu.shoppingcart.abstractions;
 
 import com.sasindu.shoppingcart.dto.request.category.AddCategoryRequest;
 import com.sasindu.shoppingcart.dto.request.category.UpdateCategoryRequest;
-import com.sasindu.shoppingcart.dto.response.category.CategoryResponse;
-import com.sasindu.shoppingcart.dto.response.product.ProductResponse;
+import com.sasindu.shoppingcart.models.Category;
+import com.sasindu.shoppingcart.models.Product;
 
 import java.util.List;
 
@@ -16,34 +16,34 @@ public interface ICategoryService {
      * addCategory method is responsible for adding a new category to the database
      *
      * @param request AddCategoryRequest object containing the category details
-     * @return CategoryResponse object containing the added category details
+     * @return Category object containing the added category details
      */
-    CategoryResponse addCategory(AddCategoryRequest request);
+    Category addCategory(AddCategoryRequest request);
 
     /**
      * getCategoryById method is responsible for fetching a category by its id
      *
      * @param id Long value of the category id
-     * @return CategoryResponse object containing the category details
+     * @return Category object containing the category details
      */
-    CategoryResponse getCategoryById(Long id);
+    Category getCategoryById(Long id);
 
 
     /**
      * getCategoryByName method is responsible for fetching a category by its name
      *
      * @param name String value of the category name
-     * @return CategoryResponse object containing the category details
+     * @return Category object containing the category details
      */
-    CategoryResponse getCategoryByName(String name);
+    Category getCategoryByName(String name);
 
 
     /**
      * getAllCategories method is responsible for fetching all the categories
      *
-     * @return List of CategoryResponse objects containing the category details
+     * @return List of Category objects containing the category details
      */
-    List<CategoryResponse> getAllCategories();
+    List<Category> getAllCategories();
 
 
     /**
@@ -51,9 +51,9 @@ public interface ICategoryService {
      *
      * @param updateCategoryRequest UpdateCategoryRequest object containing the updated category details
      * @param id                    Long value of the category id
-     * @return CategoryResponse object containing the updated category details
+     * @return Category object containing the updated category details
      */
-    CategoryResponse updateCategory(UpdateCategoryRequest updateCategoryRequest, Long id);
+    Category updateCategory(UpdateCategoryRequest updateCategoryRequest, Long id);
 
 
     /**
@@ -68,7 +68,7 @@ public interface ICategoryService {
      * getAllProductsForCategory method is responsible for fetching all the products for a given category
      *
      * @param categoryName String value of the category name
-     * @return List of ProductResponse objects containing the product details
+     * @return List of Product objects containing the product details
      */
-    List<ProductResponse> getAllProductsForCategory(String categoryName);
+    List<Product> getAllProductsForCategory(String categoryName);
 }

@@ -9,6 +9,7 @@ import com.sasindu.shoppingcart.dto.response.product.ProductResponse;
 import com.sasindu.shoppingcart.helpers.ApiResponse;
 import com.sasindu.shoppingcart.helpers.GlobalExceptionHandler;
 import com.sasindu.shoppingcart.helpers.GlobalSuccessHandler;
+import com.sasindu.shoppingcart.models.Product;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,7 +38,7 @@ public class ProductController {
     @PostMapping("/create")
     public ResponseEntity<ApiResponse> saveProduct(@RequestBody AddProductRequest request) {
         try {
-            ProductResponse product = _productService.addProduct(request);
+            ProductResponse product = _productService.addProduct(request).toProductResponse();
             return GlobalSuccessHandler.handleSuccess("Product saved successfully", product, HttpStatus.CREATED.value(), null);
         } catch (Exception e) {
             return GlobalExceptionHandler.handleException(e);
@@ -54,7 +55,7 @@ public class ProductController {
     @GetMapping("/get-all")
     public ResponseEntity<ApiResponse> getAllProducts() {
         try {
-            List<ProductResponse> products = _productService.getAllProducts();
+            List<ProductResponse> products = _productService.getAllProducts().stream().map(Product::toProductResponse).toList();
             return GlobalSuccessHandler.handleSuccess("Products fetched successfully", products, HttpStatus.OK.value(), null);
         } catch (Exception e) {
             return GlobalExceptionHandler.handleException(e);
@@ -72,7 +73,7 @@ public class ProductController {
     @GetMapping("/find-by-id/{id}")
     public ResponseEntity<ApiResponse> getProductById(@PathVariable Long id) {
         try {
-            ProductResponse product = _productService.getProductById(id);
+            ProductResponse product = _productService.getProductById(id).toProductResponse();
             return GlobalSuccessHandler.handleSuccess("Product fetched successfully", product, HttpStatus.OK.value(), null);
         } catch (Exception e) {
             return GlobalExceptionHandler.handleException(e);
@@ -90,7 +91,7 @@ public class ProductController {
     @PutMapping("/update/{id}")
     public ResponseEntity<ApiResponse> updateProduct(@RequestBody UpdateProductRequest request, @PathVariable Long id) {
         try {
-            ProductResponse product = _productService.updateProduct(request, id);
+            ProductResponse product = _productService.updateProduct(request, id).toProductResponse();
             return GlobalSuccessHandler.handleSuccess("Product updated successfully", product, HttpStatus.OK.value(), null);
         } catch (Exception e) {
             return GlobalExceptionHandler.handleException(e);
@@ -125,13 +126,20 @@ public class ProductController {
     @GetMapping("/filter")
     public ResponseEntity<ApiResponse> getFilteredProducts(@RequestParam Map<String, String> filters) {
         try {
-            List<ProductResponse> products = _productService.getFilteredProducts(filters);
+            List<ProductResponse> products = _productService.getFilteredProducts(filters).stream().map(Product::toProductResponse).toList();
             return GlobalSuccessHandler.handleSuccess("Products fetched successfully", products, HttpStatus.OK.value(), null);
         } catch (Exception e) {
             return GlobalExceptionHandler.handleException(e);
         }
     }
 
+
+    /**
+     * Get products by category.
+     *
+     * @param filters A map containing all the filter parameters (category, brand, name, etc.)
+     * @return ApiResponse object containing the filtered products
+     */
     @GetMapping("/count")
     public ResponseEntity<ApiResponse> getProductsByCategory(@RequestParam Map<String, String> filters) {
         try {
