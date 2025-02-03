@@ -125,15 +125,14 @@ public class CartItemService implements ICartItemService {
 
 
     /**
-     * Save a cart item
+     * Delete all cart items by cart id
      *
-     * @param cartItem cart item to be saved
-     * @return the saved cart item
+     * @param cartId the id of the cart
      */
     @Override
-    public CartItem saveCartItem(CartItem cartItem) {
+    public void deleteAllByCartId(Long cartId) {
         try {
-            return _cartItemRepository.save(cartItem);
+            _cartItemRepository.deleteAllByCartId(cartId);
         } catch (RuntimeException e) {
             throw e;
         } catch (Exception e) {
@@ -143,14 +142,15 @@ public class CartItemService implements ICartItemService {
 
 
     /**
-     * Delete all cart items by cart id
+     * Save a cart item - This is for internal use
      *
-     * @param cartId the id of the cart
+     * @param cartItem cart item to be saved
+     * @return the saved cart item
      */
     @Override
-    public void deleteAllByCartId(Long cartId) {
+    public CartItem saveCartItem(CartItem cartItem) {
         try {
-            _cartItemRepository.deleteAllByCartId(cartId);
+            return _cartItemRepository.save(cartItem);
         } catch (RuntimeException e) {
             throw e;
         } catch (Exception e) {

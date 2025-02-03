@@ -1,6 +1,7 @@
 package com.sasindu.shoppingcart.models;
 
 
+import com.sasindu.shoppingcart.dto.response.cart.CartResponse;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -63,5 +64,19 @@ public class Cart {
                     return unitPrice.multiply(BigDecimal.valueOf(item.getQuantity()));
                 })
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+
+    /**
+     * Convert the cart to a cart response
+     *
+     * @return the cart response
+     */
+    public CartResponse toCartResponse() {
+        CartResponse response = new CartResponse();
+        response.setId(this.id);
+        response.setTotalAmount(this.totalAmount);
+        response.setCartItems(this.cartItems);
+        return response;
     }
 }

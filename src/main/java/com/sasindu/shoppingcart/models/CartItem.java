@@ -1,6 +1,7 @@
 package com.sasindu.shoppingcart.models;
 
 
+import com.sasindu.shoppingcart.dto.response.cartitem.CartItemResponse;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -34,8 +35,28 @@ public class CartItem {
     @JoinColumn(name = "cart_id", nullable = false)
     private Cart cart;
 
-    
+
+    /**
+     * Set the total price of the cart item
+     */
     public void setTotalPrice() {
         this.totalPrice = this.unitPrice.multiply(BigDecimal.valueOf(this.quantity));
+    }
+
+
+    /**
+     * Convert the cart item to a cart item response
+     *
+     * @return CartItemResponse
+     */
+    public CartItemResponse toCartItemResponse() {
+        CartItemResponse response = new CartItemResponse();
+        response.setId(this.id);
+        response.setQuantity(this.quantity);
+        response.setUnitPrice(this.unitPrice);
+        response.setTotalPrice(this.totalPrice);
+        response.setProduct(this.product);
+        response.setCartId(this.cart.getId());
+        return response;
     }
 }
