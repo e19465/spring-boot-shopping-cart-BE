@@ -1,5 +1,6 @@
 package com.sasindu.shoppingcart.dto.response.image;
 
+import com.sasindu.shoppingcart.dto.response.product.ProductResponse;
 import lombok.Data;
 
 @Data
@@ -8,5 +9,5 @@ public class ImageResponseWithoutBlob {
     private String fileName;
     private String fileType;
     private String downloadUrl;
-    private Long productId;
+    private ProductResponse product;
 }

@@ -2,6 +2,7 @@ package com.sasindu.shoppingcart.models;
 
 
 import com.sasindu.shoppingcart.dto.response.cart.CartResponse;
+import com.sasindu.shoppingcart.dto.response.cartitem.CartItemResponse;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -10,6 +11,7 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -76,7 +78,12 @@ public class Cart {
         CartResponse response = new CartResponse();
         response.setId(this.id);
         response.setTotalAmount(this.totalAmount);
-        response.setCartItems(this.cartItems);
+
+        // Map CartItem to CartItemResponse and set it to the CartResponse
+        Set<CartItemResponse> cartItemResponses = this.cartItems.stream()
+                .map(CartItem::toCartItemResponse)  // Convert CartItem to CartItemResponse
+                .collect(Collectors.toSet());
+        response.setCartItems(cartItemResponses);
         return response;
     }
 }

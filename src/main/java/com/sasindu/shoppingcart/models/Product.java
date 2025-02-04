@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -48,10 +49,17 @@ public class Product {
         response.setPrice(this.price);
         response.setInventory(this.inventory);
         response.setDescription(this.description);
-        response.setCategory(this.category.getName());
-        response.setImages(this.images.stream()
-                .map(Image::getDownloadUrl)
-                .collect(Collectors.toList()));
+        response.setCategory(this.category.toCategoryResponse());
+
+        // Check if images is null before trying to map and collect
+        if (this.images != null) {
+            response.setImages(this.images.stream()
+                    .map(Image::getDownloadUrl)
+                    .collect(Collectors.toList()));
+        } else {
+            response.setImages(Collections.emptyList());  // Set an empty list if images is null
+        }
+
         return response;
     }
 

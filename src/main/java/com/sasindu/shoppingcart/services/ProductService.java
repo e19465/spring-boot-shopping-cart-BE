@@ -5,7 +5,6 @@ import com.sasindu.shoppingcart.abstractions.IProductService;
 import com.sasindu.shoppingcart.dto.request.product.AddProductRequest;
 import com.sasindu.shoppingcart.dto.request.product.UpdateProductRequest;
 import com.sasindu.shoppingcart.exceptions.NotFoundException;
-import com.sasindu.shoppingcart.helpers.ValidationHelper;
 import com.sasindu.shoppingcart.models.Category;
 import com.sasindu.shoppingcart.models.Product;
 import com.sasindu.shoppingcart.repository.ProductRepository;
@@ -41,9 +40,6 @@ public class ProductService implements IProductService {
         // check if the category exists in the database
         // idf yes, use it else create a new category
         try {
-            // validate the request body
-            ValidationHelper.validateModelBinding(request);
-
             // check if the category already exists
             Category category = Optional.ofNullable(_categoryService.getCategoryByName(request.getCategory().getName()))
                     .orElseGet(() -> {
@@ -83,9 +79,6 @@ public class ProductService implements IProductService {
     @Override
     public Product updateProduct(UpdateProductRequest request, Long productId) {
         try {
-            // Validate the request body
-            ValidationHelper.validateModelBinding(request);
-
             // Check if the product exists
             return _productRepository.findById(productId)
                     .map(existingProduct -> {

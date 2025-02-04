@@ -11,6 +11,9 @@ import com.sasindu.shoppingcart.repository.CartRepository;
 import com.sasindu.shoppingcart.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.HashSet;
 
 @Service
 @RequiredArgsConstructor
@@ -53,37 +56,43 @@ public class CartItemService implements ICartItemService {
      * @param quantity  The quantity of the product
      */
     @Override
+    @Transactional
     public void addItemToCart(Long cartId, Long productId, int quantity) {
         try {
-            // 1. get the cart
-            // 2. get the product
-            // 3. check if product is already in the cart, if so increment the quantity
-            // 4. if not, add the product to the cart
+            // 1. Retrieve the cart and product
             Cart cart = getCartById(cartId);
             Product product = getProductById(productId);
 
-            cart.getCartItems().stream()
-                    .filter(cartItem -> cartItem.getProduct().getId().equals(productId))
-                    .findFirst()
-                    .ifPresentOrElse(item -> {
-                        item.setQuantity(item.getQuantity() + quantity);
-                        item.setTotalPrice();
-                        cart.updateTotalAmount();
-                        _cartRepository.save(cart);
-                        _cartItemRepository.save(item);
-                    }, () -> {
-                        CartItem cartItem = new CartItem();
-                        cartItem.setCart(cart);
-                        cartItem.setProduct(product);
-                        cartItem.setQuantity(quantity);
-                        cartItem.setUnitPrice(product.getPrice());
-                        cartItem.setTotalPrice();
-                        cart.addCartItem(cartItem);
-                        cart.updateTotalAmount();
-                        _cartRepository.save(cart);
-                        _cartItemRepository.save(cartItem);
-                    });
+            // Ensure cartItems is initialized
+            if (cart.getCartItems() == null) {
+                cart.setCartItems(new HashSet<>());  // Initialize an empty HashSet
+            }
 
+            // 2. Check if the product is already in the cart
+            CartItem existingCartItem = cart.getCartItems()
+                    .stream()
+                    .filter(item -> item.getProduct().getId().equals(productId))
+                    .findFirst()
+                    .orElse(null);
+
+            if (existingCartItem != null) {
+                // 3. If the product exists, update quantity and total price
+                existingCartItem.setQuantity(existingCartItem.getQuantity() + quantity);
+                existingCartItem.setTotalPrice();
+            } else {
+                // 4. If not, create a new cart item and add it to the cart
+                CartItem newCartItem = new CartItem();
+                newCartItem.setCart(cart);
+                newCartItem.setProduct(product);
+                newCartItem.setQuantity(quantity);
+                newCartItem.setUnitPrice(product.getPrice());
+                newCartItem.setTotalPrice();
+                cart.addCartItem(newCartItem);
+            }
+
+            // 5. Update the cart's total amount and persist changes
+            cart.updateTotalAmount();
+            _cartRepository.save(cart);  // Cascade will save CartItems if mapped correctly
         } catch (RuntimeException e) {
             throw e;
         } catch (Exception e) {
@@ -142,23 +151,6 @@ public class CartItemService implements ICartItemService {
             cart.updateTotalAmount();
             _cartRepository.save(cart);
             _cartItemRepository.save(cartItem);
-        } catch (RuntimeException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-
-    /**
-     * Delete all cart items by cart id
-     *
-     * @param cartId the id of the cart
-     */
-    @Override
-    public void deleteAllByCartId(Long cartId) {
-        try {
-            _cartItemRepository.deleteAllByCartId(cartId);
         } catch (RuntimeException e) {
             throw e;
         } catch (Exception e) {

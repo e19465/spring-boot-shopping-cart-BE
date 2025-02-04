@@ -40,12 +40,4 @@ public interface ICartItemService {
      * @return the saved cart item
      */
     CartItem saveCartItem(CartItem cartItem);
-
-
-    /**
-     * Delete all cart items by cart id
-     *
-     * @param cartId id of the cart
-     */
-    void deleteAllByCartId(Long cartId);
 }

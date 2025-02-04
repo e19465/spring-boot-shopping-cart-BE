@@ -9,6 +9,7 @@ import com.sasindu.shoppingcart.dto.response.product.ProductResponse;
 import com.sasindu.shoppingcart.helpers.ApiResponse;
 import com.sasindu.shoppingcart.helpers.GlobalExceptionHandler;
 import com.sasindu.shoppingcart.helpers.GlobalSuccessHandler;
+import com.sasindu.shoppingcart.helpers.ValidationHelper;
 import com.sasindu.shoppingcart.models.Product;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -38,6 +39,9 @@ public class ProductController {
     @PostMapping("/create")
     public ResponseEntity<ApiResponse> saveProduct(@RequestBody AddProductRequest request) {
         try {
+            // validate the request
+            ValidationHelper.validateModelBinding(request);
+
             ProductResponse product = _productService.addProduct(request).toProductResponse();
             return GlobalSuccessHandler.handleSuccess("Product saved successfully", product, HttpStatus.CREATED.value(), null);
         } catch (Exception e) {
@@ -91,6 +95,9 @@ public class ProductController {
     @PutMapping("/update/{id}")
     public ResponseEntity<ApiResponse> updateProduct(@RequestBody UpdateProductRequest request, @PathVariable Long id) {
         try {
+            // validate the request
+            ValidationHelper.validateModelBinding(request);
+
             ProductResponse product = _productService.updateProduct(request, id).toProductResponse();
             return GlobalSuccessHandler.handleSuccess("Product updated successfully", product, HttpStatus.OK.value(), null);
         } catch (Exception e) {

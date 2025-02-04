@@ -10,6 +10,7 @@ import com.sasindu.shoppingcart.dto.response.product.ProductResponse;
 import com.sasindu.shoppingcart.helpers.ApiResponse;
 import com.sasindu.shoppingcart.helpers.GlobalExceptionHandler;
 import com.sasindu.shoppingcart.helpers.GlobalSuccessHandler;
+import com.sasindu.shoppingcart.helpers.ValidationHelper;
 import com.sasindu.shoppingcart.models.Category;
 import com.sasindu.shoppingcart.models.Product;
 import lombok.RequiredArgsConstructor;
@@ -39,6 +40,9 @@ public class CategoryController {
     @PostMapping("/create")
     public ResponseEntity<ApiResponse> saveCategory(@RequestBody AddCategoryRequest request) {
         try {
+            // validate the request
+            ValidationHelper.validateModelBinding(request);
+
             CategoryResponse category = _categoryService.addCategory(request).toCategoryResponse();
             return GlobalSuccessHandler.handleSuccess("Category saved successfully", category, HttpStatus.CREATED.value(), null);
         } catch (Exception e) {
@@ -111,6 +115,9 @@ public class CategoryController {
     @PutMapping("/update/{id}")
     public ResponseEntity<ApiResponse> updateCategory(@RequestBody UpdateCategoryRequest request, @PathVariable Long id) {
         try {
+            // validate the request
+            ValidationHelper.validateModelBinding(request);
+
             CategoryResponse category = _categoryService.updateCategory(request, id).toCategoryResponse();
             return GlobalSuccessHandler.handleSuccess("Category updated successfully", category, HttpStatus.OK.value(), null);
         } catch (Exception e) {

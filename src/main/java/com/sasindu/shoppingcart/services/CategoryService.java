@@ -5,7 +5,6 @@ import com.sasindu.shoppingcart.dto.request.category.AddCategoryRequest;
 import com.sasindu.shoppingcart.dto.request.category.UpdateCategoryRequest;
 import com.sasindu.shoppingcart.exceptions.ConflictException;
 import com.sasindu.shoppingcart.exceptions.NotFoundException;
-import com.sasindu.shoppingcart.helpers.ValidationHelper;
 import com.sasindu.shoppingcart.models.Category;
 import com.sasindu.shoppingcart.models.Product;
 import com.sasindu.shoppingcart.repository.CategoryRepository;
@@ -36,9 +35,6 @@ public class CategoryService implements ICategoryService {
     @Override
     public Category addCategory(AddCategoryRequest request) {
         try {
-            // Validate the request body
-            ValidationHelper.validateModelBinding(request);
-
             // Check if the category already exists
             return Optional.of(request)
                     .filter(c -> !_categoryRepository.existsByName(c.getName()))
@@ -121,9 +117,6 @@ public class CategoryService implements ICategoryService {
     @Override
     public Category updateCategory(UpdateCategoryRequest request, Long id) {
         try {
-            // validate the request body
-            ValidationHelper.validateModelBinding(request);
-
             // Check if the category exists, if not throw an exception else update the category
             return _categoryRepository.findById(id)
                     .map(category -> {

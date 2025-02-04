@@ -4,11 +4,11 @@ package com.sasindu.shoppingcart.controllers;
 import com.sasindu.shoppingcart.abstractions.ICartItemService;
 import com.sasindu.shoppingcart.abstractions.ICartService;
 import com.sasindu.shoppingcart.constants.ApplicationConstants;
-import com.sasindu.shoppingcart.dto.request.cartitem.AddCartItemRequest;
 import com.sasindu.shoppingcart.dto.request.cartitem.UpdateCartItemRequest;
 import com.sasindu.shoppingcart.helpers.ApiResponse;
 import com.sasindu.shoppingcart.helpers.GlobalExceptionHandler;
 import com.sasindu.shoppingcart.helpers.GlobalSuccessHandler;
+import com.sasindu.shoppingcart.helpers.ValidationHelper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,21 +24,32 @@ public class CartItemController {
 
     /**
      * Add an item to the cart
+     * <p>
+     * //     * @param request The request object
      *
-     * @param request The request object
      * @return The response entity
      */
+    // After Auth Context is implemented, the request body of type AddCartItemRequest will be used
     @PostMapping("/add")
-    public ResponseEntity<ApiResponse> addItemToCart(@RequestBody AddCartItemRequest request) {
+    public ResponseEntity<ApiResponse> addItemToCart(
+            @RequestParam(required = false) Long cartId,
+            @RequestParam Long productId,
+            @RequestParam int quantity
+    ) {
         try {
-            Long cartId = request.getCartId();
+            // Validate the request
+//            ValidationHelper.validateModelBinding(request);
+
 
             if (cartId == null) {
                 cartId = _cartService.initializeNewCart();
             }
 
-            Long productId = request.getProductId();
-            int quantity = request.getQuantity();
+//            Long cartId = request.getCartId();
+//            Long productId = request.getProductId();
+//            int quantity = request.getQuantity();
+
+
             _cartItemService.addItemToCart(cartId, productId, quantity);
             return GlobalSuccessHandler.handleSuccess("Item added to the cart successfully", null, HttpStatus.CREATED.value(), null);
         } catch (Exception e) {
@@ -74,28 +85,14 @@ public class CartItemController {
     @PutMapping("/update")
     public ResponseEntity<ApiResponse> updateItemQuantity(@RequestBody UpdateCartItemRequest request) {
         try {
+            // Validate the request
+            ValidationHelper.validateModelBinding(request);
+
             Long cartId = request.getCartId();
             Long productId = request.getProductId();
             int quantity = request.getQuantity();
             _cartItemService.updateItemQuantity(cartId, productId, quantity);
             return GlobalSuccessHandler.handleSuccess("Item quantity updated successfully", null, HttpStatus.OK.value(), null);
-        } catch (Exception e) {
-            return GlobalExceptionHandler.handleException(e);
-        }
-    }
-
-
-    /**
-     * Clear all items in the cart
-     *
-     * @param cartId The id of the cart
-     * @return The response entity
-     */
-    @DeleteMapping("/clear-by-cart-id/{cartId}")
-    public ResponseEntity<ApiResponse> clearCartItemsByCartId(@PathVariable Long cartId) {
-        try {
-            _cartItemService.deleteAllByCartId(cartId);
-            return GlobalSuccessHandler.handleSuccess("Cart items cleared successfully", null, HttpStatus.OK.value(), null);
         } catch (Exception e) {
             return GlobalExceptionHandler.handleException(e);
         }
@@ -108,5 +105,4 @@ public class CartItemController {
  * 1. add item - POST - http://localhost:9091/api/v1/cart-item/add
  * 2. remove item - DELETE - http://localhost:9091/api/v1/cart-item/remove/{cartId}/{productId}
  * 3. update item - PUT - http://localhost:9091/api/v1/cart-item/update
- * 4. clear cart items by cart id - DELETE - http://localhost:9091/api/v1/cart-item/clear-by-cart-id/{cartId}
  */

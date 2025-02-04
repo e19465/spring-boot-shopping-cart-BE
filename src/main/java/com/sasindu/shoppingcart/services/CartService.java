@@ -7,9 +7,9 @@ import com.sasindu.shoppingcart.repository.CartItemRepository;
 import com.sasindu.shoppingcart.repository.CartRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.util.concurrent.atomic.AtomicLong;
 
 
 @Service
@@ -17,7 +17,7 @@ import java.util.concurrent.atomic.AtomicLong;
 public class CartService implements ICartService {
     private final CartRepository _cartRepository;
     private final CartItemRepository _cartItemRepository;
-    private final AtomicLong cartIdGenerator = new AtomicLong(0);
+//    private final AtomicLong cartIdGenerator = new AtomicLong(0);
 
     /**
      * Get the cart by id and calculate the total amount and set the total amount to the cart and return the cart
@@ -48,6 +48,7 @@ public class CartService implements ICartService {
      * @param id the id of the cart
      */
     @Override
+    @Transactional
     public void clearCart(Long id) {
         try {
             Cart cart = getCartById(id);
@@ -108,10 +109,9 @@ public class CartService implements ICartService {
     public Long initializeNewCart() {
         try {
             Cart cart = new Cart();
-            cart.setId(cartIdGenerator.incrementAndGet());
             cart.setTotalAmount(BigDecimal.ZERO);
-            _cartRepository.save(cart);
-            return cart.getId();
+            Cart savedCart = _cartRepository.save(cart);
+            return savedCart.getId();
         } catch (RuntimeException e) {
             throw e;
         } catch (Exception e) {

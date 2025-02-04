@@ -1,6 +1,6 @@
 package com.sasindu.shoppingcart.dto.response.cart;
 
-import com.sasindu.shoppingcart.models.CartItem;
+import com.sasindu.shoppingcart.dto.response.cartitem.CartItemResponse;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -10,5 +10,5 @@ import java.util.Set;
 public class CartResponse {
     private Long id;
     private BigDecimal totalAmount = BigDecimal.ZERO;
-    private Set<CartItem> cartItems;
+    private Set<CartItemResponse> cartItems;
 }

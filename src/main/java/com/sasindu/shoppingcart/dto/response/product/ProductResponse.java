@@ -1,5 +1,6 @@
 package com.sasindu.shoppingcart.dto.response.product;
 
+import com.sasindu.shoppingcart.dto.response.category.CategoryResponse;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -15,5 +16,5 @@ public class ProductResponse {
     private String description;
     private String imageUrl;
     private List<String> images;
-    private String category;
+    private CategoryResponse category;
 }

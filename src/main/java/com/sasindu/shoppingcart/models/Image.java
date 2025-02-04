@@ -43,7 +43,7 @@ public class Image {
         response.setFileType(this.fileType);
         response.setDownloadUrl(this.downloadUrl);
         response.setImage(this.image);
-        response.setProductId(this.product.getId());
+        response.setProduct(this.product.toProductResponse());
         return response;
     }
 
@@ -54,7 +54,7 @@ public class Image {
         response.setFileName(this.fileName);
         response.setFileType(this.fileType);
         response.setDownloadUrl(this.downloadUrl);
-        response.setProductId(this.product.getId());
+        response.setProduct(this.product.toProductResponse());
         return response;
     }
 }

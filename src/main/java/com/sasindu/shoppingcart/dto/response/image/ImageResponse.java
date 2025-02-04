@@ -1,5 +1,6 @@
 package com.sasindu.shoppingcart.dto.response.image;
 
+import com.sasindu.shoppingcart.dto.response.product.ProductResponse;
 import lombok.Data;
 
 import java.sql.Blob;
@@ -11,5 +12,5 @@ public class ImageResponse {
     private String fileType;
     private String downloadUrl;
     private Blob image;
-    private Long productId;
+    private ProductResponse product;
 }
