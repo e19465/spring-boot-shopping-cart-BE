@@ -1,9 +1,9 @@
 package com.sasindu.shoppingcart.services;
 
-import com.sasindu.shoppingcart.abstractions.ICartItemService;
 import com.sasindu.shoppingcart.abstractions.ICartService;
 import com.sasindu.shoppingcart.exceptions.NotFoundException;
 import com.sasindu.shoppingcart.models.Cart;
+import com.sasindu.shoppingcart.repository.CartItemRepository;
 import com.sasindu.shoppingcart.repository.CartRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,7 +16,7 @@ import java.util.concurrent.atomic.AtomicLong;
 @RequiredArgsConstructor
 public class CartService implements ICartService {
     private final CartRepository _cartRepository;
-    private final ICartItemService _cartItemService;
+    private final CartItemRepository _cartItemRepository;
     private final AtomicLong cartIdGenerator = new AtomicLong(0);
 
     /**
@@ -51,7 +51,7 @@ public class CartService implements ICartService {
     public void clearCart(Long id) {
         try {
             Cart cart = getCartById(id);
-            _cartItemService.deleteAllByCartId(id);
+            _cartItemRepository.deleteAllByCartId(id);
             cart.getCartItems().clear();
             _cartRepository.deleteById(id);
         } catch (RuntimeException e) {

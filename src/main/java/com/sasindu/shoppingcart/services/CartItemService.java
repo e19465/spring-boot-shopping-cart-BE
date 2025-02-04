@@ -2,13 +2,13 @@ package com.sasindu.shoppingcart.services;
 
 
 import com.sasindu.shoppingcart.abstractions.ICartItemService;
-import com.sasindu.shoppingcart.abstractions.ICartService;
-import com.sasindu.shoppingcart.abstractions.IProductService;
 import com.sasindu.shoppingcart.exceptions.NotFoundException;
 import com.sasindu.shoppingcart.models.Cart;
 import com.sasindu.shoppingcart.models.CartItem;
 import com.sasindu.shoppingcart.models.Product;
 import com.sasindu.shoppingcart.repository.CartItemRepository;
+import com.sasindu.shoppingcart.repository.CartRepository;
+import com.sasindu.shoppingcart.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -16,9 +16,34 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class CartItemService implements ICartItemService {
     private final CartItemRepository _cartItemRepository;
-    private final ICartService _cartService;
-    private final IProductService _productService;
+    private final CartRepository _cartRepository;
+    private final ProductRepository _productRepository;
 
+
+    /**
+     * Get a cart by id - for internal use in cart item service
+     *
+     * @param cartId The id of the cart
+     * @return The cart
+     * @throws NotFoundException if the cart is not found
+     */
+    private Cart getCartById(Long cartId) {
+        return _cartRepository.findById(cartId)
+                .orElseThrow(() -> new NotFoundException("Cart not found"));
+    }
+
+
+    /**
+     * Get a product by id - for internal use in cart item service
+     *
+     * @param productId The id of the product
+     * @return The product
+     * @throws NotFoundException if the product is not found
+     */
+    private Product getProductById(Long productId) {
+        return _productRepository.findById(productId)
+                .orElseThrow(() -> new NotFoundException("Product not found"));
+    }
 
     /**
      * Add an item to the cart
@@ -34,8 +59,8 @@ public class CartItemService implements ICartItemService {
             // 2. get the product
             // 3. check if product is already in the cart, if so increment the quantity
             // 4. if not, add the product to the cart
-            Cart cart = _cartService.getCartById(cartId);
-            Product product = _productService.getProductById(productId);
+            Cart cart = getCartById(cartId);
+            Product product = getProductById(productId);
 
             cart.getCartItems().stream()
                     .filter(cartItem -> cartItem.getProduct().getId().equals(productId))
@@ -44,7 +69,7 @@ public class CartItemService implements ICartItemService {
                         item.setQuantity(item.getQuantity() + quantity);
                         item.setTotalPrice();
                         cart.updateTotalAmount();
-                        _cartService.saveCart(cart);
+                        _cartRepository.save(cart);
                         _cartItemRepository.save(item);
                     }, () -> {
                         CartItem cartItem = new CartItem();
@@ -55,7 +80,7 @@ public class CartItemService implements ICartItemService {
                         cartItem.setTotalPrice();
                         cart.addCartItem(cartItem);
                         cart.updateTotalAmount();
-                        _cartService.saveCart(cart);
+                        _cartRepository.save(cart);
                         _cartItemRepository.save(cartItem);
                     });
 
@@ -76,7 +101,7 @@ public class CartItemService implements ICartItemService {
     @Override
     public void removeItemFromCart(Long cartId, Long productId) {
         try {
-            Cart cart = _cartService.getCartById(cartId);
+            Cart cart = getCartById(cartId);
             CartItem cartItem = _cartItemRepository.findByCartIdAndProductId(cartId, productId);
 
             if (cartItem == null) {
@@ -85,7 +110,8 @@ public class CartItemService implements ICartItemService {
 
             cart.removeCartItem(cartItem);
             _cartItemRepository.delete(cartItem);
-            _cartService.saveCart(cart);
+            cart.updateTotalAmount();
+            _cartRepository.save(cart);
         } catch (RuntimeException e) {
             throw e;
         } catch (Exception e) {
@@ -104,7 +130,7 @@ public class CartItemService implements ICartItemService {
     @Override
     public void updateItemQuantity(Long cartId, Long productId, int quantity) {
         try {
-            Cart cart = _cartService.getCartById(cartId);
+            Cart cart = getCartById(cartId);
             CartItem cartItem = _cartItemRepository.findByCartIdAndProductId(cartId, productId);
 
             if (cartItem == null) {
@@ -114,7 +140,7 @@ public class CartItemService implements ICartItemService {
             cartItem.setQuantity(quantity);
             cartItem.setTotalPrice();
             cart.updateTotalAmount();
-            _cartService.saveCart(cart);
+            _cartRepository.save(cart);
             _cartItemRepository.save(cartItem);
         } catch (RuntimeException e) {
             throw e;
