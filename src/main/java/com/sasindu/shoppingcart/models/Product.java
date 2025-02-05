@@ -1,6 +1,6 @@
 package com.sasindu.shoppingcart.models;
 
-import com.sasindu.shoppingcart.dto.response.product.ProductResponse;
+import com.sasindu.shoppingcart.abstractions.dto.response.product.ProductResponse;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -34,7 +34,7 @@ public class Product {
     // One product can have multiple images
     // when product is deleted, all images related to that product should be deleted
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Image> images;
+    private List<Image> images = Collections.emptyList();
 
     @ManyToOne
     @JoinColumn(name = "category_id", nullable = false)
@@ -51,14 +51,9 @@ public class Product {
         response.setDescription(this.description);
         response.setCategory(this.category.toCategoryResponse());
 
-        // Check if images is null before trying to map and collect
-        if (this.images != null) {
-            response.setImages(this.images.stream()
-                    .map(Image::getDownloadUrl)
-                    .collect(Collectors.toList()));
-        } else {
-            response.setImages(Collections.emptyList());  // Set an empty list if images is null
-        }
+        response.setImages(this.images.stream()
+                .map(Image::getDownloadUrl)
+                .collect(Collectors.toList()));
 
         return response;
     }

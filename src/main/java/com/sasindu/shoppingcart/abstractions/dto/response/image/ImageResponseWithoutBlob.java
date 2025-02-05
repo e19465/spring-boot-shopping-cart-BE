@@ -1,6 +1,6 @@
-package com.sasindu.shoppingcart.dto.response.image;
+package com.sasindu.shoppingcart.abstractions.dto.response.image;
 
-import com.sasindu.shoppingcart.dto.response.product.ProductResponse;
+import com.sasindu.shoppingcart.abstractions.dto.response.product.ProductResponse;
 import lombok.Data;
 
 @Data

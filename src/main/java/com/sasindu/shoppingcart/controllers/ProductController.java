@@ -1,11 +1,11 @@
 package com.sasindu.shoppingcart.controllers;
 
 
-import com.sasindu.shoppingcart.abstractions.IProductService;
+import com.sasindu.shoppingcart.abstractions.dto.request.product.AddProductRequest;
+import com.sasindu.shoppingcart.abstractions.dto.request.product.UpdateProductRequest;
+import com.sasindu.shoppingcart.abstractions.dto.response.product.ProductResponse;
+import com.sasindu.shoppingcart.abstractions.interfaces.IProductService;
 import com.sasindu.shoppingcart.constants.ApplicationConstants;
-import com.sasindu.shoppingcart.dto.request.product.AddProductRequest;
-import com.sasindu.shoppingcart.dto.request.product.UpdateProductRequest;
-import com.sasindu.shoppingcart.dto.response.product.ProductResponse;
 import com.sasindu.shoppingcart.helpers.ApiResponse;
 import com.sasindu.shoppingcart.helpers.GlobalExceptionHandler;
 import com.sasindu.shoppingcart.helpers.GlobalSuccessHandler;

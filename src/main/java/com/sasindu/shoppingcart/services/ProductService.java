@@ -1,9 +1,9 @@
 package com.sasindu.shoppingcart.services;
 
-import com.sasindu.shoppingcart.abstractions.ICategoryService;
-import com.sasindu.shoppingcart.abstractions.IProductService;
-import com.sasindu.shoppingcart.dto.request.product.AddProductRequest;
-import com.sasindu.shoppingcart.dto.request.product.UpdateProductRequest;
+import com.sasindu.shoppingcart.abstractions.dto.request.product.AddProductRequest;
+import com.sasindu.shoppingcart.abstractions.dto.request.product.UpdateProductRequest;
+import com.sasindu.shoppingcart.abstractions.interfaces.ICategoryService;
+import com.sasindu.shoppingcart.abstractions.interfaces.IProductService;
 import com.sasindu.shoppingcart.exceptions.NotFoundException;
 import com.sasindu.shoppingcart.models.Category;
 import com.sasindu.shoppingcart.models.Product;

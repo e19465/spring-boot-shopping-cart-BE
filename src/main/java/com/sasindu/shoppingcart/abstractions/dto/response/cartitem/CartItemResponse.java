@@ -1,7 +1,7 @@
-package com.sasindu.shoppingcart.dto.response.cartitem;
+package com.sasindu.shoppingcart.abstractions.dto.response.cartitem;
 
 
-import com.sasindu.shoppingcart.dto.response.product.ProductResponse;
+import com.sasindu.shoppingcart.abstractions.dto.response.product.ProductResponse;
 import lombok.Data;
 
 import java.math.BigDecimal;

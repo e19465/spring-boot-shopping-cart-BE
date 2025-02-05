@@ -1,7 +1,7 @@
-package com.sasindu.shoppingcart.abstractions;
+package com.sasindu.shoppingcart.abstractions.interfaces;
 
-import com.sasindu.shoppingcart.dto.request.category.AddCategoryRequest;
-import com.sasindu.shoppingcart.dto.request.category.UpdateCategoryRequest;
+import com.sasindu.shoppingcart.abstractions.dto.request.category.AddCategoryRequest;
+import com.sasindu.shoppingcart.abstractions.dto.request.category.UpdateCategoryRequest;
 import com.sasindu.shoppingcart.models.Category;
 import com.sasindu.shoppingcart.models.Product;
 

@@ -1,7 +1,7 @@
-package com.sasindu.shoppingcart.abstractions;
+package com.sasindu.shoppingcart.abstractions.interfaces;
 
-import com.sasindu.shoppingcart.dto.request.product.AddProductRequest;
-import com.sasindu.shoppingcart.dto.request.product.UpdateProductRequest;
+import com.sasindu.shoppingcart.abstractions.dto.request.product.AddProductRequest;
+import com.sasindu.shoppingcart.abstractions.dto.request.product.UpdateProductRequest;
 import com.sasindu.shoppingcart.models.Product;
 
 import java.util.List;

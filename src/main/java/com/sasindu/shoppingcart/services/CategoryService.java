@@ -1,8 +1,8 @@
 package com.sasindu.shoppingcart.services;
 
-import com.sasindu.shoppingcart.abstractions.ICategoryService;
-import com.sasindu.shoppingcart.dto.request.category.AddCategoryRequest;
-import com.sasindu.shoppingcart.dto.request.category.UpdateCategoryRequest;
+import com.sasindu.shoppingcart.abstractions.dto.request.category.AddCategoryRequest;
+import com.sasindu.shoppingcart.abstractions.dto.request.category.UpdateCategoryRequest;
+import com.sasindu.shoppingcart.abstractions.interfaces.ICategoryService;
 import com.sasindu.shoppingcart.exceptions.ConflictException;
 import com.sasindu.shoppingcart.exceptions.NotFoundException;
 import com.sasindu.shoppingcart.models.Category;

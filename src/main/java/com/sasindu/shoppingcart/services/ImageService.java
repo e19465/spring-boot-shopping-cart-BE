@@ -1,7 +1,7 @@
 package com.sasindu.shoppingcart.services;
 
-import com.sasindu.shoppingcart.abstractions.IImageService;
-import com.sasindu.shoppingcart.abstractions.IProductService;
+import com.sasindu.shoppingcart.abstractions.interfaces.IImageService;
+import com.sasindu.shoppingcart.abstractions.interfaces.IProductService;
 import com.sasindu.shoppingcart.constants.ApplicationConstants;
 import com.sasindu.shoppingcart.exceptions.NotFoundException;
 import com.sasindu.shoppingcart.models.Image;

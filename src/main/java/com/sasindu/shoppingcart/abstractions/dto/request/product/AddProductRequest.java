@@ -1,4 +1,4 @@
-package com.sasindu.shoppingcart.dto.request.product;
+package com.sasindu.shoppingcart.abstractions.dto.request.product;
 
 import com.sasindu.shoppingcart.models.Category;
 import jakarta.validation.constraints.NotNull;

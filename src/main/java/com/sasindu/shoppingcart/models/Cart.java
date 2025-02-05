@@ -1,8 +1,8 @@
 package com.sasindu.shoppingcart.models;
 
 
-import com.sasindu.shoppingcart.dto.response.cart.CartResponse;
-import com.sasindu.shoppingcart.dto.response.cartitem.CartItemResponse;
+import com.sasindu.shoppingcart.abstractions.dto.response.cart.CartResponse;
+import com.sasindu.shoppingcart.abstractions.dto.response.cartitem.CartItemResponse;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -27,7 +28,7 @@ public class Cart {
     private BigDecimal totalAmount = BigDecimal.ZERO;
 
     @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<CartItem> cartItems;
+    private Set<CartItem> cartItems = new HashSet<>();
 
     /**
      * Add a cart item to the cart

@@ -1,11 +1,12 @@
 package com.sasindu.shoppingcart.models;
 
-import com.sasindu.shoppingcart.dto.response.category.CategoryResponse;
+import com.sasindu.shoppingcart.abstractions.dto.response.category.CategoryResponse;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Collections;
 import java.util.List;
 
 
@@ -23,7 +24,7 @@ public class Category {
     private String name;
 
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Product> products;
+    private List<Product> products = Collections.emptyList();
 
     public Category(String name) {
         this.name = name;

@@ -1,6 +1,6 @@
 package com.sasindu.shoppingcart.services;
 
-import com.sasindu.shoppingcart.abstractions.ICartService;
+import com.sasindu.shoppingcart.abstractions.interfaces.ICartService;
 import com.sasindu.shoppingcart.exceptions.NotFoundException;
 import com.sasindu.shoppingcart.models.Cart;
 import com.sasindu.shoppingcart.repository.CartItemRepository;

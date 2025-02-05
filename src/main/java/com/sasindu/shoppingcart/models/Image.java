@@ -1,7 +1,7 @@
 package com.sasindu.shoppingcart.models;
 
-import com.sasindu.shoppingcart.dto.response.image.ImageResponse;
-import com.sasindu.shoppingcart.dto.response.image.ImageResponseWithoutBlob;
+import com.sasindu.shoppingcart.abstractions.dto.response.image.ImageResponse;
+import com.sasindu.shoppingcart.abstractions.dto.response.image.ImageResponseWithoutBlob;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

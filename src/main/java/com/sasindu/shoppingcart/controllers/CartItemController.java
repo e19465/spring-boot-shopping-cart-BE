@@ -1,10 +1,10 @@
 package com.sasindu.shoppingcart.controllers;
 
 
-import com.sasindu.shoppingcart.abstractions.ICartItemService;
-import com.sasindu.shoppingcart.abstractions.ICartService;
+import com.sasindu.shoppingcart.abstractions.dto.request.cartitem.UpdateCartItemRequest;
+import com.sasindu.shoppingcart.abstractions.interfaces.ICartItemService;
+import com.sasindu.shoppingcart.abstractions.interfaces.ICartService;
 import com.sasindu.shoppingcart.constants.ApplicationConstants;
-import com.sasindu.shoppingcart.dto.request.cartitem.UpdateCartItemRequest;
 import com.sasindu.shoppingcart.helpers.ApiResponse;
 import com.sasindu.shoppingcart.helpers.GlobalExceptionHandler;
 import com.sasindu.shoppingcart.helpers.GlobalSuccessHandler;

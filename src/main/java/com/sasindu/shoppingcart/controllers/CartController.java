@@ -1,8 +1,8 @@
 package com.sasindu.shoppingcart.controllers;
 
-import com.sasindu.shoppingcart.abstractions.ICartService;
+import com.sasindu.shoppingcart.abstractions.dto.response.cart.CartResponse;
+import com.sasindu.shoppingcart.abstractions.interfaces.ICartService;
 import com.sasindu.shoppingcart.constants.ApplicationConstants;
-import com.sasindu.shoppingcart.dto.response.cart.CartResponse;
 import com.sasindu.shoppingcart.helpers.ApiResponse;
 import com.sasindu.shoppingcart.helpers.GlobalExceptionHandler;
 import com.sasindu.shoppingcart.helpers.GlobalSuccessHandler;

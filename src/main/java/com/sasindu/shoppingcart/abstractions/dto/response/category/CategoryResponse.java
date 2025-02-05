@@ -1,8 +1,6 @@
-package com.sasindu.shoppingcart.dto.response.category;
+package com.sasindu.shoppingcart.abstractions.dto.response.category;
 
 import lombok.Data;
-
-import java.util.List;
 
 @Data
 public class CategoryResponse {

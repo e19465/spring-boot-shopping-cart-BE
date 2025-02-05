@@ -1,12 +1,12 @@
 package com.sasindu.shoppingcart.controllers;
 
 
-import com.sasindu.shoppingcart.abstractions.ICategoryService;
+import com.sasindu.shoppingcart.abstractions.dto.request.category.AddCategoryRequest;
+import com.sasindu.shoppingcart.abstractions.dto.request.category.UpdateCategoryRequest;
+import com.sasindu.shoppingcart.abstractions.dto.response.category.CategoryResponse;
+import com.sasindu.shoppingcart.abstractions.dto.response.product.ProductResponse;
+import com.sasindu.shoppingcart.abstractions.interfaces.ICategoryService;
 import com.sasindu.shoppingcart.constants.ApplicationConstants;
-import com.sasindu.shoppingcart.dto.request.category.AddCategoryRequest;
-import com.sasindu.shoppingcart.dto.request.category.UpdateCategoryRequest;
-import com.sasindu.shoppingcart.dto.response.category.CategoryResponse;
-import com.sasindu.shoppingcart.dto.response.product.ProductResponse;
 import com.sasindu.shoppingcart.helpers.ApiResponse;
 import com.sasindu.shoppingcart.helpers.GlobalExceptionHandler;
 import com.sasindu.shoppingcart.helpers.GlobalSuccessHandler;

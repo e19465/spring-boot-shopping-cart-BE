@@ -1,4 +1,4 @@
-package com.sasindu.shoppingcart.abstractions;
+package com.sasindu.shoppingcart.abstractions.interfaces;
 
 import com.sasindu.shoppingcart.models.CartItem;
 

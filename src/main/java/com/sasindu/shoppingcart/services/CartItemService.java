@@ -1,7 +1,7 @@
 package com.sasindu.shoppingcart.services;
 
 
-import com.sasindu.shoppingcart.abstractions.ICartItemService;
+import com.sasindu.shoppingcart.abstractions.interfaces.ICartItemService;
 import com.sasindu.shoppingcart.exceptions.NotFoundException;
 import com.sasindu.shoppingcart.models.Cart;
 import com.sasindu.shoppingcart.models.CartItem;
@@ -12,8 +12,6 @@ import com.sasindu.shoppingcart.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.HashSet;
 
 @Service
 @RequiredArgsConstructor
@@ -31,8 +29,14 @@ public class CartItemService implements ICartItemService {
      * @throws NotFoundException if the cart is not found
      */
     private Cart getCartById(Long cartId) {
-        return _cartRepository.findById(cartId)
-                .orElseThrow(() -> new NotFoundException("Cart not found"));
+        try {
+            return _cartRepository.findById(cartId)
+                    .orElseThrow(() -> new NotFoundException("Cart not found"));
+        } catch (RuntimeException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
 
@@ -44,8 +48,14 @@ public class CartItemService implements ICartItemService {
      * @throws NotFoundException if the product is not found
      */
     private Product getProductById(Long productId) {
-        return _productRepository.findById(productId)
-                .orElseThrow(() -> new NotFoundException("Product not found"));
+        try {
+            return _productRepository.findById(productId)
+                    .orElseThrow(() -> new NotFoundException("Product not found"));
+        } catch (RuntimeException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -62,11 +72,6 @@ public class CartItemService implements ICartItemService {
             // 1. Retrieve the cart and product
             Cart cart = getCartById(cartId);
             Product product = getProductById(productId);
-
-            // Ensure cartItems is initialized
-            if (cart.getCartItems() == null) {
-                cart.setCartItems(new HashSet<>());  // Initialize an empty HashSet
-            }
 
             // 2. Check if the product is already in the cart
             CartItem existingCartItem = cart.getCartItems()

@@ -1,4 +1,4 @@
-package com.sasindu.shoppingcart.dto.request.cartitem;
+package com.sasindu.shoppingcart.abstractions.dto.request.cartitem;
 
 
 import lombok.Data;
