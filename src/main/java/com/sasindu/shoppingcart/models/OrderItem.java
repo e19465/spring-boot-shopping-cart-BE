@@ -1,5 +1,6 @@
 package com.sasindu.shoppingcart.models;
 
+import com.sasindu.shoppingcart.abstractions.dto.response.orderitem.OrderItemResponseDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -20,10 +21,10 @@ public class OrderItem {
 
     private int quantity;
 
-    private BigDecimal price;
+    private BigDecimal price = BigDecimal.ZERO;
 
     @ManyToOne
-    @JoinColumn(name = "product_id", nullable = false)
+    @JoinColumn(name = "order_id", nullable = false)
     private Order order;
 
     @ManyToOne
@@ -40,5 +41,21 @@ public class OrderItem {
         this.product = product;
         this.quantity = quantity;
         this.price = price;
+    }
+
+
+    /**
+     * Convert OrderItem entity to OrderItemResponse object
+     *
+     * @return the response object
+     */
+    public OrderItemResponseDto toOrderItemResponse() {
+        OrderItemResponseDto response = new OrderItemResponseDto();
+        response.setId(this.id);
+        response.setQuantity(this.quantity);
+        response.setPrice(this.price);
+        response.setOrder(this.order.toOrderResponse());
+        response.setProduct(this.product.toProductResponse());
+        return response;
     }
 }

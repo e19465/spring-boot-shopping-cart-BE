@@ -1,7 +1,7 @@
 package com.sasindu.shoppingcart.abstractions.interfaces;
 
-import com.sasindu.shoppingcart.abstractions.dto.request.product.AddProductRequest;
-import com.sasindu.shoppingcart.abstractions.dto.request.product.UpdateProductRequest;
+import com.sasindu.shoppingcart.abstractions.dto.request.product.AddProductRequestDto;
+import com.sasindu.shoppingcart.abstractions.dto.request.product.UpdateProductRequestDto;
 import com.sasindu.shoppingcart.models.Product;
 
 import java.util.List;
@@ -19,7 +19,7 @@ public interface IProductService {
      * @param addProductRequest Request object containing product details.
      * @return Product object containing the added product details.
      */
-    Product addProduct(AddProductRequest addProductRequest);
+    Product addProduct(AddProductRequestDto addProductRequest);
 
 
     /**
@@ -46,7 +46,7 @@ public interface IProductService {
      * @param productId ID of the product to be updated.
      * @return Product object containing the updated product details.
      */
-    Product updateProduct(UpdateProductRequest product, Long productId);
+    Product updateProduct(UpdateProductRequestDto product, Long productId);
 
 
     /**

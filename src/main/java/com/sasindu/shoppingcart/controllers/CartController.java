@@ -1,6 +1,6 @@
 package com.sasindu.shoppingcart.controllers;
 
-import com.sasindu.shoppingcart.abstractions.dto.response.cart.CartResponse;
+import com.sasindu.shoppingcart.abstractions.dto.response.cart.CartResponseDto;
 import com.sasindu.shoppingcart.abstractions.interfaces.ICartService;
 import com.sasindu.shoppingcart.constants.ApplicationConstants;
 import com.sasindu.shoppingcart.helpers.ApiResponse;
@@ -30,7 +30,7 @@ public class CartController {
     @GetMapping("/find-by-id/{id}")
     public ResponseEntity<ApiResponse> getCartById(@PathVariable Long id) {
         try {
-            CartResponse cart = _cartService.getCartById(id).toCartResponse();
+            CartResponseDto cart = _cartService.getCartById(id).toCartResponse();
             return GlobalSuccessHandler.handleSuccess("Cart fetched successfully", cart, HttpStatus.OK.value(), null);
         } catch (Exception e) {
             return GlobalExceptionHandler.handleException(e);

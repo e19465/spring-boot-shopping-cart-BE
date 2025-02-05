@@ -1,7 +1,7 @@
 package com.sasindu.shoppingcart.controllers;
 
 
-import com.sasindu.shoppingcart.abstractions.dto.request.cartitem.UpdateCartItemRequest;
+import com.sasindu.shoppingcart.abstractions.dto.request.cartitem.UpdateCartItemRequestDto;
 import com.sasindu.shoppingcart.abstractions.interfaces.ICartItemService;
 import com.sasindu.shoppingcart.abstractions.interfaces.ICartService;
 import com.sasindu.shoppingcart.constants.ApplicationConstants;
@@ -83,7 +83,7 @@ public class CartItemController {
      * @return The response entity
      */
     @PutMapping("/update")
-    public ResponseEntity<ApiResponse> updateItemQuantity(@RequestBody UpdateCartItemRequest request) {
+    public ResponseEntity<ApiResponse> updateItemQuantity(@RequestBody UpdateCartItemRequestDto request) {
         try {
             // Validate the request
             ValidationHelper.validateModelBinding(request);

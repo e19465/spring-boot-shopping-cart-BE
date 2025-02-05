@@ -1,9 +1,9 @@
 package com.sasindu.shoppingcart.controllers;
 
 
-import com.sasindu.shoppingcart.abstractions.dto.request.product.AddProductRequest;
-import com.sasindu.shoppingcart.abstractions.dto.request.product.UpdateProductRequest;
-import com.sasindu.shoppingcart.abstractions.dto.response.product.ProductResponse;
+import com.sasindu.shoppingcart.abstractions.dto.request.product.AddProductRequestDto;
+import com.sasindu.shoppingcart.abstractions.dto.request.product.UpdateProductRequestDto;
+import com.sasindu.shoppingcart.abstractions.dto.response.product.ProductResponseDto;
 import com.sasindu.shoppingcart.abstractions.interfaces.IProductService;
 import com.sasindu.shoppingcart.constants.ApplicationConstants;
 import com.sasindu.shoppingcart.helpers.ApiResponse;
@@ -37,12 +37,12 @@ public class ProductController {
      * @return ApiResponse object containing the response details
      */
     @PostMapping("/create")
-    public ResponseEntity<ApiResponse> saveProduct(@RequestBody AddProductRequest request) {
+    public ResponseEntity<ApiResponse> saveProduct(@RequestBody AddProductRequestDto request) {
         try {
             // validate the request
             ValidationHelper.validateModelBinding(request);
 
-            ProductResponse product = _productService.addProduct(request).toProductResponse();
+            ProductResponseDto product = _productService.addProduct(request).toProductResponse();
             return GlobalSuccessHandler.handleSuccess("Product saved successfully", product, HttpStatus.CREATED.value(), null);
         } catch (Exception e) {
             return GlobalExceptionHandler.handleException(e);
@@ -59,7 +59,7 @@ public class ProductController {
     @GetMapping("/get-all")
     public ResponseEntity<ApiResponse> getAllProducts() {
         try {
-            List<ProductResponse> products = _productService.getAllProducts().stream().map(Product::toProductResponse).toList();
+            List<ProductResponseDto> products = _productService.getAllProducts().stream().map(Product::toProductResponse).toList();
             return GlobalSuccessHandler.handleSuccess("Products fetched successfully", products, HttpStatus.OK.value(), null);
         } catch (Exception e) {
             return GlobalExceptionHandler.handleException(e);
@@ -77,7 +77,7 @@ public class ProductController {
     @GetMapping("/find-by-id/{id}")
     public ResponseEntity<ApiResponse> getProductById(@PathVariable Long id) {
         try {
-            ProductResponse product = _productService.getProductById(id).toProductResponse();
+            ProductResponseDto product = _productService.getProductById(id).toProductResponse();
             return GlobalSuccessHandler.handleSuccess("Product fetched successfully", product, HttpStatus.OK.value(), null);
         } catch (Exception e) {
             return GlobalExceptionHandler.handleException(e);
@@ -93,12 +93,12 @@ public class ProductController {
      * @return ApiResponse object containing the response details
      */
     @PutMapping("/update/{id}")
-    public ResponseEntity<ApiResponse> updateProduct(@RequestBody UpdateProductRequest request, @PathVariable Long id) {
+    public ResponseEntity<ApiResponse> updateProduct(@RequestBody UpdateProductRequestDto request, @PathVariable Long id) {
         try {
             // validate the request
             ValidationHelper.validateModelBinding(request);
 
-            ProductResponse product = _productService.updateProduct(request, id).toProductResponse();
+            ProductResponseDto product = _productService.updateProduct(request, id).toProductResponse();
             return GlobalSuccessHandler.handleSuccess("Product updated successfully", product, HttpStatus.OK.value(), null);
         } catch (Exception e) {
             return GlobalExceptionHandler.handleException(e);
@@ -133,7 +133,7 @@ public class ProductController {
     @GetMapping("/filter")
     public ResponseEntity<ApiResponse> getFilteredProducts(@RequestParam Map<String, String> filters) {
         try {
-            List<ProductResponse> products = _productService.getFilteredProducts(filters).stream().map(Product::toProductResponse).toList();
+            List<ProductResponseDto> products = _productService.getFilteredProducts(filters).stream().map(Product::toProductResponse).toList();
             return GlobalSuccessHandler.handleSuccess("Products fetched successfully", products, HttpStatus.OK.value(), null);
         } catch (Exception e) {
             return GlobalExceptionHandler.handleException(e);

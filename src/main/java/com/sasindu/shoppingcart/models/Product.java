@@ -1,6 +1,6 @@
 package com.sasindu.shoppingcart.models;
 
-import com.sasindu.shoppingcart.abstractions.dto.response.product.ProductResponse;
+import com.sasindu.shoppingcart.abstractions.dto.response.product.ProductResponseDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -40,24 +40,6 @@ public class Product {
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
-    // Add the toProductResponse() method here
-    public ProductResponse toProductResponse() {
-        ProductResponse response = new ProductResponse();
-        response.setId(this.id);
-        response.setName(this.name);
-        response.setBrand(this.brand);
-        response.setPrice(this.price);
-        response.setInventory(this.inventory);
-        response.setDescription(this.description);
-        response.setCategory(this.category.toCategoryResponse());
-
-        response.setImages(this.images.stream()
-                .map(Image::getDownloadUrl)
-                .collect(Collectors.toList()));
-
-        return response;
-    }
-
     public Product(
             String name,
             String brand,
@@ -71,5 +53,27 @@ public class Product {
         this.inventory = inventory;
         this.description = description;
         this.category = category;
+    }
+
+    /**
+     * Convert Product entity to ProductResponse object
+     *
+     * @return the response object
+     */
+    public ProductResponseDto toProductResponse() {
+        ProductResponseDto response = new ProductResponseDto();
+        response.setId(this.id);
+        response.setName(this.name);
+        response.setBrand(this.brand);
+        response.setPrice(this.price);
+        response.setInventory(this.inventory);
+        response.setDescription(this.description);
+        response.setCategory(this.category.toCategoryResponse());
+
+        response.setImages(this.images.stream()
+                .map(Image::getDownloadUrl)
+                .collect(Collectors.toList()));
+
+        return response;
     }
 }

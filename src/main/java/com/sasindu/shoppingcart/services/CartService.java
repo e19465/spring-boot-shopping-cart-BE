@@ -1,9 +1,9 @@
 package com.sasindu.shoppingcart.services;
 
 import com.sasindu.shoppingcart.abstractions.interfaces.ICartService;
+import com.sasindu.shoppingcart.abstractions.interfaces.ISharedService;
 import com.sasindu.shoppingcart.exceptions.NotFoundException;
 import com.sasindu.shoppingcart.models.Cart;
-import com.sasindu.shoppingcart.repository.CartItemRepository;
 import com.sasindu.shoppingcart.repository.CartRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -12,12 +12,14 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 
 
+/**
+ * CartService class is responsible for handling the business logic related to the cart
+ */
 @Service
 @RequiredArgsConstructor
 public class CartService implements ICartService {
     private final CartRepository _cartRepository;
-    private final CartItemRepository _cartItemRepository;
-//    private final AtomicLong cartIdGenerator = new AtomicLong(0);
+    private final ISharedService _sharedService;
 
     /**
      * Get the cart by id and calculate the total amount and set the total amount to the cart and return the cart
@@ -52,7 +54,7 @@ public class CartService implements ICartService {
     public void clearCart(Long id) {
         try {
             Cart cart = getCartById(id);
-            _cartItemRepository.deleteAllByCartId(id);
+            _sharedService.deleteAllCartItemsByCartId(id);
             cart.getCartItems().clear();
             _cartRepository.deleteById(id);
         } catch (RuntimeException e) {

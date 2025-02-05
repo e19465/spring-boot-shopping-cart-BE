@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
-public class AddCategoryRequest {
+public class AddCategoryRequestDto {
     @NotNull(message = "Category name is required")
     private String name;
 }

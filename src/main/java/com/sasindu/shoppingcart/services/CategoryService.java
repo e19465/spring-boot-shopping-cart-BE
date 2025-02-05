@@ -1,7 +1,7 @@
 package com.sasindu.shoppingcart.services;
 
-import com.sasindu.shoppingcart.abstractions.dto.request.category.AddCategoryRequest;
-import com.sasindu.shoppingcart.abstractions.dto.request.category.UpdateCategoryRequest;
+import com.sasindu.shoppingcart.abstractions.dto.request.category.AddCategoryRequestDto;
+import com.sasindu.shoppingcart.abstractions.dto.request.category.UpdateCategoryRequestDto;
 import com.sasindu.shoppingcart.abstractions.interfaces.ICategoryService;
 import com.sasindu.shoppingcart.exceptions.ConflictException;
 import com.sasindu.shoppingcart.exceptions.NotFoundException;
@@ -33,7 +33,7 @@ public class CategoryService implements ICategoryService {
      * @throws ConflictException if the category already exists
      */
     @Override
-    public Category addCategory(AddCategoryRequest request) {
+    public Category addCategory(AddCategoryRequestDto request) {
         try {
             // Check if the category already exists
             return Optional.of(request)
@@ -115,7 +115,7 @@ public class CategoryService implements ICategoryService {
      * @throws NotFoundException if the category is not found
      */
     @Override
-    public Category updateCategory(UpdateCategoryRequest request, Long id) {
+    public Category updateCategory(UpdateCategoryRequestDto request, Long id) {
         try {
             // Check if the category exists, if not throw an exception else update the category
             return _categoryRepository.findById(id)

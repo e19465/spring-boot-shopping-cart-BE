@@ -1,7 +1,7 @@
 package com.sasindu.shoppingcart.models;
 
-import com.sasindu.shoppingcart.abstractions.dto.response.image.ImageResponse;
-import com.sasindu.shoppingcart.abstractions.dto.response.image.ImageResponseWithoutBlob;
+import com.sasindu.shoppingcart.abstractions.dto.response.image.ImageResponseDto;
+import com.sasindu.shoppingcart.abstractions.dto.response.image.ImageResponseWithoutBlobDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -35,9 +35,13 @@ public class Image {
     private Product product;
 
 
-    // Add the toImageResponse() method here
-    public ImageResponse toImageResponse() {
-        ImageResponse response = new ImageResponse();
+    /**
+     * Convert the image to an image response
+     *
+     * @return ImageResponse
+     */
+    public ImageResponseDto toImageResponse() {
+        ImageResponseDto response = new ImageResponseDto();
         response.setId(this.id);
         response.setFileName(this.fileName);
         response.setFileType(this.fileType);
@@ -47,9 +51,13 @@ public class Image {
         return response;
     }
 
-    // Add the toImageResponseWithoutBlob() method here
-    public ImageResponseWithoutBlob toImageResponseWithoutBlob() {
-        ImageResponseWithoutBlob response = new ImageResponseWithoutBlob();
+    /**
+     * Convert the image to an image response without blob
+     *
+     * @return ImageResponseWithoutBlob
+     */
+    public ImageResponseWithoutBlobDto toImageResponseWithoutBlob() {
+        ImageResponseWithoutBlobDto response = new ImageResponseWithoutBlobDto();
         response.setId(this.id);
         response.setFileName(this.fileName);
         response.setFileType(this.fileType);

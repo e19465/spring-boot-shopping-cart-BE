@@ -1,6 +1,7 @@
 package com.sasindu.shoppingcart.models;
 
 
+import com.sasindu.shoppingcart.abstractions.dto.response.order.OrderResponseDto;
 import com.sasindu.shoppingcart.abstractions.enums.OrderStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -10,6 +11,8 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -29,8 +32,12 @@ public class Order {
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<OrderItem> orderItems;
+    private Set<OrderItem> orderItems = new HashSet<>();
 
 
     /**
@@ -42,6 +49,16 @@ public class Order {
         this.orderItems.add(orderItem);
         orderItem.setOrder(this);
         this.updateTotalAmount();
+    }
+
+
+    /**
+     * Add a list of order items to the order
+     *
+     * @param orderItems the list of order items to add
+     */
+    public void addOrderItems(List<OrderItem> orderItems) {
+        orderItems.forEach(this::addOrderItem);
     }
 
     /**
@@ -60,7 +77,25 @@ public class Order {
      */
     public void updateTotalAmount() {
         this.totalAmount = this.orderItems.stream()
-                .map(OrderItem::getPrice)
+                .map(item -> item.getPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
+
+
+    /**
+     * Convert the order to an order response
+     *
+     * @return the order response
+     */
+    public OrderResponseDto toOrderResponse() {
+        OrderResponseDto response = new OrderResponseDto();
+        response.setId(this.id);
+        response.setOrderDate(this.orderDate);
+        response.setTotalAmount(this.totalAmount);
+        response.setStatus(this.status);
+        response.setUser(this.user.toUserResponse());
+        response.setOrderItems(this.orderItems.stream().map(OrderItem::toOrderItemResponse).toList());
+        return response;
+    }
+
 }

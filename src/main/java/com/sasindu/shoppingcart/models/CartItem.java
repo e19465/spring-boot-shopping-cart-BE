@@ -1,7 +1,7 @@
 package com.sasindu.shoppingcart.models;
 
 
-import com.sasindu.shoppingcart.abstractions.dto.response.cartitem.CartItemResponse;
+import com.sasindu.shoppingcart.abstractions.dto.response.cartitem.CartItemResponseDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -23,9 +23,9 @@ public class CartItem {
 
     private int quantity;
 
-    private BigDecimal unitPrice;
+    private BigDecimal unitPrice = BigDecimal.ZERO;
 
-    private BigDecimal totalPrice;
+    private BigDecimal totalPrice = BigDecimal.ZERO;
 
     @ManyToOne
     @JoinColumn(name = "product_id", nullable = false)
@@ -49,8 +49,8 @@ public class CartItem {
      *
      * @return CartItemResponse
      */
-    public CartItemResponse toCartItemResponse() {
-        CartItemResponse response = new CartItemResponse();
+    public CartItemResponseDto toCartItemResponse() {
+        CartItemResponseDto response = new CartItemResponseDto();
         response.setId(this.id);
         response.setQuantity(this.quantity);
         response.setUnitPrice(this.unitPrice);

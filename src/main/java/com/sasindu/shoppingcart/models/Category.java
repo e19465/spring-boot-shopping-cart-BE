@@ -1,6 +1,6 @@
 package com.sasindu.shoppingcart.models;
 
-import com.sasindu.shoppingcart.abstractions.dto.response.category.CategoryResponse;
+import com.sasindu.shoppingcart.abstractions.dto.response.category.CategoryResponseDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -31,8 +31,8 @@ public class Category {
     }
 
     // Add the toCategoryResponse() method here
-    public CategoryResponse toCategoryResponse() {
-        CategoryResponse response = new CategoryResponse();
+    public CategoryResponseDto toCategoryResponse() {
+        CategoryResponseDto response = new CategoryResponseDto();
         response.setId(this.id);
         response.setName(this.name);
         return response;

@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 
 
 @Data
-public class AddProductRequest {
+public class AddProductRequestDto {
     @NotNull(message = "Name is required")
     private String name;
 

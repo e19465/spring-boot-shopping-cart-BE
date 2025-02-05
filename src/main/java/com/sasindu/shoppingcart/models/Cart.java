@@ -1,8 +1,8 @@
 package com.sasindu.shoppingcart.models;
 
 
-import com.sasindu.shoppingcart.abstractions.dto.response.cart.CartResponse;
-import com.sasindu.shoppingcart.abstractions.dto.response.cartitem.CartItemResponse;
+import com.sasindu.shoppingcart.abstractions.dto.response.cart.CartResponseDto;
+import com.sasindu.shoppingcart.abstractions.dto.response.cartitem.CartItemResponseDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -26,6 +26,10 @@ public class Cart {
     private Long id;
 
     private BigDecimal totalAmount = BigDecimal.ZERO;
+
+    @OneToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<CartItem> cartItems = new HashSet<>();
@@ -59,13 +63,7 @@ public class Cart {
      */
     public void updateTotalAmount() {
         this.totalAmount = this.cartItems.stream()
-                .map(item -> {
-                    BigDecimal unitPrice = item.getUnitPrice();
-                    if (unitPrice == null) {
-                        unitPrice = BigDecimal.ZERO;
-                    }
-                    return unitPrice.multiply(BigDecimal.valueOf(item.getQuantity()));
-                })
+                .map(item -> item.getUnitPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
@@ -75,13 +73,13 @@ public class Cart {
      *
      * @return the cart response
      */
-    public CartResponse toCartResponse() {
-        CartResponse response = new CartResponse();
+    public CartResponseDto toCartResponse() {
+        CartResponseDto response = new CartResponseDto();
         response.setId(this.id);
         response.setTotalAmount(this.totalAmount);
 
         // Map CartItem to CartItemResponse and set it to the CartResponse
-        Set<CartItemResponse> cartItemResponses = this.cartItems.stream()
+        Set<CartItemResponseDto> cartItemResponses = this.cartItems.stream()
                 .map(CartItem::toCartItemResponse)  // Convert CartItem to CartItemResponse
                 .collect(Collectors.toSet());
         response.setCartItems(cartItemResponses);

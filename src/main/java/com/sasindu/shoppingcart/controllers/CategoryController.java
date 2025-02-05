@@ -1,10 +1,10 @@
 package com.sasindu.shoppingcart.controllers;
 
 
-import com.sasindu.shoppingcart.abstractions.dto.request.category.AddCategoryRequest;
-import com.sasindu.shoppingcart.abstractions.dto.request.category.UpdateCategoryRequest;
-import com.sasindu.shoppingcart.abstractions.dto.response.category.CategoryResponse;
-import com.sasindu.shoppingcart.abstractions.dto.response.product.ProductResponse;
+import com.sasindu.shoppingcart.abstractions.dto.request.category.AddCategoryRequestDto;
+import com.sasindu.shoppingcart.abstractions.dto.request.category.UpdateCategoryRequestDto;
+import com.sasindu.shoppingcart.abstractions.dto.response.category.CategoryResponseDto;
+import com.sasindu.shoppingcart.abstractions.dto.response.product.ProductResponseDto;
 import com.sasindu.shoppingcart.abstractions.interfaces.ICategoryService;
 import com.sasindu.shoppingcart.constants.ApplicationConstants;
 import com.sasindu.shoppingcart.helpers.ApiResponse;
@@ -38,12 +38,12 @@ public class CategoryController {
      * @return ApiResponse object containing the response details
      */
     @PostMapping("/create")
-    public ResponseEntity<ApiResponse> saveCategory(@RequestBody AddCategoryRequest request) {
+    public ResponseEntity<ApiResponse> saveCategory(@RequestBody AddCategoryRequestDto request) {
         try {
             // validate the request
             ValidationHelper.validateModelBinding(request);
 
-            CategoryResponse category = _categoryService.addCategory(request).toCategoryResponse();
+            CategoryResponseDto category = _categoryService.addCategory(request).toCategoryResponse();
             return GlobalSuccessHandler.handleSuccess("Category saved successfully", category, HttpStatus.CREATED.value(), null);
         } catch (Exception e) {
             return GlobalExceptionHandler.handleException(e);
@@ -61,7 +61,7 @@ public class CategoryController {
     @GetMapping("/find-by-id/{id}")
     public ResponseEntity<ApiResponse> getCategoryById(@PathVariable Long id) {
         try {
-            CategoryResponse category = _categoryService.getCategoryById(id).toCategoryResponse();
+            CategoryResponseDto category = _categoryService.getCategoryById(id).toCategoryResponse();
             return GlobalSuccessHandler.handleSuccess("Category fetched successfully", category, HttpStatus.OK.value(), null);
         } catch (Exception e) {
             return GlobalExceptionHandler.handleException(e);
@@ -79,7 +79,7 @@ public class CategoryController {
     @GetMapping("/find-by-name/{name}")
     public ResponseEntity<ApiResponse> getCategoryByName(@PathVariable String name) {
         try {
-            CategoryResponse category = _categoryService.getCategoryByName(name).toCategoryResponse();
+            CategoryResponseDto category = _categoryService.getCategoryByName(name).toCategoryResponse();
             return GlobalSuccessHandler.handleSuccess("Category fetched successfully", category, HttpStatus.OK.value(), null);
         } catch (Exception e) {
             return GlobalExceptionHandler.handleException(e);
@@ -96,7 +96,7 @@ public class CategoryController {
     @GetMapping("/get-all")
     public ResponseEntity<ApiResponse> getAllCategories() {
         try {
-            List<CategoryResponse> categories = _categoryService.getAllCategories().stream().map(Category::toCategoryResponse).toList();
+            List<CategoryResponseDto> categories = _categoryService.getAllCategories().stream().map(Category::toCategoryResponse).toList();
             return GlobalSuccessHandler.handleSuccess("Categories fetched successfully", categories, HttpStatus.OK.value(), null);
         } catch (Exception e) {
             return GlobalExceptionHandler.handleException(e);
@@ -113,12 +113,12 @@ public class CategoryController {
      * @return ApiResponse object containing the response details
      */
     @PutMapping("/update/{id}")
-    public ResponseEntity<ApiResponse> updateCategory(@RequestBody UpdateCategoryRequest request, @PathVariable Long id) {
+    public ResponseEntity<ApiResponse> updateCategory(@RequestBody UpdateCategoryRequestDto request, @PathVariable Long id) {
         try {
             // validate the request
             ValidationHelper.validateModelBinding(request);
 
-            CategoryResponse category = _categoryService.updateCategory(request, id).toCategoryResponse();
+            CategoryResponseDto category = _categoryService.updateCategory(request, id).toCategoryResponse();
             return GlobalSuccessHandler.handleSuccess("Category updated successfully", category, HttpStatus.OK.value(), null);
         } catch (Exception e) {
             return GlobalExceptionHandler.handleException(e);
@@ -154,7 +154,7 @@ public class CategoryController {
     @GetMapping("/get-products/{category}")
     public ResponseEntity<ApiResponse> deleteCategory(@PathVariable String category) {
         try {
-            List<ProductResponse> products = _categoryService.getAllProductsForCategory(category).stream().map(Product::toProductResponse).toList();
+            List<ProductResponseDto> products = _categoryService.getAllProductsForCategory(category).stream().map(Product::toProductResponse).toList();
             return GlobalSuccessHandler.handleSuccess("All products for category", products, HttpStatus.OK.value(), null);
         } catch (Exception e) {
             return GlobalExceptionHandler.handleException(e);

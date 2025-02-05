@@ -1,7 +1,7 @@
 package com.sasindu.shoppingcart.abstractions.interfaces;
 
-import com.sasindu.shoppingcart.abstractions.dto.request.category.AddCategoryRequest;
-import com.sasindu.shoppingcart.abstractions.dto.request.category.UpdateCategoryRequest;
+import com.sasindu.shoppingcart.abstractions.dto.request.category.AddCategoryRequestDto;
+import com.sasindu.shoppingcart.abstractions.dto.request.category.UpdateCategoryRequestDto;
 import com.sasindu.shoppingcart.models.Category;
 import com.sasindu.shoppingcart.models.Product;
 
@@ -18,7 +18,7 @@ public interface ICategoryService {
      * @param request AddCategoryRequest object containing the category details
      * @return Category object containing the added category details
      */
-    Category addCategory(AddCategoryRequest request);
+    Category addCategory(AddCategoryRequestDto request);
 
     /**
      * getCategoryById method is responsible for fetching a category by its id
@@ -53,7 +53,7 @@ public interface ICategoryService {
      * @param id                    Long value of the category id
      * @return Category object containing the updated category details
      */
-    Category updateCategory(UpdateCategoryRequest updateCategoryRequest, Long id);
+    Category updateCategory(UpdateCategoryRequestDto updateCategoryRequest, Long id);
 
 
     /**

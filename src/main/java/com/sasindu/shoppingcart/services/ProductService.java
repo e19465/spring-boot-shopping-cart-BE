@@ -1,9 +1,9 @@
 package com.sasindu.shoppingcart.services;
 
-import com.sasindu.shoppingcart.abstractions.dto.request.product.AddProductRequest;
-import com.sasindu.shoppingcart.abstractions.dto.request.product.UpdateProductRequest;
-import com.sasindu.shoppingcart.abstractions.interfaces.ICategoryService;
+import com.sasindu.shoppingcart.abstractions.dto.request.product.AddProductRequestDto;
+import com.sasindu.shoppingcart.abstractions.dto.request.product.UpdateProductRequestDto;
 import com.sasindu.shoppingcart.abstractions.interfaces.IProductService;
+import com.sasindu.shoppingcart.abstractions.interfaces.ISharedService;
 import com.sasindu.shoppingcart.exceptions.NotFoundException;
 import com.sasindu.shoppingcart.models.Category;
 import com.sasindu.shoppingcart.models.Product;
@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -27,7 +26,7 @@ public class ProductService implements IProductService {
     // In here, we don't define constructor explicitly,
     // because Lombok's @RequiredArgsConstructor will do it for us
     private final ProductRepository _productRepository;
-    private final ICategoryService _categoryService;
+    private final ISharedService _sharedService;
 
     /**
      * Add a new product.
@@ -36,16 +35,16 @@ public class ProductService implements IProductService {
      * @return Product object containing the added product details.
      */
     @Override
-    public Product addProduct(AddProductRequest request) {
+    public Product addProduct(AddProductRequestDto request) {
         // check if the category exists in the database
         // idf yes, use it else create a new category
         try {
             // check if the category already exists
-            Category category = Optional.ofNullable(_categoryService.getCategoryByName(request.getCategory().getName()))
-                    .orElseGet(() -> {
-                        Category newCategory = new Category(request.getCategory().getName());
-                        return _categoryService.saveCategory(newCategory);
-                    });
+            Category category = _sharedService.getCategoryByName(request.getCategory().getName());
+            if (category == null) {
+                Category newCategory = new Category(request.getCategory().getName());
+                category = _sharedService.saveCategory(newCategory);
+            }
 
             // set the category to the product
             request.setCategory(category);
@@ -77,7 +76,7 @@ public class ProductService implements IProductService {
      * @throws NotFoundException if the product is not found.
      */
     @Override
-    public Product updateProduct(UpdateProductRequest request, Long productId) {
+    public Product updateProduct(UpdateProductRequestDto request, Long productId) {
         try {
             // Check if the product exists
             return _productRepository.findById(productId)
@@ -87,7 +86,10 @@ public class ProductService implements IProductService {
                         existingProduct.setPrice(request.getPrice());
                         existingProduct.setInventory(request.getInventory());
                         existingProduct.setDescription(request.getDescription());
-                        Category category = _categoryService.getCategoryByName(request.getCategory().getName());
+                        Category category = _sharedService.getCategoryByName(request.getCategory().getName());
+                        if (category == null) {
+                            throw new NotFoundException("Category not found");
+                        }
                         existingProduct.setCategory(category);
                         return existingProduct;
                     })

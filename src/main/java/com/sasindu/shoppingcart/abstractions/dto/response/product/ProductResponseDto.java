@@ -1,13 +1,13 @@
 package com.sasindu.shoppingcart.abstractions.dto.response.product;
 
-import com.sasindu.shoppingcart.abstractions.dto.response.category.CategoryResponse;
+import com.sasindu.shoppingcart.abstractions.dto.response.category.CategoryResponseDto;
 import lombok.Data;
 
 import java.math.BigDecimal;
 import java.util.List;
 
 @Data
-public class ProductResponse {
+public class ProductResponseDto {
     private Long id;
     private String name;
     private String brand;
@@ -16,5 +16,5 @@ public class ProductResponse {
     private String description;
     private String imageUrl;
     private List<String> images;
-    private CategoryResponse category;
+    private CategoryResponseDto category;
 }

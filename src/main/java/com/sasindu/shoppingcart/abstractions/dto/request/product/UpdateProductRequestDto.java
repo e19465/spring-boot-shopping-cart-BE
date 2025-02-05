@@ -6,7 +6,7 @@ import lombok.Data;
 import java.math.BigDecimal;
 
 @Data
-public class UpdateProductRequest {
+public class UpdateProductRequestDto {
     private String name;
     private String brand;
     private BigDecimal price;
