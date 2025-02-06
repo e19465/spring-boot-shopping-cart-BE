@@ -78,6 +78,7 @@ public class Cart {
         CartResponseDto response = new CartResponseDto();
         response.setId(this.id);
         response.setTotalAmount(this.totalAmount);
+        response.setUser(this.user.toUserResponse());  // Convert User to UserResponse
 
         // Map CartItem to CartItemResponse and set it to the CartResponse
         Set<CartItemResponseDto> cartItemResponses = this.cartItems.stream()

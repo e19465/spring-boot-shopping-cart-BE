@@ -10,4 +10,5 @@ public class UserResponseDto {
     private String lastName;
     private String email;
     private boolean isEmailVerified = false;
+    private Long cartId;
 }

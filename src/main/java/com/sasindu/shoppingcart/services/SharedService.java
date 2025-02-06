@@ -4,12 +4,12 @@ import com.sasindu.shoppingcart.abstractions.interfaces.ISharedService;
 import com.sasindu.shoppingcart.models.Cart;
 import com.sasindu.shoppingcart.models.Category;
 import com.sasindu.shoppingcart.models.Product;
-import com.sasindu.shoppingcart.repository.CartItemRepository;
-import com.sasindu.shoppingcart.repository.CartRepository;
-import com.sasindu.shoppingcart.repository.CategoryRepository;
-import com.sasindu.shoppingcart.repository.ProductRepository;
+import com.sasindu.shoppingcart.models.User;
+import com.sasindu.shoppingcart.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
 
 
 /**
@@ -22,26 +22,10 @@ public class SharedService implements ISharedService {
     private final CartRepository _cartRepository;
     private final ProductRepository _productRepository;
     private final CartItemRepository _cartItemRepository;
+    private final UserRepository _userRepository;
+
 
     //!<<<<<<<<<<<<< CATEGORY RELATED METHODS >>>>>>>>>>>>>>>>//
-
-    /**
-     * Get category by id - This can be used in any service to get the category by id
-     *
-     * @param id id of the category
-     * @return Category if found, null if not found returns null
-     */
-    @Override
-    public Category getCategoryById(Long id) {
-        try {
-            return _categoryRepository.findById(id).orElse(null);
-        } catch (RuntimeException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
 
     /**
      * Get category by name - This can be used in any service to get the category by name
@@ -70,25 +54,6 @@ public class SharedService implements ISharedService {
     public Category saveCategory(Category category) {
         try {
             return _categoryRepository.save(category);
-        } catch (RuntimeException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-
-    //!<<<<<<<<<<<<< CART ITEM RELATED METHODS >>>>>>>>>>>>>>>>//
-
-    /**
-     * Delete all cart items by cart id - for internal use in cart item service
-     *
-     * @param cartId The id of the cart
-     */
-    @Override
-    public void deleteAllCartItemsByCartId(Long cartId) {
-        try {
-            _cartItemRepository.deleteAllByCartId(cartId);
         } catch (RuntimeException e) {
             throw e;
         } catch (Exception e) {
@@ -156,6 +121,43 @@ public class SharedService implements ISharedService {
 
 
     /**
+     * Get a cart by user id - for internal use in cart item service
+     *
+     * @param userId The id of the user
+     * @return The cart if found, null if not found returns null
+     */
+    @Override
+    public Cart getCartByUserId(Long userId) {
+        try {
+            return _cartRepository.findByUserId(userId);
+        } catch (RuntimeException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    /**
+     * Initialize a new cart - for internal use until Auth Context is implemented
+     *
+     * @return the id of the new cart
+     */
+    @Override
+    public Cart initializeNewCart(User user) {
+        try {
+            Cart cart = new Cart();
+            cart.setTotalAmount(BigDecimal.ZERO);
+            cart.setUser(user);
+            return _cartRepository.save(cart);
+        } catch (RuntimeException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
      * Find cart by user id - for internal use in order service
      *
      * @param userId The id of the user
@@ -174,14 +176,16 @@ public class SharedService implements ISharedService {
 
 
     /**
-     * Delete cart by id - for internal use in order service
+     * Clear cart - remove all cart items and set total amount to 0
      *
-     * @param cartId The id of the cart
+     * @param cart The cart object
      */
     @Override
-    public void deleteCartById(Long cartId) {
+    public void clearCartByCart(Cart cart) {
         try {
-            _cartRepository.deleteById(cartId);
+            cart.getCartItems().clear();
+            cart.updateTotalAmount();
+            _cartRepository.save(cart);
         } catch (RuntimeException e) {
             throw e;
         } catch (Exception e) {
@@ -200,6 +204,19 @@ public class SharedService implements ISharedService {
     public Cart saveCart(Cart cart) {
         try {
             return _cartRepository.save(cart);
+        } catch (RuntimeException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    //!<<<<<<<<<<<<< USER RELATED METHODS >>>>>>>>>>>>>>>>//
+    @Override
+    public User getUserById(Long userId) {
+        try {
+            return _userRepository.findById(userId).orElse(null);
         } catch (RuntimeException e) {
             throw e;
         } catch (Exception e) {

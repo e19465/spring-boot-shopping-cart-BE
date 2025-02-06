@@ -55,7 +55,7 @@ public class OrderItem {
         response.setId(this.id);
         response.setQuantity(this.quantity);
         response.setPrice(this.price);
-        response.setOrder(this.order.toOrderResponse());
+        response.setOrderId(this.order.getId());
         response.setProduct(this.product.toProductResponse());
         return response;
     }

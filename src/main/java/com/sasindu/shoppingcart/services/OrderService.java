@@ -4,14 +4,13 @@ package com.sasindu.shoppingcart.services;
 import com.sasindu.shoppingcart.abstractions.enums.OrderStatus;
 import com.sasindu.shoppingcart.abstractions.interfaces.IOrderService;
 import com.sasindu.shoppingcart.abstractions.interfaces.ISharedService;
+import com.sasindu.shoppingcart.exceptions.BadRequestException;
 import com.sasindu.shoppingcart.exceptions.NotFoundException;
-import com.sasindu.shoppingcart.models.Cart;
-import com.sasindu.shoppingcart.models.Order;
-import com.sasindu.shoppingcart.models.OrderItem;
-import com.sasindu.shoppingcart.models.Product;
+import com.sasindu.shoppingcart.models.*;
 import com.sasindu.shoppingcart.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -80,8 +79,14 @@ public class OrderService implements IOrderService {
      * @return the order
      */
     @Override
+    @Transactional
     public Order placeOrder(Long userId) {
         try {
+            User user = _sharedService.getUserById(userId);
+            if (user == null) {
+                throw new NotFoundException("User not found");
+            }
+
             Cart cart = _sharedService.findCartByUserId(userId);
             if (cart == null) {
                 throw new NotFoundException("Cart not found");
@@ -90,13 +95,16 @@ public class OrderService implements IOrderService {
             // create the order
             Order order = createOrder(cart);
             List<OrderItem> orderItems = createOrderItems(order, cart);
+
+            if (orderItems.isEmpty()) {
+                throw new BadRequestException("Order items are empty");
+            }
+
             order.addOrderItems(orderItems);
             Order savedOrder = _orderRepository.save(order);
 
             // clear the cart
-            _sharedService.deleteAllCartItemsByCartId(cart.getId());
-            cart.getCartItems().clear();
-            _sharedService.deleteCartById(cart.getId());
+            _sharedService.clearCartByCart(cart);
 
             return savedOrder;
         } catch (RuntimeException e) {

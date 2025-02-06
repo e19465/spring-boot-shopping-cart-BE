@@ -2,6 +2,7 @@ package com.sasindu.shoppingcart.services;
 
 import com.sasindu.shoppingcart.abstractions.dto.request.user.AddUserRequestDto;
 import com.sasindu.shoppingcart.abstractions.interfaces.IAuthService;
+import com.sasindu.shoppingcart.abstractions.interfaces.ISharedService;
 import com.sasindu.shoppingcart.exceptions.BadRequestException;
 import com.sasindu.shoppingcart.helpers.Utils;
 import com.sasindu.shoppingcart.models.User;
@@ -17,7 +18,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class AuthService implements IAuthService {
     private final UserRepository _userRepository;
-
+    private final ISharedService _sharedService;
 
     /**
      * Register a new user
@@ -41,12 +42,20 @@ public class AuthService implements IAuthService {
                 throw new BadRequestException("Password should contain at least 8 characters, 1 uppercase, 1 lowercase, 1 number and 1 special character");
             }
 
+            if (_userRepository.existsByEmail(request.getEmail())) {
+                throw new BadRequestException("Email already exists");
+            }
+
             User user = new User();
             user.setFirstName(request.getFirstName());
             user.setLastName(request.getLastName());
             user.setEmail(request.getEmail());
             user.setPassword(request.getPassword());
-            return _userRepository.save(user);
+            User savedUser = _userRepository.save(user);
+
+            // initialize new cart for the user
+            savedUser.setCart(_sharedService.initializeNewCart(savedUser));
+            return _userRepository.save(savedUser);
         } catch (RuntimeException e) {
             throw e;
         } catch (Exception e) {

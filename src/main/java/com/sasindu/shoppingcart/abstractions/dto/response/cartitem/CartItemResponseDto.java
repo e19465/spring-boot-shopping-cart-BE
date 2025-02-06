@@ -13,4 +13,5 @@ public class CartItemResponseDto {
     private BigDecimal unitPrice;
     private BigDecimal totalPrice;
     private ProductResponseDto product;
+    private Long cartId;
 }

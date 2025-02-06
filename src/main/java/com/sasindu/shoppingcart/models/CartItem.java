@@ -56,6 +56,7 @@ public class CartItem {
         response.setQuantity(this.quantity);
         response.setUnitPrice(this.unitPrice);
         response.setTotalPrice(this.totalPrice);
+        response.setCartId(this.cart.getId());
         response.setProduct(this.product.toProductResponse());
         return response;
     }

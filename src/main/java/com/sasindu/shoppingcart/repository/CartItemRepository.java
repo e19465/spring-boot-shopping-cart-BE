@@ -3,6 +3,8 @@ package com.sasindu.shoppingcart.repository;
 import com.sasindu.shoppingcart.models.CartItem;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
+
 public interface CartItemRepository extends JpaRepository<CartItem, Long> {
 
     /**
@@ -20,4 +22,22 @@ public interface CartItemRepository extends JpaRepository<CartItem, Long> {
      * @return the cart item
      */
     CartItem findByCartIdAndProductId(Long cartId, Long productId);
+
+
+    /**
+     * Find all cart items by cart id
+     *
+     * @param userId the id of the user
+     * @return list of cart items
+     */
+    List<CartItem> findAllByCartUserId(Long userId);
+
+
+    /**
+     * Find all cart items by cart id
+     *
+     * @param cartId the id of the cart
+     * @return list of cart items
+     */
+    List<CartItem> findAllByCartId(Long cartId);
 }

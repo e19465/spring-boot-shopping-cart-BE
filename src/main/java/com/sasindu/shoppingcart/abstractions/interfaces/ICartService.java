@@ -39,12 +39,4 @@ public interface ICartService {
      * @return The saved cart
      */
     Cart saveCart(Cart cart);
-
-
-    /**
-     * Initialize a new cart - for internal use until Auth Context is implemented
-     *
-     * @return The id of the new cart
-     */
-    public Long initializeNewCart();
 }

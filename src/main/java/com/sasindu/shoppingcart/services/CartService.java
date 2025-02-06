@@ -53,10 +53,8 @@ public class CartService implements ICartService {
     @Transactional
     public void clearCart(Long id) {
         try {
-            Cart cart = getCartById(id);
-            _sharedService.deleteAllCartItemsByCartId(id);
-            cart.getCartItems().clear();
-            _cartRepository.deleteById(id);
+            Cart cart = this.getCartById(id);
+            _sharedService.clearCartByCart(cart);
         } catch (RuntimeException e) {
             throw e;
         } catch (Exception e) {
@@ -94,26 +92,6 @@ public class CartService implements ICartService {
     public Cart saveCart(Cart cart) {
         try {
             return _cartRepository.save(cart);
-        } catch (RuntimeException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-
-    /**
-     * Initialize a new cart - for internal use until Auth Context is implemented
-     *
-     * @return the id of the new cart
-     */
-    @Override
-    public Long initializeNewCart() {
-        try {
-            Cart cart = new Cart();
-            cart.setTotalAmount(BigDecimal.ZERO);
-            Cart savedCart = _cartRepository.save(cart);
-            return savedCart.getId();
         } catch (RuntimeException e) {
             throw e;
         } catch (Exception e) {

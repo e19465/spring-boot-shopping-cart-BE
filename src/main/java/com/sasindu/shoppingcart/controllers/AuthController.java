@@ -2,12 +2,12 @@ package com.sasindu.shoppingcart.controllers;
 
 
 import com.sasindu.shoppingcart.abstractions.dto.request.user.AddUserRequestDto;
+import com.sasindu.shoppingcart.abstractions.dto.response.user.UserResponseDto;
 import com.sasindu.shoppingcart.abstractions.interfaces.IAuthService;
 import com.sasindu.shoppingcart.constants.ApplicationConstants;
 import com.sasindu.shoppingcart.helpers.ApiResponse;
 import com.sasindu.shoppingcart.helpers.GlobalExceptionHandler;
 import com.sasindu.shoppingcart.helpers.GlobalSuccessHandler;
-import com.sasindu.shoppingcart.models.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,7 +32,7 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<ApiResponse> registerUser(@RequestBody AddUserRequestDto request) {
         try {
-            User user = _authService.registerUser(request);
+            UserResponseDto user = _authService.registerUser(request).toUserResponse();
             return GlobalSuccessHandler.handleSuccess("User registered successfully", user, HttpStatus.OK.value(), null);
         } catch (Exception e) {
             return GlobalExceptionHandler.handleException(e);

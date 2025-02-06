@@ -2,16 +2,18 @@ package com.sasindu.shoppingcart.abstractions.interfaces;
 
 import com.sasindu.shoppingcart.models.CartItem;
 
+import java.util.List;
+
 public interface ICartItemService {
 
     /**
      * Add a product to the cart
      *
-     * @param cartId    id of the cart to which the product should be added
+     * @param userId    id of the user to whom the product should be added
      * @param productId id of the product to be added
      * @param quantity  quantity of the product to be added
      */
-    void addItemToCart(Long cartId, Long productId, int quantity);
+    void addItemToCart(Long userId, Long productId, int quantity);
 
 
     /**
@@ -34,10 +36,20 @@ public interface ICartItemService {
 
 
     /**
-     * Save a cart item
+     * Get the cart items by user id
      *
-     * @param cartItem cart item to be saved
-     * @return the saved cart item
+     * @param userId id of the user
+     * @return list of cart items
      */
-    CartItem saveCartItem(CartItem cartItem);
+    List<CartItem> getCartItemsByUserId(Long userId);
+
+
+    /**
+     * Get the cart items by cart id
+     *
+     * @param cartId id of the cart
+     * @return list of cart items
+     */
+    List<CartItem> getCartItemsByCartId(Long cartId, Long userId);
+
 }

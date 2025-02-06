@@ -56,6 +56,7 @@ public class User {
         userResponse.setLastName(this.lastName);
         userResponse.setEmail(this.email);
         userResponse.setEmailVerified(this.isEmailVerified);
+        userResponse.setCartId(this.cart.getId());
         return userResponse;
     }
 }
