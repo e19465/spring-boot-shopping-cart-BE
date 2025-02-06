@@ -183,6 +183,7 @@ public class SharedService implements ISharedService {
     @Override
     public void clearCartByCart(Cart cart) {
         try {
+            _cartItemRepository.deleteAllByCartId(cart.getId());
             cart.getCartItems().clear();
             cart.updateTotalAmount();
             _cartRepository.save(cart);
