@@ -39,7 +39,11 @@ public class OrderService implements IOrderService {
             return cart.getCartItems().stream()
                     .map(cartItem -> {
                         Product product = cartItem.getProduct();
-                        product.setInventory(product.getInventory() - cartItem.getQuantity());
+                        int newInventory = product.getInventory() - cartItem.getQuantity();
+                        if (newInventory < 0) {
+                            throw new BadRequestException("Inventory is not enough for product: " + product.getName());
+                        }
+                        product.setInventory(newInventory);
                         _sharedService.saveProduct(product);
                         return new OrderItem(order, product, cartItem.getQuantity(), product.getPrice());
                     }).collect(Collectors.toList());

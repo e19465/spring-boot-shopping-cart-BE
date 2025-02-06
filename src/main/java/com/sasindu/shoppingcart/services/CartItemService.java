@@ -3,6 +3,7 @@ package com.sasindu.shoppingcart.services;
 
 import com.sasindu.shoppingcart.abstractions.interfaces.ICartItemService;
 import com.sasindu.shoppingcart.abstractions.interfaces.ISharedService;
+import com.sasindu.shoppingcart.exceptions.BadRequestException;
 import com.sasindu.shoppingcart.exceptions.NotFoundException;
 import com.sasindu.shoppingcart.exceptions.UnAuthorizedException;
 import com.sasindu.shoppingcart.models.Cart;
@@ -93,6 +94,12 @@ public class CartItemService implements ICartItemService {
             Product product = _sharedService.getProductById(productId);
             if (product == null) {
                 throw new NotFoundException("Product not found");
+            }
+
+
+            // check if the inventory is enough for the product
+            if (product.getInventory() < quantity) {
+                throw new BadRequestException("Inventory is not enough for product: " + product.getName());
             }
 
             // 2. Check if the product is already in the cart
