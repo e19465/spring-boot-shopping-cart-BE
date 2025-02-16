@@ -1,10 +1,10 @@
 package com.sasindu.shoppingcart.services;
 
 import com.sasindu.shoppingcart.abstractions.interfaces.ISharedService;
+import com.sasindu.shoppingcart.models.AppUser;
 import com.sasindu.shoppingcart.models.Cart;
 import com.sasindu.shoppingcart.models.Category;
 import com.sasindu.shoppingcart.models.Product;
-import com.sasindu.shoppingcart.models.User;
 import com.sasindu.shoppingcart.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -144,11 +144,11 @@ public class SharedService implements ISharedService {
      * @return the id of the new cart
      */
     @Override
-    public Cart initializeNewCart(User user) {
+    public Cart initializeNewCart(AppUser appUser) {
         try {
             Cart cart = new Cart();
             cart.setTotalAmount(BigDecimal.ZERO);
-            cart.setUser(user);
+            cart.setAppUser(appUser);
             return _cartRepository.save(cart);
         } catch (RuntimeException e) {
             throw e;
@@ -215,7 +215,7 @@ public class SharedService implements ISharedService {
 
     //!<<<<<<<<<<<<< USER RELATED METHODS >>>>>>>>>>>>>>>>//
     @Override
-    public User getUserById(Long userId) {
+    public AppUser getUserById(Long userId) {
         try {
             return _userRepository.findById(userId).orElse(null);
         } catch (RuntimeException e) {

@@ -4,7 +4,6 @@ package com.sasindu.shoppingcart.controllers;
 import com.sasindu.shoppingcart.abstractions.dto.request.user.UpdateUserRequestDto;
 import com.sasindu.shoppingcart.abstractions.dto.response.user.UserResponseDto;
 import com.sasindu.shoppingcart.abstractions.interfaces.IUserService;
-import com.sasindu.shoppingcart.constants.ApplicationConstants;
 import com.sasindu.shoppingcart.helpers.ApiResponse;
 import com.sasindu.shoppingcart.helpers.GlobalExceptionHandler;
 import com.sasindu.shoppingcart.helpers.GlobalSuccessHandler;
@@ -18,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
  * User Controller Responsible for handling all the API requests related to the user
  */
 @RestController
-@RequestMapping(ApplicationConstants.API_URL_PREFIX + "/user")
+@RequestMapping("${api.prefix}" + "/user")
 @RequiredArgsConstructor
 public class UserController {
     private final IUserService _userService;

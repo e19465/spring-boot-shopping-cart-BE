@@ -5,7 +5,6 @@ import com.sasindu.shoppingcart.abstractions.dto.request.product.AddProductReque
 import com.sasindu.shoppingcart.abstractions.dto.request.product.UpdateProductRequestDto;
 import com.sasindu.shoppingcart.abstractions.dto.response.product.ProductResponseDto;
 import com.sasindu.shoppingcart.abstractions.interfaces.IProductService;
-import com.sasindu.shoppingcart.constants.ApplicationConstants;
 import com.sasindu.shoppingcart.helpers.ApiResponse;
 import com.sasindu.shoppingcart.helpers.GlobalExceptionHandler;
 import com.sasindu.shoppingcart.helpers.GlobalSuccessHandler;
@@ -24,7 +23,7 @@ import java.util.Map;
  * ProductController class is responsible for handling all the API requests related to the product
  */
 @RestController
-@RequestMapping(ApplicationConstants.API_URL_PREFIX + "/product")
+@RequestMapping("${api.prefix}" + "/product")
 @RequiredArgsConstructor
 public class ProductController {
     private final IProductService _productService;

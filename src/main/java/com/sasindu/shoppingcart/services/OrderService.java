@@ -64,7 +64,7 @@ public class OrderService implements IOrderService {
     private Order createOrder(Cart cart) {
         try {
             Order order = new Order();
-            order.setUser(cart.getUser());
+            order.setAppUser(cart.getAppUser());
             order.setStatus(OrderStatus.PENDING);
             order.setOrderDate(LocalDate.now());
             return order;
@@ -86,8 +86,8 @@ public class OrderService implements IOrderService {
     @Transactional
     public Order placeOrder(Long userId) {
         try {
-            User user = _sharedService.getUserById(userId);
-            if (user == null) {
+            AppUser appUser = _sharedService.getUserById(userId);
+            if (appUser == null) {
                 throw new NotFoundException("User not found");
             }
 

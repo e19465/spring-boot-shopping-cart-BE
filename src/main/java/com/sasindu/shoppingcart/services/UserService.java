@@ -2,7 +2,7 @@ package com.sasindu.shoppingcart.services;
 
 import com.sasindu.shoppingcart.abstractions.dto.request.user.UpdateUserRequestDto;
 import com.sasindu.shoppingcart.abstractions.interfaces.IUserService;
-import com.sasindu.shoppingcart.models.User;
+import com.sasindu.shoppingcart.models.AppUser;
 import com.sasindu.shoppingcart.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,7 +21,7 @@ public class UserService implements IUserService {
      * @throws RuntimeException - if user not found
      */
     @Override
-    public User getUserById(Long id) {
+    public AppUser getUserById(Long id) {
         try {
             return _userRepository.findById(id)
                     .orElseThrow(() -> new RuntimeException("User not found"));
@@ -42,7 +42,7 @@ public class UserService implements IUserService {
      * @throws RuntimeException - if user not found
      */
     @Override
-    public User updateUser(UpdateUserRequestDto request, Long userId) {
+    public AppUser updateUser(UpdateUserRequestDto request, Long userId) {
         try {
             return _userRepository.findById(userId)
                     .map(user -> {

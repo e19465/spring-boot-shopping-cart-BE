@@ -3,7 +3,6 @@ package com.sasindu.shoppingcart.controllers;
 
 import com.sasindu.shoppingcart.abstractions.dto.response.order.OrderResponseDto;
 import com.sasindu.shoppingcart.abstractions.interfaces.IOrderService;
-import com.sasindu.shoppingcart.constants.ApplicationConstants;
 import com.sasindu.shoppingcart.helpers.ApiResponse;
 import com.sasindu.shoppingcart.helpers.GlobalExceptionHandler;
 import com.sasindu.shoppingcart.helpers.GlobalSuccessHandler;
@@ -20,7 +19,7 @@ import java.util.List;
  * OrderController class is responsible for handling all the API requests related to the order
  */
 @RestController
-@RequestMapping(ApplicationConstants.API_URL_PREFIX + "/orders")
+@RequestMapping("${api.prefix}" + "/orders")
 @RequiredArgsConstructor
 public class OrderController {
     private final IOrderService _orderService;

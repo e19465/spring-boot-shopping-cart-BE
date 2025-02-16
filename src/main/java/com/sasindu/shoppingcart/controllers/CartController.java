@@ -2,7 +2,6 @@ package com.sasindu.shoppingcart.controllers;
 
 import com.sasindu.shoppingcart.abstractions.dto.response.cart.CartResponseDto;
 import com.sasindu.shoppingcart.abstractions.interfaces.ICartService;
-import com.sasindu.shoppingcart.constants.ApplicationConstants;
 import com.sasindu.shoppingcart.helpers.ApiResponse;
 import com.sasindu.shoppingcart.helpers.GlobalExceptionHandler;
 import com.sasindu.shoppingcart.helpers.GlobalSuccessHandler;
@@ -15,7 +14,7 @@ import java.math.BigDecimal;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(ApplicationConstants.API_URL_PREFIX + "/cart")
+@RequestMapping("${api.prefix}" + "/cart")
 public class CartController {
     private final ICartService _cartService;
 

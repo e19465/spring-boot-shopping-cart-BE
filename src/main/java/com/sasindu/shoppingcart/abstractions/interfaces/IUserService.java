@@ -2,7 +2,7 @@ package com.sasindu.shoppingcart.abstractions.interfaces;
 
 
 import com.sasindu.shoppingcart.abstractions.dto.request.user.UpdateUserRequestDto;
-import com.sasindu.shoppingcart.models.User;
+import com.sasindu.shoppingcart.models.AppUser;
 
 /**
  * IUserService - All the user related services defined here
@@ -15,7 +15,7 @@ public interface IUserService {
      * @param id - id of the user
      * @return User
      */
-    User getUserById(Long id);
+    AppUser getUserById(Long id);
 
 
     /**
@@ -25,7 +25,7 @@ public interface IUserService {
      * @param userId  - id of the user
      * @return User
      */
-    User updateUser(UpdateUserRequestDto request, Long userId);
+    AppUser updateUser(UpdateUserRequestDto request, Long userId);
 
 
     /**

@@ -6,10 +6,10 @@ import com.sasindu.shoppingcart.abstractions.interfaces.ISharedService;
 import com.sasindu.shoppingcart.exceptions.BadRequestException;
 import com.sasindu.shoppingcart.exceptions.NotFoundException;
 import com.sasindu.shoppingcart.exceptions.UnAuthorizedException;
+import com.sasindu.shoppingcart.models.AppUser;
 import com.sasindu.shoppingcart.models.Cart;
 import com.sasindu.shoppingcart.models.CartItem;
 import com.sasindu.shoppingcart.models.Product;
-import com.sasindu.shoppingcart.models.User;
 import com.sasindu.shoppingcart.repository.CartItemRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -84,11 +84,11 @@ public class CartItemService implements ICartItemService {
             // 1. Retrieve the cart and product, if cart not found, create new cart
             Cart cart = _sharedService.getCartByUserId(userId);
             if (cart == null) {
-                User foundUser = _sharedService.getUserById(userId);
-                if (foundUser == null) {
+                AppUser foundAppUser = _sharedService.getUserById(userId);
+                if (foundAppUser == null) {
                     throw new NotFoundException("User not found");
                 }
-                cart = _sharedService.initializeNewCart(foundUser);
+                cart = _sharedService.initializeNewCart(foundAppUser);
             }
 
             Product product = _sharedService.getProductById(productId);
@@ -201,8 +201,8 @@ public class CartItemService implements ICartItemService {
     @Override
     public List<CartItem> getCartItemsByUserId(Long userId) {
         try {
-            User user = _sharedService.getUserById(userId);
-            if (user == null) {
+            AppUser appUser = _sharedService.getUserById(userId);
+            if (appUser == null) {
                 throw new NotFoundException("User not found");
             }
             return _cartItemRepository.findAllByCartUserId(userId);
@@ -228,7 +228,7 @@ public class CartItemService implements ICartItemService {
                 throw new NotFoundException("Cart not found");
             }
 
-            if (!cart.getUser().getId().equals(userId)) {
+            if (!cart.getAppUser().getId().equals(userId)) {
                 throw new UnAuthorizedException("Unauthorized access");
             }
 

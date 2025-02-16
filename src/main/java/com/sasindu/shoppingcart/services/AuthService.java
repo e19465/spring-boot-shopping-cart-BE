@@ -4,8 +4,8 @@ import com.sasindu.shoppingcart.abstractions.dto.request.user.AddUserRequestDto;
 import com.sasindu.shoppingcart.abstractions.interfaces.IAuthService;
 import com.sasindu.shoppingcart.abstractions.interfaces.ISharedService;
 import com.sasindu.shoppingcart.exceptions.BadRequestException;
-import com.sasindu.shoppingcart.helpers.Utils;
-import com.sasindu.shoppingcart.models.User;
+import com.sasindu.shoppingcart.helpers.HelperUtilStaticMethods;
+import com.sasindu.shoppingcart.models.AppUser;
 import com.sasindu.shoppingcart.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -28,17 +28,17 @@ public class AuthService implements IAuthService {
      * @throws RuntimeException - if user not found
      */
     @Override
-    public User registerUser(AddUserRequestDto request) {
+    public AppUser registerUser(AddUserRequestDto request) {
         try {
-            if (!Utils.isPasswordMatch(request.getPassword(), request.getConfirmPassword())) {
+            if (!HelperUtilStaticMethods.isPasswordMatch(request.getPassword(), request.getConfirmPassword())) {
                 throw new BadRequestException("Password and Confirm Password should be same");
             }
 
-            if (!Utils.isEmailValid(request.getEmail())) {
+            if (!HelperUtilStaticMethods.isEmailValid(request.getEmail())) {
                 throw new BadRequestException("Invalid email");
             }
 
-            if (!Utils.isPasswordStrong(request.getPassword())) {
+            if (!HelperUtilStaticMethods.isPasswordStrong(request.getPassword())) {
                 throw new BadRequestException("Password should contain at least 8 characters, 1 uppercase, 1 lowercase, 1 number and 1 special character");
             }
 
@@ -46,16 +46,16 @@ public class AuthService implements IAuthService {
                 throw new BadRequestException("Email already exists");
             }
 
-            User user = new User();
-            user.setFirstName(request.getFirstName());
-            user.setLastName(request.getLastName());
-            user.setEmail(request.getEmail());
-            user.setPassword(request.getPassword());
-            User savedUser = _userRepository.save(user);
+            AppUser appUser = new AppUser();
+            appUser.setFirstName(request.getFirstName());
+            appUser.setLastName(request.getLastName());
+            appUser.setEmail(request.getEmail());
+            appUser.setPassword(request.getPassword());
+            AppUser savedAppUser = _userRepository.save(appUser);
 
             // initialize new cart for the user
-            savedUser.setCart(_sharedService.initializeNewCart(savedUser));
-            return _userRepository.save(savedUser);
+            savedAppUser.setCart(_sharedService.initializeNewCart(savedAppUser));
+            return _userRepository.save(savedAppUser);
         } catch (RuntimeException e) {
             throw e;
         } catch (Exception e) {

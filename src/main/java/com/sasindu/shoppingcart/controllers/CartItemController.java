@@ -5,7 +5,6 @@ import com.sasindu.shoppingcart.abstractions.dto.request.cartitem.UpdateCartItem
 import com.sasindu.shoppingcart.abstractions.dto.response.cartitem.CartItemResponseDto;
 import com.sasindu.shoppingcart.abstractions.interfaces.ICartItemService;
 import com.sasindu.shoppingcart.abstractions.interfaces.ICartService;
-import com.sasindu.shoppingcart.constants.ApplicationConstants;
 import com.sasindu.shoppingcart.helpers.ApiResponse;
 import com.sasindu.shoppingcart.helpers.GlobalExceptionHandler;
 import com.sasindu.shoppingcart.helpers.GlobalSuccessHandler;
@@ -20,7 +19,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(ApplicationConstants.API_URL_PREFIX + "/cart-item")
+@RequestMapping("${api.prefix}" + "/cart-item")
 public class CartItemController {
     private final ICartItemService _cartItemService;
     private final ICartService _cartService;

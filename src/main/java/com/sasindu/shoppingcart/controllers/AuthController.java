@@ -4,7 +4,6 @@ package com.sasindu.shoppingcart.controllers;
 import com.sasindu.shoppingcart.abstractions.dto.request.user.AddUserRequestDto;
 import com.sasindu.shoppingcart.abstractions.dto.response.user.UserResponseDto;
 import com.sasindu.shoppingcart.abstractions.interfaces.IAuthService;
-import com.sasindu.shoppingcart.constants.ApplicationConstants;
 import com.sasindu.shoppingcart.helpers.ApiResponse;
 import com.sasindu.shoppingcart.helpers.GlobalExceptionHandler;
 import com.sasindu.shoppingcart.helpers.GlobalSuccessHandler;
@@ -17,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(ApplicationConstants.API_URL_PREFIX + "/auth")
+@RequestMapping("${api.prefix}" + "/auth")
 @RequiredArgsConstructor
 public class AuthController {
     private final IAuthService _authService;

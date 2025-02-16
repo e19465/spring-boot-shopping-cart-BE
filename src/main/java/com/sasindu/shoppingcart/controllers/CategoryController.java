@@ -6,7 +6,6 @@ import com.sasindu.shoppingcart.abstractions.dto.request.category.UpdateCategory
 import com.sasindu.shoppingcart.abstractions.dto.response.category.CategoryResponseDto;
 import com.sasindu.shoppingcart.abstractions.dto.response.product.ProductResponseDto;
 import com.sasindu.shoppingcart.abstractions.interfaces.ICategoryService;
-import com.sasindu.shoppingcart.constants.ApplicationConstants;
 import com.sasindu.shoppingcart.helpers.ApiResponse;
 import com.sasindu.shoppingcart.helpers.GlobalExceptionHandler;
 import com.sasindu.shoppingcart.helpers.GlobalSuccessHandler;
@@ -25,7 +24,7 @@ import java.util.List;
  * CategoryController class is responsible for handling all the API requests related to the category
  */
 @RestController
-@RequestMapping(ApplicationConstants.API_URL_PREFIX + "/category")
+@RequestMapping("${api.prefix}" + "/category")
 @RequiredArgsConstructor
 public class CategoryController {
     private final ICategoryService _categoryService;

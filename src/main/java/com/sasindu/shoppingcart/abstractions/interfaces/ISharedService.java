@@ -1,9 +1,9 @@
 package com.sasindu.shoppingcart.abstractions.interfaces;
 
+import com.sasindu.shoppingcart.models.AppUser;
 import com.sasindu.shoppingcart.models.Cart;
 import com.sasindu.shoppingcart.models.Category;
 import com.sasindu.shoppingcart.models.Product;
-import com.sasindu.shoppingcart.models.User;
 
 public interface ISharedService {
 
@@ -32,10 +32,10 @@ public interface ISharedService {
     /**
      * Initialize a new cart
      *
-     * @param user The user to initialize the cart for
+     * @param appUser The user to initialize the cart for
      * @return The new cart
      */
-    public Cart initializeNewCart(User user);
+    public Cart initializeNewCart(AppUser appUser);
 
     /**
      * Get a cart by its id
@@ -107,5 +107,5 @@ public interface ISharedService {
      * @param userId The id of the user
      * @return The user object
      */
-    User getUserById(Long userId);
+    AppUser getUserById(Long userId);
 }

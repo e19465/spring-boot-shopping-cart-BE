@@ -2,7 +2,7 @@ package com.sasindu.shoppingcart.abstractions.interfaces;
 
 
 import com.sasindu.shoppingcart.abstractions.dto.request.user.AddUserRequestDto;
-import com.sasindu.shoppingcart.models.User;
+import com.sasindu.shoppingcart.models.AppUser;
 
 /**
  * Interface for the AuthService
@@ -15,5 +15,5 @@ public interface IAuthService {
      * @param user - AddUserRequest object containing the user details
      * @return User object containing the user details
      */
-    User registerUser(AddUserRequestDto user);
+    AppUser registerUser(AddUserRequestDto user);
 }

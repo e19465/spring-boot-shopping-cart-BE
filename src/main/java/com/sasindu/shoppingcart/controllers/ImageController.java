@@ -3,7 +3,6 @@ package com.sasindu.shoppingcart.controllers;
 import com.sasindu.shoppingcart.abstractions.dto.response.image.ImageResponseDto;
 import com.sasindu.shoppingcart.abstractions.dto.response.image.ImageResponseWithoutBlobDto;
 import com.sasindu.shoppingcart.abstractions.interfaces.IImageService;
-import com.sasindu.shoppingcart.constants.ApplicationConstants;
 import com.sasindu.shoppingcart.helpers.ApiResponse;
 import com.sasindu.shoppingcart.helpers.GlobalExceptionHandler;
 import com.sasindu.shoppingcart.helpers.GlobalSuccessHandler;
@@ -24,7 +23,7 @@ import java.util.List;
  * ImageController class is responsible for handling all the API requests related to the image
  */
 @RestController
-@RequestMapping(ApplicationConstants.API_URL_PREFIX + "/images")
+@RequestMapping("${api.prefix}" + "/images")
 @RequiredArgsConstructor
 public class ImageController {
     private final IImageService _imageService;
