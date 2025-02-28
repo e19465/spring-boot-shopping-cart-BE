@@ -88,40 +88,4 @@ public class UserService implements IUserService {
             throw new RuntimeException(e);
         }
     }
-
-
-    /**
-     * Check if the email exists
-     *
-     * @param email - email
-     * @return boolean
-     */
-    @Override
-    public boolean existsByEmail(String email) {
-        try {
-            return _userRepository.existsByEmail(email);
-        } catch (RuntimeException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-
-    /**
-     * Save user
-     *
-     * @param appUser - AppUser object
-     * @return AppUser object
-     */
-    @Override
-    public AppUser saveUser(AppUser appUser) {
-        try {
-            return _userRepository.save(appUser);
-        } catch (RuntimeException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
 }

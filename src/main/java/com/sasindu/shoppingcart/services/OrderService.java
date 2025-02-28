@@ -67,7 +67,7 @@ public class OrderService implements IOrderService {
     private Order createOrder(Cart cart) {
         try {
             Order order = new Order();
-            order.setAppUser(cart.getAppUser());
+            order.setUser(cart.getUser());
             order.setStatus(OrderStatus.PENDING);
             order.setOrderDate(LocalDate.now());
             return order;
@@ -129,7 +129,7 @@ public class OrderService implements IOrderService {
                     .findById(orderId)
                     .orElseThrow(() -> new NotFoundException("Order not found"));
 
-            if (!isAdmin && !order.getAppUser().getId().equals(appUser.getId())) {
+            if (!isAdmin && !order.getUser().getId().equals(appUser.getId())) {
                 throw new UnAuthorizedException("Unauthorized access");
             }
             return order;

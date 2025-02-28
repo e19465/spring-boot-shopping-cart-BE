@@ -12,6 +12,7 @@ import com.sasindu.shoppingcart.models.Cart;
 import com.sasindu.shoppingcart.models.CartItem;
 import com.sasindu.shoppingcart.models.Product;
 import com.sasindu.shoppingcart.repository.CartItemRepository;
+import com.sasindu.shoppingcart.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,6 +29,7 @@ public class CartItemService implements ICartItemService {
     private final CartItemRepository _cartItemRepository;
     private final ICartService _cartService;
     private final IUserService _userService;
+    private final UserRepository _userRepository;
     private final IProductService _productService;
     private final IAuthService _authService;
 
@@ -67,7 +69,7 @@ public class CartItemService implements ICartItemService {
             if (cartItem == null) {
                 throw new NotFoundException("Cart item not found");
             }
-            if (!cartItem.getCart().getAppUser().getId().equals(user.getId())) {
+            if (!cartItem.getCart().getUser().getId().equals(user.getId())) {
                 throw new UnAuthorizedException("Unauthorized access");
             }
             return cartItem;
@@ -99,6 +101,8 @@ public class CartItemService implements ICartItemService {
                     throw new NotFoundException("User not found");
                 }
                 cart = _cartService.initializeNewCart(foundAppUser);
+                foundAppUser.setCart(cart);
+                _userRepository.save(foundAppUser);
             }
 
             Product product = _productService.getProductById(productId);
@@ -160,7 +164,7 @@ public class CartItemService implements ICartItemService {
             Cart cart = getCartById(cartId);
 
             // check if the cart belongs to the user
-            if (!cart.getAppUser().getId().equals(user.getId())) {
+            if (!cart.getUser().getId().equals(user.getId())) {
                 throw new UnAuthorizedException("Unauthorized access");
             }
 
@@ -198,7 +202,7 @@ public class CartItemService implements ICartItemService {
             Cart cart = getCartById(cartId);
 
             // check if the cart belongs to the user
-            if (!cart.getAppUser().getId().equals(user.getId())) {
+            if (!cart.getUser().getId().equals(user.getId())) {
                 throw new UnAuthorizedException("Unauthorized access");
             }
 
@@ -254,24 +258,6 @@ public class CartItemService implements ICartItemService {
         try {
             Cart cart = _cartService.getCartById(cartId);
             return _cartItemRepository.findAllByCartId(cart.getId());
-        } catch (RuntimeException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-
-    /**
-     * Delete all cart items by cart id
-     *
-     * @param id The id of the cart
-     */
-    @Override
-    public void deleteAllByCartId(Long id) {
-        try {
-            Cart cart = getCartById(id);
-            _cartItemRepository.deleteAllByCartId(cart.getId());
         } catch (RuntimeException e) {
             throw e;
         } catch (Exception e) {

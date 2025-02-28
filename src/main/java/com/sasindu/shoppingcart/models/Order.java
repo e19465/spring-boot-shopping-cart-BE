@@ -35,7 +35,7 @@ public class Order {
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
-    private AppUser appUser;
+    private AppUser user;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<OrderItem> orderItems = new HashSet<>();
@@ -94,7 +94,7 @@ public class Order {
         response.setOrderDate(this.orderDate);
         response.setTotalAmount(this.totalAmount);
         response.setStatus(this.status);
-        response.setUser(this.appUser.toUserResponse());
+        response.setUser(this.user.toUserResponse());
         response.setOrderItems(this.orderItems.stream().map(OrderItem::toOrderItemResponse).toList());
         return response;
     }

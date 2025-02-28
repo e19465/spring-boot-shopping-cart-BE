@@ -30,7 +30,7 @@ public class Cart {
 
     @OneToOne
     @JoinColumn(name = "user_id", nullable = false)
-    private AppUser appUser;
+    private AppUser user;
 
     @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<CartItem> cartItems = new HashSet<>();
@@ -78,7 +78,7 @@ public class Cart {
         CartResponseDto response = new CartResponseDto();
         response.setId(this.id);
         response.setTotalAmount(this.totalAmount);
-        response.setUser(this.appUser.toUserResponse());  // Convert User to UserResponse
+        response.setUser(this.user.toUserResponse());  // Convert User to UserResponse
 
         // Map CartItem to CartItemResponse and set it to the CartResponse
         Set<CartItemResponseDto> cartItemResponses = this.cartItems.stream()

@@ -1,12 +1,12 @@
 package com.sasindu.shoppingcart.services;
 
 import com.sasindu.shoppingcart.abstractions.interfaces.IAuthService;
-import com.sasindu.shoppingcart.abstractions.interfaces.ICartItemService;
 import com.sasindu.shoppingcart.abstractions.interfaces.ICartService;
 import com.sasindu.shoppingcart.exceptions.NotFoundException;
 import com.sasindu.shoppingcart.exceptions.UnAuthorizedException;
 import com.sasindu.shoppingcart.models.AppUser;
 import com.sasindu.shoppingcart.models.Cart;
+import com.sasindu.shoppingcart.repository.CartItemRepository;
 import com.sasindu.shoppingcart.repository.CartRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,8 +22,7 @@ import java.math.BigDecimal;
 @RequiredArgsConstructor
 public class CartService implements ICartService {
     private final CartRepository _cartRepository;
-    private final ICartItemService _cartItemService;
-    private final ICartService _cartService;
+    private final CartItemRepository _cartItemRepository;
     private final IAuthService _authService;
 
     /**
@@ -39,7 +38,7 @@ public class CartService implements ICartService {
             boolean isUserAdmin = _authService.isAuthenticatedUserAdmin();
             AppUser authenticatedUser = _authService.getAuthenticatedUser();
             Cart cart = _cartRepository.findById(cartId).orElseThrow(() -> new NotFoundException("Cart not found"));
-            if (!isUserAdmin && !cart.getAppUser().getId().equals(authenticatedUser.getId())) {
+            if (!isUserAdmin && !cart.getUser().getId().equals(authenticatedUser.getId())) {
                 throw new UnAuthorizedException("Unauthorized access");
             }
             return cart;
@@ -62,7 +61,7 @@ public class CartService implements ICartService {
     public void clearCart(Long id) {
         try {
             Cart cart = getCartById(id);
-            _cartService.clearCartByCart(cart);
+            clearCartByCart(cart);
         } catch (RuntimeException e) {
             throw e;
         } catch (Exception e) {
@@ -126,7 +125,7 @@ public class CartService implements ICartService {
                 throw new NotFoundException("Cart not found");
             }
 
-            if (!isUserAdmin && !cart.getAppUser().getId().equals(authenticatedUser.getId())) {
+            if (!isUserAdmin && !cart.getUser().getId().equals(authenticatedUser.getId())) {
                 throw new UnAuthorizedException("Unauthorized access");
             }
 
@@ -149,7 +148,7 @@ public class CartService implements ICartService {
         try {
             Cart cart = new Cart();
             cart.setTotalAmount(BigDecimal.ZERO);
-            cart.setAppUser(appUser);
+            cart.setUser(appUser);
             return _cartRepository.save(cart);
         } catch (RuntimeException e) {
             throw e;
@@ -168,10 +167,10 @@ public class CartService implements ICartService {
     public void clearCartByCart(Cart cart) {
         try {
             AppUser authenticatedUser = _authService.getAuthenticatedUser();
-            if (!cart.getAppUser().getId().equals(authenticatedUser.getId())) {
+            if (!cart.getUser().getId().equals(authenticatedUser.getId())) {
                 throw new UnAuthorizedException("Unauthorized access");
             }
-            _cartItemService.deleteAllByCartId(cart.getId());
+            _cartItemRepository.deleteAllByCartId(cart.getId());
             cart.getCartItems().clear();
             cart.updateTotalAmount();
             _cartRepository.save(cart);

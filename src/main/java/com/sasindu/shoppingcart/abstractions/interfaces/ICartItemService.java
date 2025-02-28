@@ -49,12 +49,4 @@ public interface ICartItemService {
      * @return list of cart items
      */
     List<CartItem> getCartItemsByCartId(Long cartId);
-
-
-    /**
-     * Delete all cart items by cart id
-     *
-     * @param id id of the cart
-     */
-    void deleteAllByCartId(Long id);
 }

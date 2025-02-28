@@ -3,13 +3,14 @@ package com.sasindu.shoppingcart.services;
 import com.sasindu.shoppingcart.abstractions.dto.request.auth.LoginRequestDto;
 import com.sasindu.shoppingcart.abstractions.dto.request.user.RegisterRequestDto;
 import com.sasindu.shoppingcart.abstractions.interfaces.IAuthService;
-import com.sasindu.shoppingcart.abstractions.interfaces.ICartService;
-import com.sasindu.shoppingcart.abstractions.interfaces.IUserService;
 import com.sasindu.shoppingcart.exceptions.BadRequestException;
 import com.sasindu.shoppingcart.exceptions.ForbiddenException;
 import com.sasindu.shoppingcart.exceptions.UnAuthorizedException;
 import com.sasindu.shoppingcart.helpers.HelperUtilStaticMethods;
 import com.sasindu.shoppingcart.models.AppUser;
+import com.sasindu.shoppingcart.models.Cart;
+import com.sasindu.shoppingcart.repository.CartRepository;
+import com.sasindu.shoppingcart.repository.UserRepository;
 import com.sasindu.shoppingcart.security.jwt.JWTUtils;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -22,6 +23,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+
 
 /**
  * Service class for the Auth Service
@@ -29,8 +32,8 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class AuthService implements IAuthService {
-    private final IUserService _userService;
-    private final ICartService _cartService;
+    private final UserRepository _userRepository;
+    private final CartRepository _cartRepository;
     private final JWTUtils _jwtUtils;
     private final PasswordEncoder _passwordEncoder;
     private final AuthenticationManager _authenticationManager;
@@ -99,7 +102,7 @@ public class AuthService implements IAuthService {
                 throw new BadRequestException("Password should contain at least 8 characters, 1 uppercase, 1 lowercase, 1 number and 1 special character");
             }
 
-            if (_userService.existsByEmail(request.getEmail())) {
+            if (_userRepository.existsByEmail(request.getEmail())) {
                 throw new BadRequestException("Email already exists");
             }
 
@@ -108,11 +111,16 @@ public class AuthService implements IAuthService {
             appUser.setLastName(request.getLastName());
             appUser.setEmail(request.getEmail());
             appUser.setPassword(request.getPassword());
-            AppUser savedAppUser = _userService.saveUser(appUser);
+            AppUser savedAppUser = _userRepository.save(appUser);
 
             // initialize new cart for the user
-            savedAppUser.setCart(_cartService.initializeNewCart(savedAppUser));
-            return _userService.saveUser(savedAppUser);
+            Cart cart = new Cart();
+            cart.setTotalAmount(BigDecimal.ZERO);
+            cart.setUser(appUser);
+            Cart savedCart = _cartRepository.save(cart);
+            savedAppUser.setCart(savedCart);
+
+            return _userRepository.save(savedAppUser);
         } catch (RuntimeException e) {
             throw e;
         } catch (Exception e) {
@@ -190,10 +198,8 @@ public class AuthService implements IAuthService {
             }
 
             Long userId = _jwtUtils.getUserIdFromRefreshToken(refresh);
-            AppUser user = _userService.getUserById(userId);
-            if (user == null) {
-                throw new ForbiddenException("Invalid refresh token");
-            }
+            AppUser user = _userRepository.findById(userId)
+                    .orElseThrow(() -> new ForbiddenException("Invalid refresh token"));
             if (!user.isEnabled()) {
                 throw new ForbiddenException("Please verify your email");
             }

@@ -1,7 +1,13 @@
 package com.sasindu.shoppingcart.constants;
 
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
+import java.util.List;
+
+@Component
 public final class ApplicationConstants {
     public static final String IMAGE_DOWNLOAD_URL_PREFIX = "/api/v1/images/image/download/";
 
@@ -62,44 +68,44 @@ public final class ApplicationConstants {
     }
 
     //!  CORS Configuration
-    private static String[] CORS_ALLOWED_ORIGINS;
-    private static String[] CORS_ALLOWED_METHODS;
-    private static String[] CORS_ALLOWED_HEADERS;
+    private static List<String> CORS_ALLOWED_ORIGINS;
+    private static List<String> CORS_ALLOWED_METHODS;
+    private static List<String> CORS_ALLOWED_HEADERS;
     private static boolean CORS_ALLOW_CREDENTIALS;
 
-    public static String[] getCorsAllowedOrigins() {
+    @Value("${cors.allowed.origins}")
+    private String corsAllowedOriginsString;
+
+    @Value("${cors.allowed.methods}")
+    private String corsAllowedMethodsString;
+
+    @Value("${cors.allowed.headers}")
+    private String corsAllowedHeadersString;
+
+    @Value("${cors.allow.credentials}")
+    private String corsAllowCredentialsString;
+
+    @PostConstruct
+    public void init() {
+        CORS_ALLOWED_ORIGINS = Arrays.asList(corsAllowedOriginsString.split(","));
+        CORS_ALLOWED_METHODS = Arrays.asList(corsAllowedMethodsString.split(","));
+        CORS_ALLOWED_HEADERS = Arrays.asList(corsAllowedHeadersString.split(","));
+        CORS_ALLOW_CREDENTIALS = Boolean.parseBoolean(corsAllowCredentialsString);
+    }
+
+    public static List<String> getCorsAllowedOrigins() {
         return CORS_ALLOWED_ORIGINS;
     }
 
-    @Value("${cors.allowed.origins}")
-    public void setCorsAllowedOrigins(String corsAllowedOriginsString) {
-        CORS_ALLOWED_ORIGINS = corsAllowedOriginsString.split(",");
-    }
-
-    public static String[] getCorsAllowedMethods() {
+    public static List<String> getCorsAllowedMethods() {
         return CORS_ALLOWED_METHODS;
     }
 
-    @Value("${cors.allowed.methods}")
-    public void setCorsAllowedMethods(String corsAllowedMethodsString) {
-        CORS_ALLOWED_METHODS = corsAllowedMethodsString.split(",");
-    }
-
-    public static String[] getCorsAllowedHeaders() {
+    public static List<String> getCorsAllowedHeaders() {
         return CORS_ALLOWED_HEADERS;
-    }
-
-    @Value("${cors.allowed.headers}")
-    public void setCorsAllowedHeaders(String corsAllowedHeadersString) {
-        CORS_ALLOWED_HEADERS = corsAllowedHeadersString.split(",");
     }
 
     public static boolean isCorsAllowCredentials() {
         return CORS_ALLOW_CREDENTIALS;
-    }
-
-    @Value("${cors.allow.credentials}")
-    public void setCorsAllowCredentials(String corsAllowCredentialsString) {
-        CORS_ALLOW_CREDENTIALS = corsAllowCredentialsString.equals("true");
     }
 }
