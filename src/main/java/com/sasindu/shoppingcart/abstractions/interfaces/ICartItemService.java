@@ -1,5 +1,7 @@
 package com.sasindu.shoppingcart.abstractions.interfaces;
 
+import com.sasindu.shoppingcart.abstractions.dto.request.cartitem.AddCartItemRequestDto;
+import com.sasindu.shoppingcart.abstractions.dto.request.cartitem.UpdateCartItemRequestDto;
 import com.sasindu.shoppingcart.models.CartItem;
 
 import java.util.List;
@@ -9,11 +11,9 @@ public interface ICartItemService {
     /**
      * Add a product to the cart
      *
-     * @param userId    id of the user to whom the product should be added
-     * @param productId id of the product to be added
-     * @param quantity  quantity of the product to be added
+     * @param request AddCartItemRequestDto object
      */
-    void addItemToCart(Long userId, Long productId, int quantity);
+    void addItemToCart(AddCartItemRequestDto request);
 
 
     /**
@@ -28,11 +28,9 @@ public interface ICartItemService {
     /**
      * Update the quantity of a product in the cart
      *
-     * @param cartId    id of the cart in which the product should be updated
-     * @param productId id of the product to be updated
-     * @param quantity  new quantity of the product
+     * @param request UpdateCartItemRequestDto object
      */
-    void updateItemQuantity(Long cartId, Long productId, int quantity);
+    void updateItemQuantity(UpdateCartItemRequestDto request);
 
 
     /**
@@ -50,6 +48,13 @@ public interface ICartItemService {
      * @param cartId id of the cart
      * @return list of cart items
      */
-    List<CartItem> getCartItemsByCartId(Long cartId, Long userId);
+    List<CartItem> getCartItemsByCartId(Long cartId);
 
+
+    /**
+     * Delete all cart items by cart id
+     *
+     * @param id id of the cart
+     */
+    void deleteAllByCartId(Long id);
 }

@@ -4,7 +4,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-public class GlobalSuccessHandler {
+public class SuccessResponseHandler {
     //! Handle success responses, public access
     public static ResponseEntity<ApiResponse> handleSuccess(String message, Object data, int status, HttpHeaders headers) {
         if (status == HttpStatus.OK.value()) {

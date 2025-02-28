@@ -3,8 +3,8 @@ package com.sasindu.shoppingcart.controllers;
 import com.sasindu.shoppingcart.abstractions.dto.response.cart.CartResponseDto;
 import com.sasindu.shoppingcart.abstractions.interfaces.ICartService;
 import com.sasindu.shoppingcart.helpers.ApiResponse;
-import com.sasindu.shoppingcart.helpers.GlobalExceptionHandler;
-import com.sasindu.shoppingcart.helpers.GlobalSuccessHandler;
+import com.sasindu.shoppingcart.helpers.ErrorResponseHandler;
+import com.sasindu.shoppingcart.helpers.SuccessResponseHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,16 +23,16 @@ public class CartController {
      * getCartById method is responsible for fetching a cart by its id
      * this method calls the getCartById method of the CartService class internally
      *
-     * @param id Long value of the cart id
+     * @param cartId Long value of the cart id
      * @return ApiResponse object containing the response details
      */
-    @GetMapping("/find-by-id/{id}")
-    public ResponseEntity<ApiResponse> getCartById(@PathVariable Long id) {
+    @GetMapping("/find-by-id/{cartId}")
+    public ResponseEntity<ApiResponse> getCartById(@PathVariable Long cartId) {
         try {
-            CartResponseDto cart = _cartService.getCartById(id).toCartResponse();
-            return GlobalSuccessHandler.handleSuccess("Cart fetched successfully", cart, HttpStatus.OK.value(), null);
+            CartResponseDto cart = _cartService.getCartById(cartId).toCartResponse();
+            return SuccessResponseHandler.handleSuccess("Cart fetched successfully", cart, HttpStatus.OK.value(), null);
         } catch (Exception e) {
-            return GlobalExceptionHandler.handleException(e);
+            return ErrorResponseHandler.handleException(e);
         }
     }
 
@@ -48,9 +48,9 @@ public class CartController {
     public ResponseEntity<ApiResponse> clearCart(@PathVariable Long id) {
         try {
             _cartService.clearCart(id);
-            return GlobalSuccessHandler.handleSuccess("Cart cleared successfully", null, HttpStatus.OK.value(), null);
+            return SuccessResponseHandler.handleSuccess("Cart cleared successfully", null, HttpStatus.OK.value(), null);
         } catch (Exception e) {
-            return GlobalExceptionHandler.handleException(e);
+            return ErrorResponseHandler.handleException(e);
         }
     }
 
@@ -66,9 +66,9 @@ public class CartController {
     public ResponseEntity<ApiResponse> getTotalPrice(@PathVariable Long id) {
         try {
             BigDecimal totalPrice = _cartService.getTotalPrice(id);
-            return GlobalSuccessHandler.handleSuccess("Total price fetched successfully", totalPrice, HttpStatus.OK.value(), null);
+            return SuccessResponseHandler.handleSuccess("Total price fetched successfully", totalPrice, HttpStatus.OK.value(), null);
         } catch (Exception e) {
-            return GlobalExceptionHandler.handleException(e);
+            return ErrorResponseHandler.handleException(e);
         }
     }
 }

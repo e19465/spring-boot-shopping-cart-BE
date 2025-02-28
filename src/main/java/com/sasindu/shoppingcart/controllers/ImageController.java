@@ -4,8 +4,8 @@ import com.sasindu.shoppingcart.abstractions.dto.response.image.ImageResponseDto
 import com.sasindu.shoppingcart.abstractions.dto.response.image.ImageResponseWithoutBlobDto;
 import com.sasindu.shoppingcart.abstractions.interfaces.IImageService;
 import com.sasindu.shoppingcart.helpers.ApiResponse;
-import com.sasindu.shoppingcart.helpers.GlobalExceptionHandler;
-import com.sasindu.shoppingcart.helpers.GlobalSuccessHandler;
+import com.sasindu.shoppingcart.helpers.ErrorResponseHandler;
+import com.sasindu.shoppingcart.helpers.SuccessResponseHandler;
 import com.sasindu.shoppingcart.models.Image;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.ByteArrayResource;
@@ -13,6 +13,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -31,18 +32,20 @@ public class ImageController {
     /**
      * saveImages method is responsible for saving images
      * this method calls the saveImages method of the ImageService class internally
+     * Only users with the role ROLE_ADMIN can access this endpoint
      *
      * @param files     MultipartFile list of objects containing the image details
      * @param productId Long value of the product id
      * @return ApiResponse object containing the response details
      */
     @PostMapping("/upload/{productId}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<ApiResponse> saveImages(@RequestParam List<MultipartFile> files, @PathVariable Long productId) {
         try {
             List<ImageResponseWithoutBlobDto> images = _imageService.saveImages(files, productId).stream().map(Image::toImageResponseWithoutBlob).toList();
-            return GlobalSuccessHandler.handleSuccess("Upload successful", images, HttpStatus.CREATED.value(), null);
+            return SuccessResponseHandler.handleSuccess("Upload successful", images, HttpStatus.CREATED.value(), null);
         } catch (Exception e) {
-            return GlobalExceptionHandler.handleException(e);
+            return ErrorResponseHandler.handleException(e);
         }
     }
 
@@ -50,6 +53,7 @@ public class ImageController {
     /**
      * downloadImage method is responsible for downloading an image by its id
      * this method calls the getImageById method of the ImageService class internally
+     * Only users with the role ROLE_ADMIN can access this endpoint
      *
      * @param imageId Long value of the image id
      * @return Resource object containing the image details
@@ -68,7 +72,7 @@ public class ImageController {
                     .headers(headers)
                     .body(resource);
         } catch (Exception e) {
-            return GlobalExceptionHandler.handleException(e);
+            return ErrorResponseHandler.handleException(e);
         }
     }
 
@@ -76,19 +80,21 @@ public class ImageController {
     /**
      * updateImage method is responsible for updating an image
      * this method calls the updateImage method of the ImageService class internally
+     * Only users with the role ROLE_ADMIN can access this endpoint
      *
      * @param file    MultipartFile object containing the image details
      * @param imageId Long value of the image id
      * @return ApiResponse object containing the response details
      */
     @PutMapping("image/update/{imageId}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<ApiResponse> updateImage(@RequestParam MultipartFile file, @PathVariable Long imageId) {
         try {
             ImageResponseWithoutBlobDto response = _imageService.updateImage(file, imageId).toImageResponseWithoutBlob();
-            return GlobalSuccessHandler.handleSuccess("Update successful", response, HttpStatus.OK.value(), null
+            return SuccessResponseHandler.handleSuccess("Update successful", response, HttpStatus.OK.value(), null
             );
         } catch (Exception e) {
-            return GlobalExceptionHandler.handleException(e);
+            return ErrorResponseHandler.handleException(e);
         }
     }
 
@@ -96,17 +102,19 @@ public class ImageController {
     /**
      * deleteImage method is responsible for deleting an image by its id
      * this method calls the deleteImageById method of the ImageService class internally
+     * Only users with the role ROLE_ADMIN can access this endpoint
      *
      * @param imageId Long value of the image id
      * @return ApiResponse object containing the response details
      */
     @DeleteMapping("image/delete/{imageId}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<ApiResponse> deleteImage(@PathVariable Long imageId) {
         try {
             _imageService.deleteImageById(imageId);
-            return GlobalSuccessHandler.handleSuccess("Delete successful", null, 200, null);
+            return SuccessResponseHandler.handleSuccess("Delete successful", null, 200, null);
         } catch (Exception e) {
-            return GlobalExceptionHandler.handleException(e);
+            return ErrorResponseHandler.handleException(e);
         }
     }
 }

@@ -4,8 +4,8 @@ package com.sasindu.shoppingcart.controllers;
 import com.sasindu.shoppingcart.abstractions.dto.response.order.OrderResponseDto;
 import com.sasindu.shoppingcart.abstractions.interfaces.IOrderService;
 import com.sasindu.shoppingcart.helpers.ApiResponse;
-import com.sasindu.shoppingcart.helpers.GlobalExceptionHandler;
-import com.sasindu.shoppingcart.helpers.GlobalSuccessHandler;
+import com.sasindu.shoppingcart.helpers.ErrorResponseHandler;
+import com.sasindu.shoppingcart.helpers.SuccessResponseHandler;
 import com.sasindu.shoppingcart.models.Order;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -29,16 +29,15 @@ public class OrderController {
      * Place order method is responsible for placing an order
      * this method calls the placeOrder method of the OrderService class internally
      *
-     * @param userId Long value of the user id
      * @return ApiResponse object containing the response details
      */
-    @PostMapping("/place-order/{userId}")
-    public ResponseEntity<ApiResponse> placeOrder(@PathVariable Long userId) {
+    @PostMapping("/place-order")
+    public ResponseEntity<ApiResponse> placeOrder() {
         try {
-            OrderResponseDto response = _orderService.placeOrder(userId).toOrderResponse();
-            return GlobalSuccessHandler.handleSuccess("Order placed successfully", response, HttpStatus.CREATED.value(), null);
+            OrderResponseDto response = _orderService.placeOrder().toOrderResponse();
+            return SuccessResponseHandler.handleSuccess("Order placed successfully", response, HttpStatus.CREATED.value(), null);
         } catch (Exception e) {
-            return GlobalExceptionHandler.handleException(e);
+            return ErrorResponseHandler.handleException(e);
         }
     }
 
@@ -54,9 +53,9 @@ public class OrderController {
     public ResponseEntity<ApiResponse> getOrderById(@PathVariable Long orderId) {
         try {
             OrderResponseDto response = _orderService.getOrderById(orderId).toOrderResponse();
-            return GlobalSuccessHandler.handleSuccess("Order retrieved successfully", response, HttpStatus.OK.value(), null);
+            return SuccessResponseHandler.handleSuccess("Order retrieved successfully", response, HttpStatus.OK.value(), null);
         } catch (Exception e) {
-            return GlobalExceptionHandler.handleException(e);
+            return ErrorResponseHandler.handleException(e);
         }
     }
 
@@ -75,9 +74,9 @@ public class OrderController {
                     .stream()
                     .map(Order::toOrderResponse)
                     .toList();
-            return GlobalSuccessHandler.handleSuccess("Orders retrieved successfully", response, HttpStatus.OK.value(), null);
+            return SuccessResponseHandler.handleSuccess("Orders retrieved successfully", response, HttpStatus.OK.value(), null);
         } catch (Exception e) {
-            return GlobalExceptionHandler.handleException(e);
+            return ErrorResponseHandler.handleException(e);
         }
     }
 }
@@ -85,7 +84,7 @@ public class OrderController {
 
 /*
  * ENDPOINTS
- * 1. place order - POST - http://localhost:9091/api/v1/orders/place-order/{userId}
+ * 1. place order - POST - http://localhost:9091/api/v1/orders/place-order
  * 2. get order by id - GET - http://localhost:9091/api/v1/orders/find-by-id/{orderId}
  * 3. get orders by user id - GET - http://localhost:9091/api/v1/orders/get-by-user-id/{userId}
  */

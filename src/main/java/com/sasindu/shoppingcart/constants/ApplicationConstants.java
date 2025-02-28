@@ -17,19 +17,27 @@ public final class ApplicationConstants {
             "/api/v1/public/**",
     };
     private static final String[] PUBLIC_API_CATEGORY_URLS = new String[]{
-            "/api/v1/category/get-by-id/**",
+            "/api/v1/category/find-by-id/**",
+            "/api/v1/category/find-by-name/**",
             "/api/v1/category/get-all/**",
+            "/api/v1/category/get-products/**",
     };
     private static final String[] PUBLIC_API_PRODUCT_URLS = new String[]{
-            "/api/v1/product/get-by-id/**",
+            "/api/v1/product/find-by-id/**",
             "/api/v1/product/get-all/**",
+            "/api/v1/product/filter/**",
+            "/api/v1/product/count/**",
+    };
+    private static final String[] PUBLIC_API_IMAGE_URLS = new String[]{
+            "/api/v1/images/image/download/**",
     };
     // Combine multiple arrays into one
     public static final String[] PUBLIC_URLS = combineArrays(
             PUBLIC_APPLICATION_URLS,
             PUBLIC_API_SHARED_URLS,
             PUBLIC_API_CATEGORY_URLS,
-            PUBLIC_API_PRODUCT_URLS
+            PUBLIC_API_PRODUCT_URLS,
+            PUBLIC_API_IMAGE_URLS
     );
 
     // Method to combine multiple arrays into one

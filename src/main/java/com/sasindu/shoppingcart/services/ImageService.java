@@ -1,7 +1,7 @@
 package com.sasindu.shoppingcart.services;
 
 import com.sasindu.shoppingcart.abstractions.interfaces.IImageService;
-import com.sasindu.shoppingcart.abstractions.interfaces.ISharedService;
+import com.sasindu.shoppingcart.abstractions.interfaces.IProductService;
 import com.sasindu.shoppingcart.constants.ApplicationConstants;
 import com.sasindu.shoppingcart.exceptions.NotFoundException;
 import com.sasindu.shoppingcart.models.Image;
@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ImageService implements IImageService {
     private final ImageRepository _imageRepository;
-    private final ISharedService _sharedService;
+    private final IProductService _productService;
     private static final String IMAGE_DOWNLOAD_URL_PREFIX = ApplicationConstants.IMAGE_DOWNLOAD_URL_PREFIX;
 
     /**
@@ -75,7 +75,7 @@ public class ImageService implements IImageService {
     public List<Image> saveImages(List<MultipartFile> files, Long productId) {
         try {
             // Check if the product exists
-            Product product = _sharedService.getProductById(productId);
+            Product product = _productService.getProductById(productId);
             if (product == null) {
                 throw new NotFoundException("Product not found for id: " + productId);
             }

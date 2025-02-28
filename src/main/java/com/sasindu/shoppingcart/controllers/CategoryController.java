@@ -7,14 +7,15 @@ import com.sasindu.shoppingcart.abstractions.dto.response.category.CategoryRespo
 import com.sasindu.shoppingcart.abstractions.dto.response.product.ProductResponseDto;
 import com.sasindu.shoppingcart.abstractions.interfaces.ICategoryService;
 import com.sasindu.shoppingcart.helpers.ApiResponse;
-import com.sasindu.shoppingcart.helpers.GlobalExceptionHandler;
-import com.sasindu.shoppingcart.helpers.GlobalSuccessHandler;
+import com.sasindu.shoppingcart.helpers.ErrorResponseHandler;
+import com.sasindu.shoppingcart.helpers.SuccessResponseHandler;
 import com.sasindu.shoppingcart.helpers.ValidationHelper;
 import com.sasindu.shoppingcart.models.Category;
 import com.sasindu.shoppingcart.models.Product;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -32,20 +33,21 @@ public class CategoryController {
     /**
      * saveCategory method is responsible for saving a category
      * this method calls the addCategory method of the CategoryService class internally
+     * Only users with the role ROLE_ADMIN can access this endpoint
      *
      * @param request AddCategoryRequest object containing the category details
      * @return ApiResponse object containing the response details
      */
     @PostMapping("/create")
-    public ResponseEntity<ApiResponse> saveCategory(@RequestBody AddCategoryRequestDto request) {
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<ApiResponse> createCategory(@RequestBody AddCategoryRequestDto request) {
         try {
             // validate the request
             ValidationHelper.validateModelBinding(request);
-
             CategoryResponseDto category = _categoryService.addCategory(request).toCategoryResponse();
-            return GlobalSuccessHandler.handleSuccess("Category saved successfully", category, HttpStatus.CREATED.value(), null);
+            return SuccessResponseHandler.handleSuccess("Category created successfully", category, HttpStatus.CREATED.value(), null);
         } catch (Exception e) {
-            return GlobalExceptionHandler.handleException(e);
+            return ErrorResponseHandler.handleException(e);
         }
     }
 
@@ -61,9 +63,9 @@ public class CategoryController {
     public ResponseEntity<ApiResponse> getCategoryById(@PathVariable Long id) {
         try {
             CategoryResponseDto category = _categoryService.getCategoryById(id).toCategoryResponse();
-            return GlobalSuccessHandler.handleSuccess("Category fetched successfully", category, HttpStatus.OK.value(), null);
+            return SuccessResponseHandler.handleSuccess("Category fetched successfully", category, HttpStatus.OK.value(), null);
         } catch (Exception e) {
-            return GlobalExceptionHandler.handleException(e);
+            return ErrorResponseHandler.handleException(e);
         }
     }
 
@@ -79,9 +81,9 @@ public class CategoryController {
     public ResponseEntity<ApiResponse> getCategoryByName(@PathVariable String name) {
         try {
             CategoryResponseDto category = _categoryService.getCategoryByName(name).toCategoryResponse();
-            return GlobalSuccessHandler.handleSuccess("Category fetched successfully", category, HttpStatus.OK.value(), null);
+            return SuccessResponseHandler.handleSuccess("Category fetched successfully", category, HttpStatus.OK.value(), null);
         } catch (Exception e) {
-            return GlobalExceptionHandler.handleException(e);
+            return ErrorResponseHandler.handleException(e);
         }
     }
 
@@ -96,9 +98,9 @@ public class CategoryController {
     public ResponseEntity<ApiResponse> getAllCategories() {
         try {
             List<CategoryResponseDto> categories = _categoryService.getAllCategories().stream().map(Category::toCategoryResponse).toList();
-            return GlobalSuccessHandler.handleSuccess("Categories fetched successfully", categories, HttpStatus.OK.value(), null);
+            return SuccessResponseHandler.handleSuccess("Categories fetched successfully", categories, HttpStatus.OK.value(), null);
         } catch (Exception e) {
-            return GlobalExceptionHandler.handleException(e);
+            return ErrorResponseHandler.handleException(e);
         }
     }
 
@@ -106,21 +108,23 @@ public class CategoryController {
     /**
      * updateCategory method is responsible for updating a category
      * this method calls the updateCategory method of the CategoryService class internally
+     * Only users with the role ROLE_ADMIN can access this endpoint
      *
      * @param request UpdateCategoryRequest object containing the updated category details
      * @param id      Long value of the category id
      * @return ApiResponse object containing the response details
      */
     @PutMapping("/update/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<ApiResponse> updateCategory(@RequestBody UpdateCategoryRequestDto request, @PathVariable Long id) {
         try {
             // validate the request
             ValidationHelper.validateModelBinding(request);
 
             CategoryResponseDto category = _categoryService.updateCategory(request, id).toCategoryResponse();
-            return GlobalSuccessHandler.handleSuccess("Category updated successfully", category, HttpStatus.OK.value(), null);
+            return SuccessResponseHandler.handleSuccess("Category updated successfully", category, HttpStatus.OK.value(), null);
         } catch (Exception e) {
-            return GlobalExceptionHandler.handleException(e);
+            return ErrorResponseHandler.handleException(e);
         }
     }
 
@@ -128,17 +132,19 @@ public class CategoryController {
     /**
      * deleteCategory method is responsible for deleting a category
      * this method calls the deleteCategoryById method of the CategoryService class internally
+     * Only users with the role ROLE_ADMIN can access this endpoint
      *
      * @param id Long value of the category id
      * @return ApiResponse object containing the response details
      */
     @DeleteMapping("/delete/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<ApiResponse> deleteCategory(@PathVariable Long id) {
         try {
             _categoryService.deleteCategoryById(id);
-            return GlobalSuccessHandler.handleSuccess("Category deleted successfully", null, HttpStatus.OK.value(), null);
+            return SuccessResponseHandler.handleSuccess("Category deleted successfully", null, HttpStatus.OK.value(), null);
         } catch (Exception e) {
-            return GlobalExceptionHandler.handleException(e);
+            return ErrorResponseHandler.handleException(e);
         }
     }
 
@@ -151,12 +157,12 @@ public class CategoryController {
      * @return ApiResponse object containing the response details
      */
     @GetMapping("/get-products/{category}")
-    public ResponseEntity<ApiResponse> deleteCategory(@PathVariable String category) {
+    public ResponseEntity<ApiResponse> getAllProductsForCategory(@PathVariable String category) {
         try {
             List<ProductResponseDto> products = _categoryService.getAllProductsForCategory(category).stream().map(Product::toProductResponse).toList();
-            return GlobalSuccessHandler.handleSuccess("All products for category", products, HttpStatus.OK.value(), null);
+            return SuccessResponseHandler.handleSuccess("All products for category", products, HttpStatus.OK.value(), null);
         } catch (Exception e) {
-            return GlobalExceptionHandler.handleException(e);
+            return ErrorResponseHandler.handleException(e);
         }
     }
 }
@@ -165,9 +171,9 @@ public class CategoryController {
 /*
  * ENDPOINTS
  * 1. create category - POST - http://localhost:9091/api/v1/category/create
- * 2. find category by id - GET - http://localhost:9091/api/v1/category/find-by-id/{id}
- * 3. find category by name - GET - http://localhost:9091/api/v1/category/find-by-name/{name}
- * 4. find all categories - GET - http://localhost:9091/api/v1/category/get-all
+ * 2. get category by id - GET - http://localhost:9091/api/v1/category/find-by-id/{id}
+ * 3. get category by name - GET - http://localhost:9091/api/v1/category/find-by-name/{name}
+ * 4. get all categories - GET - http://localhost:9091/api/v1/category/get-all
  * 5. update category - PUT - http://localhost:9091/api/v1/category/update/{id}
  * 6. delete category - DELETE - http://localhost:9091/api/v1/category/delete/{id}
  * 7. get products for category - GET - http://localhost:9091/api/v1/category/get-products/{category}

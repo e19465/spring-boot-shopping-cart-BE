@@ -1,8 +1,11 @@
 package com.sasindu.shoppingcart.services;
 
+import com.sasindu.shoppingcart.abstractions.interfaces.IAuthService;
+import com.sasindu.shoppingcart.abstractions.interfaces.ICartItemService;
 import com.sasindu.shoppingcart.abstractions.interfaces.ICartService;
-import com.sasindu.shoppingcart.abstractions.interfaces.ISharedService;
 import com.sasindu.shoppingcart.exceptions.NotFoundException;
+import com.sasindu.shoppingcart.exceptions.UnAuthorizedException;
+import com.sasindu.shoppingcart.models.AppUser;
 import com.sasindu.shoppingcart.models.Cart;
 import com.sasindu.shoppingcart.repository.CartRepository;
 import lombok.RequiredArgsConstructor;
@@ -19,23 +22,27 @@ import java.math.BigDecimal;
 @RequiredArgsConstructor
 public class CartService implements ICartService {
     private final CartRepository _cartRepository;
-    private final ISharedService _sharedService;
+    private final ICartItemService _cartItemService;
+    private final ICartService _cartService;
+    private final IAuthService _authService;
 
     /**
      * Get the cart by id and calculate the total amount and set the total amount to the cart and return the cart
+     * Accessible only by the authenticated cart owner or admin
      *
-     * @param id the id of the cart
+     * @param cartId the id of the cart
      * @return the cart
      */
     @Override
-    public Cart getCartById(Long id) {
+    public Cart getCartById(Long cartId) {
         try {
-            return _cartRepository.findById(id)
-                    .map(c -> {
-                        c.setTotalAmount(c.getTotalAmount());
-                        return _cartRepository.save(c);
-                    })
-                    .orElseThrow(() -> new NotFoundException("Cart not found"));
+            boolean isUserAdmin = _authService.isAuthenticatedUserAdmin();
+            AppUser authenticatedUser = _authService.getAuthenticatedUser();
+            Cart cart = _cartRepository.findById(cartId).orElseThrow(() -> new NotFoundException("Cart not found"));
+            if (!isUserAdmin && !cart.getAppUser().getId().equals(authenticatedUser.getId())) {
+                throw new UnAuthorizedException("Unauthorized access");
+            }
+            return cart;
         } catch (RuntimeException e) {
             throw e;
         } catch (Exception e) {
@@ -46,6 +53,7 @@ public class CartService implements ICartService {
 
     /**
      * Clear the cart by id (delete all cart items and delete the cart)
+     * Accessible only by the authenticated cart owner
      *
      * @param id the id of the cart
      */
@@ -53,8 +61,8 @@ public class CartService implements ICartService {
     @Transactional
     public void clearCart(Long id) {
         try {
-            Cart cart = this.getCartById(id);
-            _sharedService.clearCartByCart(cart);
+            Cart cart = getCartById(id);
+            _cartService.clearCartByCart(cart);
         } catch (RuntimeException e) {
             throw e;
         } catch (Exception e) {
@@ -65,6 +73,7 @@ public class CartService implements ICartService {
 
     /**
      * Get the total price of the cart by id
+     * Accessible only by the authenticated cart owner or admin
      *
      * @param id the id of the cart
      * @return the total price of the cart
@@ -92,6 +101,80 @@ public class CartService implements ICartService {
     public Cart saveCart(Cart cart) {
         try {
             return _cartRepository.save(cart);
+        } catch (RuntimeException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    /**
+     * Get a cart by user id - for internal use in cart item service
+     *
+     * @param userId The id of the user
+     * @return The cart if found, null if not found returns null
+     */
+    @Override
+    public Cart getCartByUserId(Long userId) {
+        try {
+            boolean isUserAdmin = _authService.isAuthenticatedUserAdmin();
+            AppUser authenticatedUser = _authService.getAuthenticatedUser();
+            Cart cart = _cartRepository.findByUserId(userId);
+
+            if (cart == null) {
+                throw new NotFoundException("Cart not found");
+            }
+
+            if (!isUserAdmin && !cart.getAppUser().getId().equals(authenticatedUser.getId())) {
+                throw new UnAuthorizedException("Unauthorized access");
+            }
+
+            return cart;
+        } catch (RuntimeException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    /**
+     * Initialize a new cart - for internal use until Auth Context is implemented
+     *
+     * @return the id of the new cart
+     */
+    @Override
+    public Cart initializeNewCart(AppUser appUser) {
+        try {
+            Cart cart = new Cart();
+            cart.setTotalAmount(BigDecimal.ZERO);
+            cart.setAppUser(appUser);
+            return _cartRepository.save(cart);
+        } catch (RuntimeException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    /**
+     * Clear cart - remove all cart items and set total amount to 0
+     *
+     * @param cart The cart object
+     */
+    @Override
+    public void clearCartByCart(Cart cart) {
+        try {
+            AppUser authenticatedUser = _authService.getAuthenticatedUser();
+            if (!cart.getAppUser().getId().equals(authenticatedUser.getId())) {
+                throw new UnAuthorizedException("Unauthorized access");
+            }
+            _cartItemService.deleteAllByCartId(cart.getId());
+            cart.getCartItems().clear();
+            cart.updateTotalAmount();
+            _cartRepository.save(cart);
         } catch (RuntimeException e) {
             throw e;
         } catch (Exception e) {

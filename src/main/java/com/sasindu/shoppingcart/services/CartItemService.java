@@ -1,8 +1,9 @@
 package com.sasindu.shoppingcart.services;
 
 
-import com.sasindu.shoppingcart.abstractions.interfaces.ICartItemService;
-import com.sasindu.shoppingcart.abstractions.interfaces.ISharedService;
+import com.sasindu.shoppingcart.abstractions.dto.request.cartitem.AddCartItemRequestDto;
+import com.sasindu.shoppingcart.abstractions.dto.request.cartitem.UpdateCartItemRequestDto;
+import com.sasindu.shoppingcart.abstractions.interfaces.*;
 import com.sasindu.shoppingcart.exceptions.BadRequestException;
 import com.sasindu.shoppingcart.exceptions.NotFoundException;
 import com.sasindu.shoppingcart.exceptions.UnAuthorizedException;
@@ -25,7 +26,10 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CartItemService implements ICartItemService {
     private final CartItemRepository _cartItemRepository;
-    private final ISharedService _sharedService;
+    private final ICartService _cartService;
+    private final IUserService _userService;
+    private final IProductService _productService;
+    private final IAuthService _authService;
 
 
     /**
@@ -36,7 +40,7 @@ public class CartItemService implements ICartItemService {
      */
     private Cart getCartById(Long cartId) {
         try {
-            Cart cart = _sharedService.getCartById(cartId);
+            Cart cart = _cartService.getCartById(cartId);
             if (cart == null) {
                 throw new NotFoundException("Cart not found");
             }
@@ -58,9 +62,13 @@ public class CartItemService implements ICartItemService {
      */
     private CartItem getCartItemByCartIdAndProductId(Long cartId, Long productId) {
         try {
+            AppUser user = _authService.getAuthenticatedUser();
             CartItem cartItem = _cartItemRepository.findByCartIdAndProductId(cartId, productId);
             if (cartItem == null) {
                 throw new NotFoundException("Cart item not found");
+            }
+            if (!cartItem.getCart().getAppUser().getId().equals(user.getId())) {
+                throw new UnAuthorizedException("Unauthorized access");
             }
             return cartItem;
         } catch (RuntimeException e) {
@@ -73,25 +81,27 @@ public class CartItemService implements ICartItemService {
     /**
      * Add an item to the cart
      *
-     * @param userId    The id of the user who owns the cart
-     * @param productId The id of the product
-     * @param quantity  The quantity of the product
+     * @param request The AddCartItemRequestDto request object
      */
     @Override
     @Transactional
-    public void addItemToCart(Long userId, Long productId, int quantity) {
+    public void addItemToCart(AddCartItemRequestDto request) {
         try {
             // 1. Retrieve the cart and product, if cart not found, create new cart
-            Cart cart = _sharedService.getCartByUserId(userId);
+            AppUser user = _authService.getAuthenticatedUser();
+            Long userId = user.getId();
+            Long productId = request.getProductId();
+            int quantity = request.getQuantity();
+            Cart cart = _cartService.getCartByUserId(userId);
             if (cart == null) {
-                AppUser foundAppUser = _sharedService.getUserById(userId);
+                AppUser foundAppUser = _userService.getUserById(userId);
                 if (foundAppUser == null) {
                     throw new NotFoundException("User not found");
                 }
-                cart = _sharedService.initializeNewCart(foundAppUser);
+                cart = _cartService.initializeNewCart(foundAppUser);
             }
 
-            Product product = _sharedService.getProductById(productId);
+            Product product = _productService.getProductById(productId);
             if (product == null) {
                 throw new NotFoundException("Product not found");
             }
@@ -126,7 +136,7 @@ public class CartItemService implements ICartItemService {
 
             // 5. Update the cart's total amount and persist changes
             cart.updateTotalAmount();
-            _sharedService.saveCart(cart);  // Cascade will save CartItems if mapped correctly
+            _cartService.saveCart(cart);  // Cascade will save CartItems if mapped correctly
         } catch (RuntimeException e) {
             throw e;
         } catch (Exception e) {
@@ -144,9 +154,16 @@ public class CartItemService implements ICartItemService {
     @Override
     public void removeItemFromCart(Long cartId, Long productId) {
         try {
+            AppUser user = _authService.getAuthenticatedUser();
 
             // get the cart
             Cart cart = getCartById(cartId);
+
+            // check if the cart belongs to the user
+            if (!cart.getAppUser().getId().equals(user.getId())) {
+                throw new UnAuthorizedException("Unauthorized access");
+            }
+
 
             // get the product
             CartItem cartItem = getCartItemByCartIdAndProductId(cartId, productId);
@@ -154,7 +171,7 @@ public class CartItemService implements ICartItemService {
             cart.removeCartItem(cartItem);
             _cartItemRepository.delete(cartItem);
             cart.updateTotalAmount();
-            _sharedService.saveCart(cart);
+            _cartService.saveCart(cart);
         } catch (RuntimeException e) {
             throw e;
         } catch (Exception e) {
@@ -166,15 +183,24 @@ public class CartItemService implements ICartItemService {
     /**
      * Update the quantity of an item in the cart
      *
-     * @param cartId    The id of the cart
-     * @param productId The id of the product
-     * @param quantity  The new quantity
+     * @param request The UpdateCartItemRequestDto request object
      */
     @Override
-    public void updateItemQuantity(Long cartId, Long productId, int quantity) {
+    public void updateItemQuantity(UpdateCartItemRequestDto request) {
         try {
+            Long cartId = request.getCartId();
+            Long productId = request.getProductId();
+            int quantity = request.getQuantity();
+
+            AppUser user = _authService.getAuthenticatedUser();
+
             // get the cart
             Cart cart = getCartById(cartId);
+
+            // check if the cart belongs to the user
+            if (!cart.getAppUser().getId().equals(user.getId())) {
+                throw new UnAuthorizedException("Unauthorized access");
+            }
 
             // get the product
             CartItem cartItem = getCartItemByCartIdAndProductId(cartId, productId);
@@ -182,7 +208,7 @@ public class CartItemService implements ICartItemService {
             cartItem.setQuantity(quantity);
             cartItem.setTotalPrice();
             cart.updateTotalAmount();
-            _sharedService.saveCart(cart);
+            _cartService.saveCart(cart);
             _cartItemRepository.save(cartItem);
         } catch (RuntimeException e) {
             throw e;
@@ -201,10 +227,13 @@ public class CartItemService implements ICartItemService {
     @Override
     public List<CartItem> getCartItemsByUserId(Long userId) {
         try {
-            AppUser appUser = _sharedService.getUserById(userId);
-            if (appUser == null) {
-                throw new NotFoundException("User not found");
+            AppUser appUser = _authService.getAuthenticatedUser();
+            boolean isAdmin = _authService.isAuthenticatedUserAdmin();
+
+            if (!isAdmin && !appUser.getId().equals(userId)) {
+                throw new UnAuthorizedException("Unauthorized access");
             }
+
             return _cartItemRepository.findAllByCartUserId(userId);
         } catch (RuntimeException e) {
             throw e;
@@ -221,18 +250,28 @@ public class CartItemService implements ICartItemService {
      * @return List of cart items
      */
     @Override
-    public List<CartItem> getCartItemsByCartId(Long cartId, Long userId) {
+    public List<CartItem> getCartItemsByCartId(Long cartId) {
         try {
-            Cart cart = _sharedService.getCartById(cartId);
-            if (cart == null) {
-                throw new NotFoundException("Cart not found");
-            }
+            Cart cart = _cartService.getCartById(cartId);
+            return _cartItemRepository.findAllByCartId(cart.getId());
+        } catch (RuntimeException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 
-            if (!cart.getAppUser().getId().equals(userId)) {
-                throw new UnAuthorizedException("Unauthorized access");
-            }
 
-            return _cartItemRepository.findAllByCartId(cartId);
+    /**
+     * Delete all cart items by cart id
+     *
+     * @param id The id of the cart
+     */
+    @Override
+    public void deleteAllByCartId(Long id) {
+        try {
+            Cart cart = getCartById(id);
+            _cartItemRepository.deleteAllByCartId(cart.getId());
         } catch (RuntimeException e) {
             throw e;
         } catch (Exception e) {

@@ -34,4 +34,22 @@ public interface IUserService {
      * @param id - id of the user
      */
     void deleteUserById(Long id);
+
+
+    /**
+     * Check if the email exists
+     *
+     * @param email - email
+     * @return boolean
+     */
+    boolean existsByEmail(String email);
+
+
+    /**
+     * Save user
+     *
+     * @param appUser - AppUser object
+     * @return AppUser object
+     */
+    AppUser saveUser(AppUser appUser);
 }

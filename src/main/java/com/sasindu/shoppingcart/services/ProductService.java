@@ -2,8 +2,8 @@ package com.sasindu.shoppingcart.services;
 
 import com.sasindu.shoppingcart.abstractions.dto.request.product.AddProductRequestDto;
 import com.sasindu.shoppingcart.abstractions.dto.request.product.UpdateProductRequestDto;
+import com.sasindu.shoppingcart.abstractions.interfaces.ICategoryService;
 import com.sasindu.shoppingcart.abstractions.interfaces.IProductService;
-import com.sasindu.shoppingcart.abstractions.interfaces.ISharedService;
 import com.sasindu.shoppingcart.exceptions.NotFoundException;
 import com.sasindu.shoppingcart.models.Category;
 import com.sasindu.shoppingcart.models.Product;
@@ -26,7 +26,7 @@ public class ProductService implements IProductService {
     // In here, we don't define constructor explicitly,
     // because Lombok's @RequiredArgsConstructor will do it for us
     private final ProductRepository _productRepository;
-    private final ISharedService _sharedService;
+    private final ICategoryService _categoryService;
 
     /**
      * Add a new product.
@@ -40,10 +40,10 @@ public class ProductService implements IProductService {
         // idf yes, use it else create a new category
         try {
             // check if the category already exists
-            Category category = _sharedService.getCategoryByName(request.getCategory().getName());
+            Category category = _categoryService.getCategoryByName(request.getCategory().getName());
             if (category == null) {
                 Category newCategory = new Category(request.getCategory().getName());
-                category = _sharedService.saveCategory(newCategory);
+                category = _categoryService.saveCategory(newCategory);
             }
 
             // set the category to the product
@@ -86,7 +86,7 @@ public class ProductService implements IProductService {
                         existingProduct.setPrice(request.getPrice());
                         existingProduct.setInventory(request.getInventory());
                         existingProduct.setDescription(request.getDescription());
-                        Category category = _sharedService.getCategoryByName(request.getCategory().getName());
+                        Category category = _categoryService.getCategoryByName(request.getCategory().getName());
                         if (category == null) {
                             throw new NotFoundException("Category not found");
                         }
@@ -128,8 +128,7 @@ public class ProductService implements IProductService {
     @Override
     public Product getProductById(Long id) {
         try {
-            return _productRepository.findById(id)
-                    .orElseThrow(() -> new NotFoundException("Product not found"));
+            return _productRepository.findById(id).orElse(null);
         } catch (RuntimeException e) {
             throw e;
         } catch (Exception e) {
@@ -155,105 +154,6 @@ public class ProductService implements IProductService {
             throw e;
         } catch (Exception e) {
             throw new RuntimeException("Failed to delete product: " + e.getMessage(), e);
-        }
-    }
-
-
-    /**
-     * Get all products by category.
-     *
-     * @param category Category name of the products.
-     * @return List of Product objects containing product details.
-     */
-    @Override
-    public List<Product> getProductsByCategory(String category) {
-        try {
-            return _productRepository.findByCategoryName(category);
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to fetch products: " + e.getMessage(), e);
-        }
-    }
-
-
-    /**
-     * Get all products by brand.
-     *
-     * @param brand Brand name of the products.
-     * @return List of ProductResponse objects containing product details.
-     */
-    @Override
-    public List<Product> getProductsByBrand(String brand) {
-        try {
-            return _productRepository.findByBrand(brand);
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to fetch products: " + e.getMessage(), e);
-        }
-    }
-
-
-    /**
-     * Get all products by category and brand.
-     *
-     * @param category Category name of the products.
-     * @param brand    Brand name of the products.
-     * @return List of Product objects containing product details.
-     */
-    @Override
-    public List<Product> getProductByCategoryAndBrand(String category, String brand) {
-        try {
-            return _productRepository.findByCategoryNameAndBrand(category, brand);
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to fetch products: " + e.getMessage(), e);
-        }
-    }
-
-
-    /**
-     * Get products by name.
-     *
-     * @param name Name of the products.
-     * @return List of Product objects containing product details.
-     */
-    @Override
-    public List<Product> getProductsByName(String name) {
-        try {
-            return _productRepository.findByName(name);
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to fetch products: " + e.getMessage(), e);
-        }
-    }
-
-
-    /**
-     * Get products by brand and name.
-     *
-     * @param brand Brand name of the products.
-     * @param name  Name of the products.
-     * @return List of Product objects containing product details.
-     */
-    @Override
-    public List<Product> getProductsByBrandAndName(String brand, String name) {
-        try {
-            return _productRepository.findByBrandAndName(brand, name);
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to fetch products: " + e.getMessage(), e);
-        }
-    }
-
-
-    /**
-     * Count products by brand and name.
-     *
-     * @param brand Brand name of the products.
-     * @param name  Name of the products.
-     * @return Number of products.
-     */
-    @Override
-    public Long countProductsByBrandAndName(String brand, String name) {
-        try {
-            return _productRepository.countByBrandAndName(brand, name);
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to count products: " + e.getMessage(), e);
         }
     }
 

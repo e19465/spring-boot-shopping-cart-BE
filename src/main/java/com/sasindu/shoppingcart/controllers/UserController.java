@@ -5,8 +5,8 @@ import com.sasindu.shoppingcart.abstractions.dto.request.user.UpdateUserRequestD
 import com.sasindu.shoppingcart.abstractions.dto.response.user.UserResponseDto;
 import com.sasindu.shoppingcart.abstractions.interfaces.IUserService;
 import com.sasindu.shoppingcart.helpers.ApiResponse;
-import com.sasindu.shoppingcart.helpers.GlobalExceptionHandler;
-import com.sasindu.shoppingcart.helpers.GlobalSuccessHandler;
+import com.sasindu.shoppingcart.helpers.ErrorResponseHandler;
+import com.sasindu.shoppingcart.helpers.SuccessResponseHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,9 +33,9 @@ public class UserController {
     public ResponseEntity<ApiResponse> getUserById(@PathVariable Long id) {
         try {
             UserResponseDto user = _userService.getUserById(id).toUserResponse();
-            return GlobalSuccessHandler.handleSuccess("User retrieved successfully", user, HttpStatus.OK.value(), null);
+            return SuccessResponseHandler.handleSuccess("User retrieved successfully", user, HttpStatus.OK.value(), null);
         } catch (Exception e) {
-            return GlobalExceptionHandler.handleException(e);
+            return ErrorResponseHandler.handleException(e);
         }
     }
 
@@ -51,9 +51,9 @@ public class UserController {
     public ResponseEntity<ApiResponse> updateUser(@RequestBody UpdateUserRequestDto request, @PathVariable Long userId) {
         try {
             UserResponseDto user = _userService.updateUser(request, userId).toUserResponse();
-            return GlobalSuccessHandler.handleSuccess("User updated successfully", user, HttpStatus.OK.value(), null);
+            return SuccessResponseHandler.handleSuccess("User updated successfully", user, HttpStatus.OK.value(), null);
         } catch (Exception e) {
-            return GlobalExceptionHandler.handleException(e);
+            return ErrorResponseHandler.handleException(e);
         }
     }
 
@@ -68,9 +68,9 @@ public class UserController {
     public ResponseEntity<ApiResponse> deleteUserById(@PathVariable Long id) {
         try {
             _userService.deleteUserById(id);
-            return GlobalSuccessHandler.handleSuccess("User deleted successfully", null, HttpStatus.OK.value(), null);
+            return SuccessResponseHandler.handleSuccess("User deleted successfully", null, HttpStatus.OK.value(), null);
         } catch (Exception e) {
-            return GlobalExceptionHandler.handleException(e);
+            return ErrorResponseHandler.handleException(e);
         }
     }
 

@@ -1,5 +1,6 @@
 package com.sasindu.shoppingcart.abstractions.interfaces;
 
+import com.sasindu.shoppingcart.models.AppUser;
 import com.sasindu.shoppingcart.models.Cart;
 
 import java.math.BigDecimal;
@@ -39,4 +40,30 @@ public interface ICartService {
      * @return The saved cart
      */
     Cart saveCart(Cart cart);
+
+
+    /**
+     * Get the cart by user id
+     *
+     * @param userId The id of the user
+     * @return The cart
+     */
+    Cart getCartByUserId(Long userId);
+
+
+    /**
+     * Initialize a new cart
+     *
+     * @param appUser The user to initialize the cart for
+     * @return The new cart
+     */
+    Cart initializeNewCart(AppUser appUser);
+
+
+    /**
+     * Clear cart by cart
+     *
+     * @param cart The cart object
+     */
+    void clearCartByCart(Cart cart);
 }

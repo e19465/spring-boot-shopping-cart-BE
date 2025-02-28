@@ -4,7 +4,7 @@ package com.sasindu.shoppingcart.abstractions.dto.request.user;
 import lombok.Data;
 
 @Data
-public class AddUserRequestDto {
+public class RegisterRequestDto {
     private String firstName;
     private String lastName = "";
     private String email;

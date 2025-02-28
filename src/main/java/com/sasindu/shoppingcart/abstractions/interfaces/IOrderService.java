@@ -13,10 +13,9 @@ public interface IOrderService {
     /**
      * Place order.
      *
-     * @param userId the user id
      * @return the order
      */
-    Order placeOrder(Long userId);
+    Order placeOrder();
 
 
     /**

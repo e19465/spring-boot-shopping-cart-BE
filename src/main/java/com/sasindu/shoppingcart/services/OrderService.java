@@ -2,10 +2,10 @@ package com.sasindu.shoppingcart.services;
 
 
 import com.sasindu.shoppingcart.abstractions.enums.OrderStatus;
-import com.sasindu.shoppingcart.abstractions.interfaces.IOrderService;
-import com.sasindu.shoppingcart.abstractions.interfaces.ISharedService;
+import com.sasindu.shoppingcart.abstractions.interfaces.*;
 import com.sasindu.shoppingcart.exceptions.BadRequestException;
 import com.sasindu.shoppingcart.exceptions.NotFoundException;
+import com.sasindu.shoppingcart.exceptions.UnAuthorizedException;
 import com.sasindu.shoppingcart.models.*;
 import com.sasindu.shoppingcart.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +25,10 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class OrderService implements IOrderService {
     private final OrderRepository _orderRepository;
-    private final ISharedService _sharedService;
+    private final IProductService _productService;
+    private final IUserService _userService;
+    private final IAuthService _authService;
+    private final ICartService _cartService;
 
     /**
      * Create the order items for order.This is used as internal helper method to create an order
@@ -44,7 +47,7 @@ public class OrderService implements IOrderService {
                             throw new BadRequestException("Inventory is not enough for product: " + product.getName());
                         }
                         product.setInventory(newInventory);
-                        _sharedService.saveProduct(product);
+                        _productService.saveProduct(product);
                         return new OrderItem(order, product, cartItem.getQuantity(), product.getPrice());
                     }).collect(Collectors.toList());
         } catch (RuntimeException e) {
@@ -79,22 +82,14 @@ public class OrderService implements IOrderService {
     /**
      * Place order.
      *
-     * @param userId the user id
      * @return the order
      */
     @Override
     @Transactional
-    public Order placeOrder(Long userId) {
+    public Order placeOrder() {
         try {
-            AppUser appUser = _sharedService.getUserById(userId);
-            if (appUser == null) {
-                throw new NotFoundException("User not found");
-            }
-
-            Cart cart = _sharedService.findCartByUserId(userId);
-            if (cart == null) {
-                throw new NotFoundException("Cart not found");
-            }
+            AppUser appUser = _authService.getAuthenticatedUser();
+            Cart cart = _cartService.getCartByUserId(appUser.getId());
 
             // create the order
             Order order = createOrder(cart);
@@ -108,7 +103,7 @@ public class OrderService implements IOrderService {
             Order savedOrder = _orderRepository.save(order);
 
             // clear the cart
-            _sharedService.clearCartByCart(cart);
+            _cartService.clearCartByCart(cart);
 
             return savedOrder;
         } catch (RuntimeException e) {
@@ -128,9 +123,16 @@ public class OrderService implements IOrderService {
     @Override
     public Order getOrderById(Long orderId) {
         try {
-            return _orderRepository
+            AppUser appUser = _authService.getAuthenticatedUser();
+            boolean isAdmin = _authService.isAuthenticatedUserAdmin();
+            Order order = _orderRepository
                     .findById(orderId)
                     .orElseThrow(() -> new NotFoundException("Order not found"));
+
+            if (!isAdmin && !order.getAppUser().getId().equals(appUser.getId())) {
+                throw new UnAuthorizedException("Unauthorized access");
+            }
+            return order;
         } catch (RuntimeException e) {
             throw e;
         } catch (Exception e) {
@@ -148,6 +150,9 @@ public class OrderService implements IOrderService {
     @Override
     public List<Order> getOrdersByUserId(Long userId) {
         try {
+            if (!_authService.isAuthenticatedUserAdmin() && !_authService.checkLoggedInUserWithId(userId)) {
+                throw new UnAuthorizedException("Unauthorized access");
+            }
             return _orderRepository.findAllByUserId(userId);
         } catch (RuntimeException e) {
             throw e;

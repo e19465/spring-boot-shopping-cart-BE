@@ -58,63 +58,6 @@ public interface IProductService {
 
 
     /**
-     * Get all products by category.
-     *
-     * @param category Category of the products.
-     * @return List of Product objects containing product details.
-     */
-    List<Product> getProductsByCategory(String category);
-
-
-    /**
-     * Get all products by brand.
-     *
-     * @param brand Brand of the products.
-     * @return List of Product objects containing product details.
-     */
-    List<Product> getProductsByBrand(String brand);
-
-
-    /**
-     * Get all products by category and brand.
-     *
-     * @param category Category of the products.
-     * @param brand    Brand of the products.
-     * @return List of Product objects containing product details.
-     */
-    List<Product> getProductByCategoryAndBrand(String category, String brand);
-
-
-    /**
-     * Get products by name.
-     *
-     * @param name Name of the products.
-     * @return List of Product objects containing product details.
-     */
-    List<Product> getProductsByName(String name);
-
-
-    /**
-     * Get products by brand and name.
-     *
-     * @param brand Brand of the products.
-     * @param name  Name of the products.
-     * @return List of Product objects containing product details.
-     */
-    List<Product> getProductsByBrandAndName(String brand, String name);
-
-
-    /**
-     * Count products by brand and name.
-     *
-     * @param brand Brand of the products.
-     * @param name  Name of the products.
-     * @return Number of products.
-     */
-    Long countProductsByBrandAndName(String brand, String name);
-
-
-    /**
      * Get filtered products.
      *
      * @param filters Map of filters (category, brand and name).

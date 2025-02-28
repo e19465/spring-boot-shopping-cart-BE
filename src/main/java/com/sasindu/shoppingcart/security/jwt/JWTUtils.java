@@ -123,10 +123,10 @@ public class JWTUtils {
      * @param token refresh token
      * @return user id in String
      */
-    public String getUserIdStringFromRefreshToken(String token) {
+    public Long getUserIdFromRefreshToken(String token) {
         try {
             Claims claims = getClaimsFromToken(token, refreshKey());
-            return claims.getSubject();
+            return Long.parseLong(claims.getSubject());
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
         }
