@@ -28,7 +28,7 @@ public class Cart {
 
     private BigDecimal totalAmount = BigDecimal.ZERO;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "user_id", nullable = false)
     private AppUser user;
 

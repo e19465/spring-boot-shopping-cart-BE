@@ -60,7 +60,7 @@ public class AuthController {
      *
      * @param response - HttpServletResponse object
      */
-    @PostMapping("/logout")
+    @GetMapping("/logout")
     public ResponseEntity<ApiResponse> logout(HttpServletResponse response) {
         try {
             _authService.logout(response);
@@ -93,6 +93,6 @@ public class AuthController {
  * ENDPOINTS
  * 1. register - POST - http://localhost:9091/api/v1/auth/register
  * 2. login - POST - http://localhost:9091/api/v1/auth/login
- * 3. logout - POST - http://localhost:9091/api/v1/auth/logout
+ * 3. logout - GET - http://localhost:9091/api/v1/auth/logout
  * 4. refresh-tokens - GET - http://localhost:9091/api/v1/auth/refresh-tokens
  */

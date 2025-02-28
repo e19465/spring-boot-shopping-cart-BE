@@ -2,6 +2,7 @@ package com.sasindu.shoppingcart.services;
 
 import com.sasindu.shoppingcart.abstractions.dto.request.auth.LoginRequestDto;
 import com.sasindu.shoppingcart.abstractions.dto.request.user.RegisterRequestDto;
+import com.sasindu.shoppingcart.abstractions.enums.AppUserRole;
 import com.sasindu.shoppingcart.abstractions.interfaces.IAuthService;
 import com.sasindu.shoppingcart.exceptions.BadRequestException;
 import com.sasindu.shoppingcart.exceptions.ForbiddenException;
@@ -22,6 +23,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
 
@@ -53,12 +55,12 @@ public class AuthService implements IAuthService {
      * @param user     - AppUser object
      * @param response - HttpServletResponse object
      */
-    private void setCookies(AppUser user, HttpServletResponse response, boolean isClear) {
+    private void setCookies(AppUser user, HttpServletResponse response) {
         try {
-            String access = isClear ? null : _jwtUtils.generateAccessToken(user);
-            String refresh = isClear ? null : _jwtUtils.generateRefreshToken(user);
-            int accessMaxAge = Integer.parseInt(jwtAccessExpireStringMinutes) * 60; // 5 minutes
-            int refreshMaxAge = Integer.parseInt(refreshTokenExpireStringDays) * 24 * 60 * 60; // 7 days
+            String access = (user == null) ? null : _jwtUtils.generateAccessToken(user);
+            String refresh = (user == null) ? null : _jwtUtils.generateRefreshToken(user);
+            int accessMaxAge = (user == null) ? 0 : Integer.parseInt(jwtAccessExpireStringMinutes) * 60; // 5 minutes
+            int refreshMaxAge = (user == null) ? 0 : Integer.parseInt(refreshTokenExpireStringDays) * 24 * 60 * 60; // 7 days
 
             Cookie accessCookie = new Cookie("access", access);
             accessCookie.setHttpOnly(true);
@@ -110,7 +112,8 @@ public class AuthService implements IAuthService {
             appUser.setFirstName(request.getFirstName());
             appUser.setLastName(request.getLastName());
             appUser.setEmail(request.getEmail());
-            appUser.setPassword(request.getPassword());
+            appUser.setPassword(_passwordEncoder.encode(request.getPassword()));
+            appUser.setRole(AppUserRole.ROLE_USER);
             AppUser savedAppUser = _userRepository.save(appUser);
 
             // initialize new cart for the user
@@ -153,7 +156,7 @@ public class AuthService implements IAuthService {
             }
 
             // Set the cookies
-            setCookies(user, response, false);
+            setCookies(user, response);
         } catch (InternalAuthenticationServiceException | BadCredentialsException e) {
             throw new UnAuthorizedException("Invalid credentials");
         } catch (DisabledException e) {
@@ -193,6 +196,10 @@ public class AuthService implements IAuthService {
         try {
             String refresh = HelperUtilStaticMethods.getCookieFromRequest(request, "refresh");
 
+            if (!StringUtils.hasText(refresh)) {
+                throw new UnAuthorizedException("Unauthorized access");
+            }
+
             if (!_jwtUtils.isRefreshTokenValid(refresh)) {
                 throw new UnAuthorizedException("Invalid refresh token");
             }
@@ -203,7 +210,7 @@ public class AuthService implements IAuthService {
             if (!user.isEnabled()) {
                 throw new ForbiddenException("Please verify your email");
             }
-            setCookies(user, response, false);
+            setCookies(user, response);
         } catch (RuntimeException e) {
             throw e;
         } catch (Exception e) {
@@ -220,7 +227,7 @@ public class AuthService implements IAuthService {
     @Override
     public void logout(HttpServletResponse response) {
         try {
-            setCookies(null, response, true);
+            setCookies(null, response);
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
         }

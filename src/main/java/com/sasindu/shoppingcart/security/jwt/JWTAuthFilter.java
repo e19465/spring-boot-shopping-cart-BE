@@ -16,6 +16,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
@@ -24,6 +25,7 @@ import java.util.Map;
 
 
 @Component
+
 public class JWTAuthFilter extends OncePerRequestFilter {
     @Autowired
     private JWTUtils _jwtUtils;
@@ -53,7 +55,7 @@ public class JWTAuthFilter extends OncePerRequestFilter {
 
             // Get the access token from the request, if it is not valid, then continue
             String accessToken = HelperUtilStaticMethods.getCookieFromRequest(request, "access");
-            if (accessToken == null || _jwtUtils.isAccessTokenValid(accessToken)) {
+            if (!StringUtils.hasText(accessToken) || !_jwtUtils.isAccessTokenValid(accessToken)) {
                 filterChain.doFilter(request, response);
                 return;
             }

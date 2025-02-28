@@ -83,6 +83,7 @@ public class SecurityConfig {
      *
      * @return JWTAuthFilter object
      */
+    @Bean
     public JWTAuthFilter jwtAuthFilter() {
         return new JWTAuthFilter();
     }
