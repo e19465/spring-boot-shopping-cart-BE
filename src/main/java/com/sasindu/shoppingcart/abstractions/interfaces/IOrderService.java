@@ -34,4 +34,12 @@ public interface IOrderService {
      * @return the orders by user id
      */
     List<Order> getOrdersByUserId(Long userId);
+
+
+    /**
+     * Cancel order.
+     *
+     * @param orderId the order id
+     */
+    void cancelOrder(Long orderId);
 }

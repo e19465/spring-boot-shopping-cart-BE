@@ -10,7 +10,8 @@ import java.util.List;
 @Component
 public final class ApplicationConstants {
     public static final String IMAGE_DOWNLOAD_URL_PREFIX = "/api/v1/images/image/download/";
-
+    public static final int MAXIMUM_ORDER_CANCEL_DAYS = 3;
+    
     //! Configure Public URLs
     private static final String[] PUBLIC_APPLICATION_URLS = new String[]{
             "/static/**",

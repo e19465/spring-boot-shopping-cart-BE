@@ -2,8 +2,8 @@ package com.sasindu.shoppingcart.services;
 
 import com.sasindu.shoppingcart.abstractions.interfaces.IAuthService;
 import com.sasindu.shoppingcart.abstractions.interfaces.ICartService;
+import com.sasindu.shoppingcart.exceptions.ForbiddenException;
 import com.sasindu.shoppingcart.exceptions.NotFoundException;
-import com.sasindu.shoppingcart.exceptions.UnAuthorizedException;
 import com.sasindu.shoppingcart.models.AppUser;
 import com.sasindu.shoppingcart.models.Cart;
 import com.sasindu.shoppingcart.repository.CartItemRepository;
@@ -37,9 +37,10 @@ public class CartService implements ICartService {
         try {
             boolean isUserAdmin = _authService.isAuthenticatedUserAdmin();
             AppUser authenticatedUser = _authService.getAuthenticatedUser();
-            Cart cart = _cartRepository.findById(cartId).orElseThrow(() -> new NotFoundException("Cart not found"));
+            Cart cart = _cartRepository.findById(cartId)
+                    .orElseThrow(() -> new NotFoundException("Cart not found"));
             if (!isUserAdmin && !cart.getUser().getId().equals(authenticatedUser.getId())) {
-                throw new UnAuthorizedException("Unauthorized access");
+                throw new ForbiddenException("Access denied");
             }
             return cart;
         } catch (RuntimeException e) {
@@ -126,7 +127,7 @@ public class CartService implements ICartService {
             }
 
             if (!isUserAdmin && !cart.getUser().getId().equals(authenticatedUser.getId())) {
-                throw new UnAuthorizedException("Unauthorized access");
+                throw new ForbiddenException("Access denied");
             }
 
             return cart;
@@ -168,7 +169,7 @@ public class CartService implements ICartService {
         try {
             AppUser authenticatedUser = _authService.getAuthenticatedUser();
             if (!cart.getUser().getId().equals(authenticatedUser.getId())) {
-                throw new UnAuthorizedException("Unauthorized access");
+                throw new ForbiddenException("Access denied");
             }
             _cartItemRepository.deleteAllByCartId(cart.getId());
             cart.getCartItems().clear();

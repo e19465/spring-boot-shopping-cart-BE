@@ -5,6 +5,7 @@ import com.sasindu.shoppingcart.abstractions.dto.request.cartitem.AddCartItemReq
 import com.sasindu.shoppingcart.abstractions.dto.request.cartitem.UpdateCartItemRequestDto;
 import com.sasindu.shoppingcart.abstractions.interfaces.*;
 import com.sasindu.shoppingcart.exceptions.BadRequestException;
+import com.sasindu.shoppingcart.exceptions.ForbiddenException;
 import com.sasindu.shoppingcart.exceptions.NotFoundException;
 import com.sasindu.shoppingcart.exceptions.UnAuthorizedException;
 import com.sasindu.shoppingcart.models.AppUser;
@@ -94,6 +95,15 @@ public class CartItemService implements ICartItemService {
             Long userId = user.getId();
             Long productId = request.getProductId();
             int quantity = request.getQuantity();
+
+            if (productId == null) {
+                throw new BadRequestException("Product id and quantity are required");
+            }
+
+            if (quantity <= 0) {
+                throw new BadRequestException("Quantity should be greater than 0");
+            }
+
             Cart cart = _cartService.getCartByUserId(userId);
             if (cart == null) {
                 AppUser foundAppUser = _userService.getUserById(userId);
@@ -165,7 +175,7 @@ public class CartItemService implements ICartItemService {
 
             // check if the cart belongs to the user
             if (!cart.getUser().getId().equals(user.getId())) {
-                throw new UnAuthorizedException("Unauthorized access");
+                throw new ForbiddenException("Access denied");
             }
 
 
@@ -203,7 +213,7 @@ public class CartItemService implements ICartItemService {
 
             // check if the cart belongs to the user
             if (!cart.getUser().getId().equals(user.getId())) {
-                throw new UnAuthorizedException("Unauthorized access");
+                throw new ForbiddenException("Access denied");
             }
 
             // get the product

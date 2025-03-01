@@ -79,6 +79,16 @@ public class OrderController {
             return ErrorResponseHandler.handleException(e);
         }
     }
+
+    @DeleteMapping("/cancel-order/{orderId}")
+    public ResponseEntity<ApiResponse> cancelOrder(@PathVariable Long orderId) {
+        try {
+            _orderService.cancelOrder(orderId);
+            return SuccessResponseHandler.handleSuccess("Order cancelled successfully", null, HttpStatus.OK.value(), null);
+        } catch (Exception e) {
+            return ErrorResponseHandler.handleException(e);
+        }
+    }
 }
 
 
@@ -87,4 +97,5 @@ public class OrderController {
  * 1. place order - POST - http://localhost:9091/api/v1/orders/place-order
  * 2. get order by id - GET - http://localhost:9091/api/v1/orders/find-by-id/{orderId}
  * 3. get orders by user id - GET - http://localhost:9091/api/v1/orders/get-by-user-id/{userId}
+ * 4. cancel order - DELETE - http://localhost:9091/api/v1/orders/cancel-order/{orderId}
  */

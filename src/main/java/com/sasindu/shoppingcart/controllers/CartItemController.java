@@ -34,8 +34,9 @@ public class CartItemController {
      */
     // After Auth Context is implemented, the request body of type AddCartItemRequest will be used
     @PostMapping("/add")
-    public ResponseEntity<ApiResponse> addItemToCart(AddCartItemRequestDto request) {
+    public ResponseEntity<ApiResponse> addItemToCart(@RequestBody AddCartItemRequestDto request) {
         try {
+            ValidationHelper.validateModelBinding(request);
             _cartItemService.addItemToCart(request);
             return SuccessResponseHandler.handleSuccess("Item added to the cart successfully", null, HttpStatus.CREATED.value(), null);
         } catch (Exception e) {
