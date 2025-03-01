@@ -55,7 +55,8 @@ public class AuthService implements IAuthService {
      * @param user     - AppUser object
      * @param response - HttpServletResponse object
      */
-    private void setCookies(AppUser user, HttpServletResponse response) {
+    @Override
+    public void setCookies(AppUser user, HttpServletResponse response) {
         try {
             String access = (user == null) ? null : _jwtUtils.generateAccessToken(user);
             String refresh = (user == null) ? null : _jwtUtils.generateRefreshToken(user);

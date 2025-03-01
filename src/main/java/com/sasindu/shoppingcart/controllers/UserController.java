@@ -7,6 +7,7 @@ import com.sasindu.shoppingcart.abstractions.interfaces.IUserService;
 import com.sasindu.shoppingcart.helpers.ApiResponse;
 import com.sasindu.shoppingcart.helpers.ErrorResponseHandler;
 import com.sasindu.shoppingcart.helpers.SuccessResponseHandler;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -65,9 +66,9 @@ public class UserController {
      * @return ApiResponse object containing the response details
      */
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<ApiResponse> deleteUserById(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse> deleteUserById(@PathVariable Long id, HttpServletResponse response) {
         try {
-            _userService.deleteUserById(id);
+            _userService.deleteUserById(id, response);
             return SuccessResponseHandler.handleSuccess("User deleted successfully", null, HttpStatus.OK.value(), null);
         } catch (Exception e) {
             return ErrorResponseHandler.handleException(e);

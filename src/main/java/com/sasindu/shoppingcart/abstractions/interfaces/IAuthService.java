@@ -79,4 +79,13 @@ public interface IAuthService {
      * @return true if the authenticated user is an admin else false
      */
     boolean isAuthenticatedUserAdmin();
+
+
+    /**
+     * Set the cookies
+     *
+     * @param user     - AppUser object
+     * @param response - HttpServletResponse object
+     */
+    void setCookies(AppUser user, HttpServletResponse response);
 }

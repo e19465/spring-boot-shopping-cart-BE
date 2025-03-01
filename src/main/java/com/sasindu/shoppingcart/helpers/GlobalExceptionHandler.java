@@ -4,6 +4,7 @@ package com.sasindu.shoppingcart.helpers;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authorization.AuthorizationDeniedException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -70,6 +71,20 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(NoResourceFoundException.class)
     public ResponseEntity<ApiResponse> handleNoResourceFoundException(Exception e) {
         String message = "Resource not found";
+        return ResponseEntity.status(HttpStatus.NOT_FOUND.value())
+                .body(new ApiResponse(message, null, null));
+    }
+
+    
+    /**
+     * Handle UsernameNotFoundException
+     *
+     * @param e - Exception
+     * @return ResponseEntity<ApiResponse>
+     */
+    @ExceptionHandler(UsernameNotFoundException.class)
+    public ResponseEntity<ApiResponse> handleUsernameNotFoundException(Exception e) {
+        String message = "User not found";
         return ResponseEntity.status(HttpStatus.NOT_FOUND.value())
                 .body(new ApiResponse(message, null, null));
     }

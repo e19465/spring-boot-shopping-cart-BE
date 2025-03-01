@@ -3,6 +3,7 @@ package com.sasindu.shoppingcart.abstractions.interfaces;
 
 import com.sasindu.shoppingcart.abstractions.dto.request.user.UpdateUserRequestDto;
 import com.sasindu.shoppingcart.models.AppUser;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * IUserService - All the user related services defined here
@@ -33,5 +34,5 @@ public interface IUserService {
      *
      * @param id - id of the user
      */
-    void deleteUserById(Long id);
+    void deleteUserById(Long id, HttpServletResponse response);
 }

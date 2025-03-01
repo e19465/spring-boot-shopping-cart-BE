@@ -15,6 +15,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -53,6 +54,15 @@ public class JWTAuthFilter extends OncePerRequestFilter {
                 throw new RuntimeException("Request, response or filter chain is null");
             }
 
+            // Get the requested URL
+//            String requestURI = request.getRequestURI();
+
+            // Check if the URL is public and bypass token validation
+//            if (Arrays.stream(ApplicationConstants.PUBLIC_URLS).anyMatch(requestURI::startsWith)) {
+//                filterChain.doFilter(request, response);
+//                return;
+//            }
+
             // Get the access token from the request, if it is not valid, then continue
             String accessToken = HelperUtilStaticMethods.getCookieFromRequest(request, "access");
             if (!StringUtils.hasText(accessToken) || !_jwtUtils.isAccessTokenValid(accessToken)) {
@@ -64,23 +74,41 @@ public class JWTAuthFilter extends OncePerRequestFilter {
             UserDetails userDetails = _appUserDetailsService.loadUserByUsername(email);
             Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authentication);
-        } catch (JwtException e) {
+        } catch (JwtException | UsernameNotFoundException e) {
             assert response != null;
-            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 
             // Construct JSON response
             Map<String, Object> errorResponse = new HashMap<>();
             errorResponse.put("message", null);
-            errorResponse.put("error", "Access Denied");
             errorResponse.put("data", null);
+
+            if (e instanceof JwtException) {
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                errorResponse.put("error", "Unauthorized access");
+            } else {
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                errorResponse.put("error", "User not found");
+            }
+            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 
             // Convert to JSON and write response
             ObjectMapper objectMapper = new ObjectMapper();
             response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
             return;
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            if (response != null) {
+                Map<String, Object> errorResponse = new HashMap<>();
+                errorResponse.put("message", null);
+                errorResponse.put("data", null);
+                errorResponse.put("error", "Internal server error");
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+                ObjectMapper objectMapper = new ObjectMapper();
+                response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
+                return;
+            } else {
+                throw new RuntimeException(e);
+            }
         }
         filterChain.doFilter(request, response);
     }
